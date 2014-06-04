@@ -12,11 +12,27 @@
         <dep.org.codehaus.jackson.version>1.9.8</dep.org.codehaus.jackson.version>
         <dep.org.apache.httpcomponents.version>4.3.2</dep.org.apache.httpcomponents.version>
     </properties>
+
     <scm>
         <url>https://github.com/WPSkunkWorks/worldpay-lib-java</url>
         <connection>scm:git:git@github.com:WPSkunkWorks/worldpay-lib-java.git</connection>
         <developerConnection>scm:git:git@github.com:WPSkunkWorks/worldpay-lib-java.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
+
+    <!-- Distribution management repositories; where artifacts are deployed to -->
+    <distributionManagement>
+        <repository>
+            <id>cw-releases</id>
+            <url>http://localhost:8081/nexus/content/repositories/releases/</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>cw-snapshots</id>
+            <url>http://localhost:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>com.worldpay.gateway.clearwater</groupId>

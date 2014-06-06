@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <version>0.1.0</version>
+    <version>0.1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <groupId>com.worldpay</groupId>
     <artifactId>worldpay-lib-java</artifactId>
@@ -16,7 +16,7 @@
         <url>https://github.com/WPSkunkWorks/worldpay-lib-java</url>
         <connection>scm:git:git@github.com:WPSkunkWorks/worldpay-lib-java.git</connection>
         <developerConnection>scm:git:git@github.com:WPSkunkWorks/worldpay-lib-java.git</developerConnection>
-        <tag>worldpay-lib-java-0.1.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <!-- Distribution management repositories; where artifacts are deployed to -->

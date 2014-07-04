@@ -125,8 +125,9 @@ public class OrderServiceTest {
         tokenRequest.setPaymentMethod(cardRequest);
 
         try {
+            final String json = JsonParser.toJson(tokenRequest);
             TokenResponse tokenResponse = Request.Post(PropertyUtils.getProperty("tokenUrl"))
-                     .bodyString(JsonParser.toJson(tokenRequest), ContentType.APPLICATION_JSON)
+                     .bodyString(json, ContentType.APPLICATION_JSON)
                      .execute()
                      .handleResponse(new ResponseHandler<TokenResponse>() {
                          public TokenResponse handleResponse(HttpResponse response) throws IOException {

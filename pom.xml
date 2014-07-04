@@ -7,8 +7,8 @@
     <artifactId>worldpay-lib-java</artifactId>
     <name>Worldpay Java Client</name>
     <properties>
-        <dep.clearwater-client-core.version>0.4.3-RELEASE</dep.clearwater-client-core.version>
-        <dep.org.codehaus.jackson.version>1.9.8</dep.org.codehaus.jackson.version>
+        <dep.clearwater-client-core.version>0.5.0-RELEASE</dep.clearwater-client-core.version>
+        <dep.org.fasterxml.jackson.version>2.4.1</dep.org.fasterxml.jackson.version>
         <dep.org.apache.httpcomponents.version>4.3.2</dep.org.apache.httpcomponents.version>
     </properties>
 
@@ -23,12 +23,12 @@
     <distributionManagement>
         <repository>
             <id>cw-releases</id>
-            <url>http://localhost:8081/nexus/content/repositories/releases/</url>
+            <url>http://nexus.worldpay.io:8081/nexus/content/repositories/releases/</url>
         </repository>
 
         <snapshotRepository>
             <id>cw-snapshots</id>
-            <url>http://localhost:8081/nexus/content/repositories/snapshots/</url>
+            <url>http://nexus.worldpay.io:8081/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -43,11 +43,25 @@
             <artifactId>fluent-hc</artifactId>
             <version>${dep.org.apache.httpcomponents.version}</version>
         </dependency>
+
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${dep.org.fasterxml.jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
             <version>${dep.org.codehaus.jackson.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${dep.org.codehaus.jackson.version}</version>
+        </dependency>
+
         <!-- test dependencies -->
         <dependency>
             <groupId>junit</groupId>

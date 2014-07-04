@@ -15,8 +15,9 @@ public class OrderService extends AbstractService {
     /**
      * Create an order with the specified request.
      *
-     * @param the {@link OrderRequest} object
-     * @return the {@link OrderResponse} object
+     * @param orderRequest {@link OrderRequest} object
+     *
+     * @return {@link OrderResponse} object
      */
     public OrderResponse create(OrderRequest orderRequest) {
         return http.post("/orders", orderRequest, OrderResponse.class);
@@ -25,11 +26,11 @@ public class OrderService extends AbstractService {
     /**
      * Refund the order identified by order code.
      *
-     * @param orderCode
+     * @param orderCode Order code
+     *
      * @return the {@link OrderResponse} object
      */
     public OrderResponse refund(String orderCode) {
         return http.post("/orders/" + orderCode + "/refund", null, OrderResponse.class);
     }
-
 }

@@ -1,8 +1,8 @@
 package com.worldpay.sdk.util;
 
-import java.io.InputStream;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import java.io.InputStream;
 
 /**
  * Class used for converting to and from JSON.
@@ -18,13 +18,13 @@ public final class JsonParser {
      * Private constructor.
      */
     private JsonParser() {
-
     }
 
     /**
      * Convert an object to JSON representation.
      *
      * @param object to convert
+     *
      * @return the string representation
      */
     public static String toJson(Object object) {
@@ -40,6 +40,7 @@ public final class JsonParser {
      *
      * @param json the string to convert
      * @param type the type of object
+     *
      * @return the object created from the string
      */
     public static <T> T toObject(String json, Class<T> type) {
@@ -53,9 +54,10 @@ public final class JsonParser {
     /**
      * Convert an input stream to Object representation.
      *
-     * @param in
-     * @param type
-     * @return
+     * @param in   {@link InputStream}
+     * @param type {@link Class} type
+     *
+     * @return Data read into an object of type
      */
     public static <T> T toObject(InputStream in, Class<T> type) {
         try {
@@ -64,5 +66,4 @@ public final class JsonParser {
             throw new RuntimeException(e);
         }
     }
-
 }

@@ -1,7 +1,8 @@
 package com.worldpay.sdk;
 
-import java.io.IOException;
-
+import com.worldpay.gateway.clearwater.client.core.dto.response.ApiError;
+import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
+import com.worldpay.sdk.util.JsonParser;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -10,9 +11,7 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 
-import com.worldpay.gateway.clearwater.client.core.dto.response.ApiError;
-import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
-import com.worldpay.sdk.util.JsonParser;
+import java.io.IOException;
 
 /**
  * Class to handle HTTP requests and responses.
@@ -35,7 +34,7 @@ class Http {
     private static final String APPLICATION_JSON = "application/json";
 
     enum RequestMethod {
-        DELETE, GET, POST, PUT;
+        DELETE, GET, POST, PUT
     }
 
     /**
@@ -78,6 +77,22 @@ class Http {
     }
 
     /**
+     * Create a new resource using POST
+     *
+     * @param resourcePath the location of the resource e.g. /order/123
+     * @param request the Object which needs to be serialized and sent as POST payload, may be null
+     */
+     void post(String resourcePath, Object request) {
+        Request postRequest = createRequest(RequestMethod.POST, resourcePath);
+
+        if (request != null) {
+            postRequest.bodyString(toJson(request), ContentType.APPLICATION_JSON);
+        }
+
+        execute(postRequest);
+    }
+
+    /**
      * Updates an existing resource using PUT and return the parsed response.
      *
      * @param resourcePath the location of the resource e.g. /order/123
@@ -110,8 +125,9 @@ class Http {
     /**
      * Convert object to string representation.
      *
-     * @param request
-     * @return
+     * @param request object to convert
+     *
+     * @return String representation of the {@code request}
      */
     private String toJson(Object request) {
         try {
@@ -124,13 +140,29 @@ class Http {
     /**
      * Execute the request.
      *
-     * @param request the request
+     * @param request      the request
      * @param responseType the response type
-     * @return
+     *
+     * @return an instance of the {@code responseType}
      */
     private <T> T execute(Request request, final Class<T> responseType) {
         try {
             return request.execute().handleResponse(getHandler(responseType));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Execute the request to be used when no response is expected
+     *
+     * @param request the request
+     */
+    private void execute(Request request) {
+        try {
+            HttpResponse response = request.execute().returnResponse();
+            HttpEntity entity = response.getEntity();
+            errorHandler(response, entity);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -171,24 +203,36 @@ class Http {
     /**
      * Return the handler for the response type.
      *
-     * @param responseType
-     * @return
+     * @param responseType the expected response type
+     *
+     * @return an instance of {@code responseType}
      */
     private <T> ResponseHandler<T> getHandler(final Class<T> responseType) {
         return new ResponseHandler<T>() {
 
             public T handleResponse(HttpResponse response) throws IOException {
                 HttpEntity entity = response.getEntity();
-                StatusLine statusLine = response.getStatusLine();
-
-                if (statusLine.getStatusCode() >= 300) {
-                    ApiError error = JsonParser.toObject(entity.getContent(), ApiError.class);
-                    throw new WorldpayException(error, "API error: "  + error.getMessage());
-                }
-
+                errorHandler(response, entity);
                 return JsonParser.toObject(entity.getContent(), responseType);
             }
         };
     }
 
+    /**
+     * Examines the {@code response} and throws {@link WorldpayException} if an error response is detected
+     *
+     * @param response {@link HttpResponse} to be examin
+     * @param entity   {@link HttpEntity}
+     *
+     * @throws IOException       if it fails to parse the error message contained in the response
+     * @throws WorldpayException if an erroneous response is detected
+     */
+    private void errorHandler(HttpResponse response, HttpEntity entity) throws IOException {
+        StatusLine statusLine = response.getStatusLine();
+
+        if (statusLine.getStatusCode() >= 300) {
+            ApiError error = JsonParser.toObject(entity.getContent(), ApiError.class);
+            throw new WorldpayException(error, "API error: " + error.getMessage());
+        }
+    }
 }

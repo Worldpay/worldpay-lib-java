@@ -33,7 +33,7 @@ class Http {
      */
     private static final String APPLICATION_JSON = "application/json";
 
-    enum RequestMethod {
+    private enum RequestMethod {
         DELETE, GET, POST, PUT
     }
 
@@ -53,7 +53,7 @@ class Http {
      * @param baseUri Base URI for connection
      * @param serviceKey default service key for connection
      */
-    Http(String baseUri, String serviceKey) {
+    public Http(String baseUri, String serviceKey) {
         this.baseUri = baseUri;
         this.serviceKey = serviceKey;
     }
@@ -66,7 +66,7 @@ class Http {
      * @param responseType the type of the return value
      * @return the converted object
      */
-    <T> T post(String resourcePath, Object request, final Class<T> responseType) {
+    public <T> T post(String resourcePath, Object request, final Class<T> responseType) {
         Request postRequest = createRequest(RequestMethod.POST, resourcePath);
 
         if (request != null) {
@@ -82,7 +82,7 @@ class Http {
      * @param resourcePath the location of the resource e.g. /order/123
      * @param request the Object which needs to be serialized and sent as POST payload, may be null
      */
-     void post(String resourcePath, Object request) {
+     public void post(String resourcePath, Object request) {
         Request postRequest = createRequest(RequestMethod.POST, resourcePath);
 
         if (request != null) {
@@ -100,7 +100,7 @@ class Http {
      * @param responseType the type of the return value
      * @return the converted object
      */
-    <T> T put(String resourcePath, Object request, final Class<T> responseType) {
+    public <T> T put(String resourcePath, Object request, final Class<T> responseType) {
         Request putRequest = createRequest(RequestMethod.PUT, resourcePath);
 
         if (request != null) {
@@ -117,7 +117,7 @@ class Http {
      * @param responseType the type of the return value
      * @return the converted object
      */
-    <T> T get(String resourcePath, final Class<T> responseType) {
+    public <T> T get(String resourcePath, final Class<T> responseType) {
         Request getRequest = createRequest(RequestMethod.GET, resourcePath);
         return execute(getRequest, responseType);
     }

@@ -27,10 +27,8 @@ public class OrderService extends AbstractService {
      * Refund the order identified by order code.
      *
      * @param orderCode Order code
-     *
-     * @return the {@link OrderResponse} object
      */
-    public OrderResponse refund(String orderCode) {
-        return http.post("/orders/" + orderCode + "/refund", null, OrderResponse.class);
+    public void refund(String orderCode) {
+        http.post("/orders/" + orderCode + "/refund", null);
     }
 }

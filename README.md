@@ -6,7 +6,7 @@ Java SDK for interacting with the Worldpay Developer REST API.
 ## Usage
 
 Initialize the REST client with the default URL and the specified service key and then use the required service:
-```c#
+```Java
 WorldpayRestClient restClient = new WorldpayRestClient("YOUR_SERVICE_KEY");
 
 OrderRequest orderRequest = new OrderRequest();

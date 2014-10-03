@@ -31,4 +31,15 @@ public class OrderService extends AbstractService {
     public void refund(String orderCode) {
         http.post("/orders/" + orderCode + "/refund", null);
     }
+
+    /**
+     * Partially Refund the order identified by order code by the amount given
+     *
+     * @param orderCode the ordr to be refunded
+     * @param amount    the amount to be refunded
+     */
+    public void refund(String orderCode, int amount) {
+        OrderRequest orderRequest = new OrderRequest();
+        http.post("/orders/" + orderCode + "/refund", orderRequest);
+    }
 }

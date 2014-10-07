@@ -1,6 +1,7 @@
 package com.worldpay.sdk;
 
 import com.worldpay.gateway.clearwater.client.core.dto.request.OrderRequest;
+import com.worldpay.gateway.clearwater.client.core.dto.request.RefundOrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
 
 /**
@@ -39,8 +40,7 @@ public class OrderService extends AbstractService {
      * @param amount    the amount to be refunded
      */
     public void refund(String orderCode, int amount) {
-        // TODO create a new RefundOrderRequest(amount)
-        OrderRequest orderRequest = new OrderRequest();
-        http.post("/orders/" + orderCode + "/refund", orderRequest);
+        RefundOrderRequest refundRequest =  new RefundOrderRequest(amount);
+        http.post("/orders/" + orderCode + "/refund", refundRequest);
     }
 }

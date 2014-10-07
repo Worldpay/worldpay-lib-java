@@ -7,7 +7,7 @@
     <artifactId>worldpay-lib-java</artifactId>
     <name>Worldpay Java Client</name>
     <properties>
-        <dep.clearwater-client-core.version>0.6.0-RELEASE</dep.clearwater-client-core.version>
+        <dep.clearwater-client-core.version>0.9.0-SNAPSHOT</dep.clearwater-client-core.version>
         <dep.org.fasterxml.jackson.version>2.4.1</dep.org.fasterxml.jackson.version>
         <dep.org.apache.httpcomponents.version>4.3.2</dep.org.apache.httpcomponents.version>
     </properties>

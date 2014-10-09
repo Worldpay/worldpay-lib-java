@@ -4,7 +4,7 @@ import com.worldpay.gateway.clearwater.client.ui.dto.response.TransferDetailResp
 import com.worldpay.gateway.clearwater.client.ui.dto.response.TransferSearchResponse;
 
 /**
- * Created by MDS on 25/09/2014.
+ * Service used for transfer related operations
  */
 public class TransferService extends AbstractService {
 

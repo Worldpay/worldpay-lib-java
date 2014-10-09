@@ -1,11 +1,10 @@
 package com.worldpay.sdk;
 
-import com.sun.scenario.Settings;
 import com.worldpay.gateway.clearwater.client.ui.dto.common.RiskSetting;
 import com.worldpay.gateway.clearwater.client.ui.dto.response.SettingResponse;
 
 /**
- * Created by MDS on 25/09/2014.
+ * Service used for the settings related operations.
  */
 public class SettingsService extends AbstractService {
 

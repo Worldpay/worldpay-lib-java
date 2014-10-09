@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 /**
- * Created by MDS on 26/09/2014.
+ * Test the SettingsService interacts correctly with the API
  */
 public class SettingsServiceTest {
 

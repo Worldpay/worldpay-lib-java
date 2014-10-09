@@ -9,12 +9,14 @@ import com.worldpay.sdk.util.PropertyUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.management.*;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 /**
- * Created by MDS on 26/09/2014.
+ * Test that the Webhook notifications are correctly handled by the Webhook service
  */
 public class WebhookServiceTest {
 
@@ -36,19 +38,21 @@ public class WebhookServiceTest {
     @Test
     public void shouldHandleNotification() {
         String requestBody = getNotificationString();
-        OrderStatusChangeNotificationPayload finalPayload = (OrderStatusChangeNotificationPayload)webhookService.process(requestBody);
+        Notification finalPayload = webhookService.process(requestBody);
 
         assertThat(finalPayload, is(notNullValue()));
         assertThat(finalPayload.getPaymentStatus(), is(paymentStatus));
         assertThat(finalPayload.getOrderCode(), is(orderCode));
         assertThat(finalPayload.getEnvironment(), is(environment));
 
-        assertThat(finalPayload.getPayload(), is(notNullValue()));
-        assertThat(finalPayload.getPayload().getAdminCode(), is(adminCode));
-        assertThat(finalPayload.getPayload().getMerchantId(), is(merchantId));
-        assertThat(finalPayload.getPayload().getNotificationEventType(), is(notificationEventType));
+        assertThat(finalPayload.getAdminCode(), is(adminCode));
+        assertThat(finalPayload.getMerchantId(), is(merchantId));
+        assertThat(finalPayload.getNotificationEventType(), is(notificationEventType));
     }
 
+    /**
+     * Utility to build the string representation of the data to expect via the webhook notification
+     */
     private String getNotificationString() {
         BasicNotificationPayload payload = new BasicNotificationPayload(NotificationEventType.ORDER_STATE_CHANGE, adminCode);
         payload.setMerchantId(merchantId);

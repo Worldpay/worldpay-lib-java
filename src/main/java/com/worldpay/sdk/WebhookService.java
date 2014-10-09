@@ -1,12 +1,7 @@
 package com.worldpay.sdk;
 
-import com.worldpay.gateway.clearwater.client.ui.dto.common.NotificationPayload;
-import com.worldpay.gateway.clearwater.client.ui.dto.order.OrderStatusChangeNotificationPayload;
-import org.apache.http.HttpEntity;
-import com.worldpay.gateway.clearwater.client.ui.dto.response.WebhookResponse;
-
 /**
- * Created by MDS on 25/09/2014.
+ * Service for handlig incoming webhook notifications
  */
 public class WebhookService extends AbstractService {
 
@@ -21,7 +16,7 @@ public class WebhookService extends AbstractService {
      *
      * @return the deserialised notification payload
      */
-    public NotificationPayload process(String requestBody) {
-        return http.handleRequest(requestBody, OrderStatusChangeNotificationPayload.class);
+    public Notification process(String requestBody) {
+        return http.handleRequest(requestBody, Notification.class);
     }
 }

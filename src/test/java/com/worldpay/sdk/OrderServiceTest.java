@@ -79,6 +79,17 @@ public class OrderServiceTest {
     }
 
     @Test
+    public void shouldPartialRefundOrder() {
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.setToken(createToken());
+
+        String orderCode = orderService.create(orderRequest).getOrderCode();
+        assertThat(orderCode, is(notNullValue()));
+
+        orderService.refund(orderCode,1);
+    }
+
+    @Test
     public void shouldThrowExceptionForInvalidToken() {
         OrderRequest orderRequest = createOrderRequest();
         orderRequest.setToken("invalid-token");

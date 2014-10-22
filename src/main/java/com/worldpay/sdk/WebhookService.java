@@ -1,5 +1,7 @@
 package com.worldpay.sdk;
 
+import com.worldpay.gateway.clearwater.client.ui.dto.common.AbstractNotificationPayload;
+
 /**
  * Service for handlig incoming webhook notifications
  */
@@ -16,7 +18,7 @@ public class WebhookService extends AbstractService {
      *
      * @return the deserialised notification payload
      */
-    public Notification process(String requestBody) {
-        return http.handleRequest(requestBody, Notification.class);
+    public AbstractNotificationPayload process(String requestBody) {
+        return http.handleRequest(requestBody, AbstractNotificationPayload.class);
     }
 }

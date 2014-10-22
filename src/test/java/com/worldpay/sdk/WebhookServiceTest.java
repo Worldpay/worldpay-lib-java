@@ -1,7 +1,7 @@
 package com.worldpay.sdk;
 
 import com.worldpay.gateway.clearwater.client.core.dto.common.Environment;
-import com.worldpay.gateway.clearwater.client.ui.dto.common.BasicNotificationPayload;
+import com.worldpay.gateway.clearwater.client.ui.dto.common.AbstractNotificationPayload;
 import com.worldpay.gateway.clearwater.client.ui.dto.common.NotificationEventType;
 import com.worldpay.gateway.clearwater.client.ui.dto.order.OrderStatusChangeNotificationPayload;
 import com.worldpay.sdk.util.JsonParser;
@@ -23,6 +23,8 @@ public class WebhookServiceTest {
     private WebhookService webhookService;
 
     private final String merchantId = "Merchant";
+    private final String aggregateMerchantId = "AggregateMerchant";
+    private final String merchantCode = "MerchantCode";
     private final String adminCode = "adminCode";
     private final String orderCode = "orderCode";
     private final String paymentStatus = "paid";
@@ -38,30 +40,33 @@ public class WebhookServiceTest {
     @Test
     public void shouldHandleNotification() {
         String requestBody = getNotificationString();
-        Notification finalPayload = webhookService.process(requestBody);
 
-        assertThat(finalPayload, is(notNullValue()));
-        assertThat(finalPayload.getPaymentStatus(), is(paymentStatus));
-        assertThat(finalPayload.getOrderCode(), is(orderCode));
-        assertThat(finalPayload.getEnvironment(), is(environment));
+        AbstractNotificationPayload finalPayload = webhookService.process(requestBody);
+        OrderStatusChangeNotificationPayload orderNotification = (OrderStatusChangeNotificationPayload)finalPayload;
 
-        assertThat(finalPayload.getAdminCode(), is(adminCode));
-        assertThat(finalPayload.getMerchantId(), is(merchantId));
-        assertThat(finalPayload.getNotificationEventType(), is(notificationEventType));
+        assertThat(orderNotification, is(notNullValue()));
+        assertThat(orderNotification.getPaymentStatus(), is(paymentStatus));
+        assertThat(orderNotification.getOrderCode(), is(orderCode));
+        assertThat(orderNotification.getEnvironment(), is(environment));
+
+        assertThat(orderNotification.getAdminCode(), is(adminCode));
+        assertThat(orderNotification.getMerchantId(), is(merchantId));
+        assertThat(orderNotification.getNotificationEventType(), is(notificationEventType));
     }
 
     /**
      * Utility to build the string representation of the data to expect via the webhook notification
      */
     private String getNotificationString() {
-        BasicNotificationPayload payload = new BasicNotificationPayload(NotificationEventType.ORDER_STATE_CHANGE, adminCode);
-        payload.setMerchantId(merchantId);
-        OrderStatusChangeNotificationPayload statusPayload = new OrderStatusChangeNotificationPayload();
-
-        statusPayload.setEnvironment(environment);
-        statusPayload.setOrderCode(orderCode);
-        statusPayload.setPaymentStatus(paymentStatus);
-        statusPayload.setPayload(payload);
+        OrderStatusChangeNotificationPayload statusPayload =
+                new OrderStatusChangeNotificationPayload(
+                        merchantId,
+                        aggregateMerchantId,
+                        adminCode,
+                        merchantCode,
+                        orderCode,
+                        paymentStatus,
+                        environment);
 
         return JsonParser.toJson(statusPayload);
     }

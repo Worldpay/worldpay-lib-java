@@ -104,7 +104,8 @@ class Http {
         Request putRequest = createRequest(RequestMethod.PUT, resourcePath);
 
         if (request != null) {
-            putRequest.bodyString(toJson(request), ContentType.APPLICATION_JSON);
+            String jsonString = toJson(request);
+            putRequest.bodyString(jsonString, ContentType.APPLICATION_JSON);
         }
     }
 
@@ -120,7 +121,8 @@ class Http {
         Request putRequest = createRequest(RequestMethod.PUT, resourcePath);
 
         if (request != null) {
-            putRequest.bodyString(toJson(request), ContentType.APPLICATION_JSON);
+            String jsonString = toJson(request);
+            putRequest.bodyString(jsonString, ContentType.APPLICATION_JSON);
         }
 
         return execute(putRequest, responseType);

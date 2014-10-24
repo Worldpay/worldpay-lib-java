@@ -8,6 +8,12 @@ import com.worldpay.gateway.clearwater.client.ui.dto.response.SettingResponse;
  */
 public class SettingsService extends AbstractService {
 
+    private final String MERCHANT_SETTINGS = "/merchants/%s/settings";
+
+    private final String MERCHANT_SETTINGS_RISK = "/merchants/%s/settings/riskSettings";
+
+    private final String MERCHANT_SETTINGS_RECURRING_BILLING = "/merchants/%s/settings/orderSettings/recurringBilling/%b";
+
     /**
      * Constructor
      *
@@ -25,7 +31,7 @@ public class SettingsService extends AbstractService {
      * @return {@link SettingResponse} object
      */
     public SettingResponse getSettings(String merchantId) {
-        return http.get(String.format("/merchants/%s/settings", merchantId), SettingResponse.class);
+        return http.get(String.format(MERCHANT_SETTINGS, merchantId), SettingResponse.class);
     }
 
     /**
@@ -36,7 +42,7 @@ public class SettingsService extends AbstractService {
      * @param riskSettings {@link RiskSetting} object
      */
     public void updateRiskSettings(String merchantId, RiskSetting riskSettings) {
-        http.put(String.format("/merchants/%s/settings/riskSettings", merchantId), riskSettings);
+        http.put(String.format(MERCHANT_SETTINGS_RISK, merchantId), riskSettings);
     }
 
     /**
@@ -47,6 +53,6 @@ public class SettingsService extends AbstractService {
      * @param enable Boolean
      */
     public void updateRecurringBilling(String merchantId, Boolean enable) {
-        http.put(String.format("/merchants/%s/settings/orderSettings/recurringBilling/%b", merchantId, enable), null);
+        http.put(String.format(MERCHANT_SETTINGS_RECURRING_BILLING, merchantId, enable), null);
     }
 }

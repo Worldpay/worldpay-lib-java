@@ -9,6 +9,16 @@ import com.worldpay.gateway.clearwater.client.ui.dto.response.TransferSearchResp
 public class TransferService extends AbstractService {
 
     /**
+     * Transfer
+     */
+    private String TRANSFER = "/transfers/%s";
+
+    /**
+     * Transfer search
+     */
+    private String TRANSFER_SEARCH = "/transfers?merchantId=%s?pageNumber=%d";
+
+    /**
      * Constructor
      *
      * @param http {@link Http}
@@ -27,7 +37,7 @@ public class TransferService extends AbstractService {
      * @return {@link TransferSearchResponse} object
      */
     public TransferSearchResponse search(String merchantId, Integer pageNumber) {
-        return http.get(String.format("/transfers?merchantId=%s?pageNumber=%d", merchantId, pageNumber), TransferSearchResponse.class);
+        return http.get(String.format(TRANSFER_SEARCH, merchantId, pageNumber), TransferSearchResponse.class);
     }
 
     /**
@@ -38,6 +48,6 @@ public class TransferService extends AbstractService {
      * @return {@link TransferDetailResponse} object
      */
     public TransferDetailResponse get(String transferId) {
-        return http.get(String.format("/transfers/%s", transferId), TransferDetailResponse.class);
+        return http.get(String.format(TRANSFER, transferId), TransferDetailResponse.class);
     }
 }

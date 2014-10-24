@@ -28,7 +28,7 @@ public class SettingsServiceTest {
     @Test
     public void shouldReturnSettings() {
         SettingResponse settings = settingsService.getSettings(merchantId);
-        assertThat(settings, is(notNullValue()));
+        assertThat("Settings", settings, is(notNullValue()));
     }
 
     @Test
@@ -36,15 +36,15 @@ public class SettingsServiceTest {
         settingsService.updateRecurringBilling(merchantId, true);
 
         SettingResponse settings = settingsService.getSettings(merchantId);
-        assertThat(settings, is(notNullValue()));
-        assertThat(settings.getOrderSetting(), is(notNullValue()));
-        assertThat(settings.getOrderSetting().isOptInForRecurringBilling(), is(true));
+        assertThat("Settings", settings, is(notNullValue()));
+        assertThat("Order setting", settings.getOrderSetting(), is(notNullValue()));
+        assertThat("Recurring billing", settings.getOrderSetting().isOptInForRecurringBilling(), is(true));
 
         settingsService.updateRecurringBilling(merchantId, false);
 
         settings = settingsService.getSettings(merchantId);
-        assertThat(settings, is(notNullValue()));
-        assertThat(settings.getOrderSetting().isOptInForRecurringBilling(), is(false));
+        assertThat("Settings", settings, is(notNullValue()));
+        assertThat("Recurring billing", settings.getOrderSetting().isOptInForRecurringBilling(), is(false));
     }
 
     @Test
@@ -53,16 +53,16 @@ public class SettingsServiceTest {
         settingsService.updateRiskSettings(merchantId, risk);
 
         SettingResponse settings = settingsService.getSettings(merchantId);
-        assertThat(settings, is(notNullValue()));
-        assertThat(settings.getRiskSetting().isAvsEnabled(), is(true));
-        assertThat(settings.getRiskSetting().isCvcEnabled(), is(false));
+        assertThat("Settings", settings, is(notNullValue()));
+        assertThat("AVS Enabled", settings.getRiskSetting().isAvsEnabled(), is(true));
+        assertThat("CVC Enabled", settings.getRiskSetting().isCvcEnabled(), is(false));
 
         risk = new RiskSetting(false, true);
         settingsService.updateRiskSettings(merchantId, risk);
 
         settings = settingsService.getSettings(merchantId);
-        assertThat(settings, is(notNullValue()));
-        assertThat(settings.getRiskSetting().isAvsEnabled(), is(false));
-        assertThat(settings.getRiskSetting().isCvcEnabled(), is(true));
+        assertThat("Settings", settings, is(notNullValue()));
+        assertThat("AVS Enabled", settings.getRiskSetting().isAvsEnabled(), is(false));
+        assertThat("CVC Enabled", settings.getRiskSetting().isCvcEnabled(), is(true));
     }
 }

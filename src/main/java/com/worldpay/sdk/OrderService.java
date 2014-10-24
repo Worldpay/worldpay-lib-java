@@ -13,7 +13,12 @@ public class OrderService extends AbstractService {
 
     private final String REFUND_URL = "/orders/%s/refund";
 
-    OrderService(Http http) {
+    /**
+     * Constructor
+     *
+     * @param http {@link Http}
+     */
+    protected OrderService(Http http) {
         super(http);
     }
 

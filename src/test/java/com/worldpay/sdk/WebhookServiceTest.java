@@ -14,6 +14,7 @@ import javax.management.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 
 /**
  * Test that the Webhook notifications are correctly handled by the Webhook service
@@ -42,16 +43,18 @@ public class WebhookServiceTest {
         String requestBody = getNotificationString();
 
         AbstractNotificationPayload finalPayload = webhookService.process(requestBody);
+        assertThat("Notification Type", finalPayload, instanceOf(OrderStatusChangeNotificationPayload.class));
+
         OrderStatusChangeNotificationPayload orderNotification = (OrderStatusChangeNotificationPayload)finalPayload;
 
-        assertThat(orderNotification, is(notNullValue()));
-        assertThat(orderNotification.getPaymentStatus(), is(paymentStatus));
-        assertThat(orderNotification.getOrderCode(), is(orderCode));
-        assertThat(orderNotification.getEnvironment(), is(environment));
+        assertThat("Order notification", orderNotification, is(notNullValue()));
+        assertThat("Payment status", orderNotification.getPaymentStatus(), is(paymentStatus));
+        assertThat("Order code", orderNotification.getOrderCode(), is(orderCode));
+        assertThat("Environment", orderNotification.getEnvironment(), is(environment));
 
-        assertThat(orderNotification.getAdminCode(), is(adminCode));
-        assertThat(orderNotification.getMerchantId(), is(merchantId));
-        assertThat(orderNotification.getNotificationEventType(), is(notificationEventType));
+        assertThat("Admin code", orderNotification.getAdminCode(), is(adminCode));
+        assertThat("Merchant id", orderNotification.getMerchantId(), is(merchantId));
+        assertThat("Notification event type", orderNotification.getNotificationEventType(), is(notificationEventType));
     }
 
     /**

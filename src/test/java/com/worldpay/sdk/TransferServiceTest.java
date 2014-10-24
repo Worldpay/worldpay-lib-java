@@ -30,12 +30,12 @@ public class TransferServiceTest {
     @Test
     public void shouldSearchTransfers() {
         TransferSearchResponse response = transferService.search(merchantId, 1);
-        assertThat(response, is(notNullValue()));
+        assertThat("Transfer search", response, is(notNullValue()));
     }
 
     @Test
     public void shouldGetTransfer() {
         TransferDetailResponse response = transferService.get(transferId);
-        assertThat(response, is(notNullValue()));
+        assertThat("Transfer detail", response, is(notNullValue()));
     }
 }

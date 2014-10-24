@@ -8,7 +8,12 @@ import com.worldpay.gateway.clearwater.client.ui.dto.response.SettingResponse;
  */
 public class SettingsService extends AbstractService {
 
-    SettingsService(Http http) {
+    /**
+     * Constructor
+     *
+     * @param http {@link Http}
+     */
+    protected SettingsService(Http http) {
         super(http);
     }
 

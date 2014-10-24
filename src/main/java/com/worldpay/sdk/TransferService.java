@@ -8,7 +8,12 @@ import com.worldpay.gateway.clearwater.client.ui.dto.response.TransferSearchResp
  */
 public class TransferService extends AbstractService {
 
-    TransferService(Http http) {
+    /**
+     * Constructor
+     *
+     * @param http {@link Http}
+     */
+    protected TransferService(Http http) {
         super(http);
     }
 

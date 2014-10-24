@@ -7,7 +7,12 @@ import com.worldpay.gateway.clearwater.client.ui.dto.common.AbstractNotification
  */
 public class WebhookService extends AbstractService {
 
-    WebhookService(Http http) {
+    /**
+     * Constructor
+     *
+     * @param http {@link Http}
+     */
+    protected WebhookService(Http http) {
         super(http);
     }
 

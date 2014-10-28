@@ -70,7 +70,8 @@ class Http {
         Request postRequest = createRequest(RequestMethod.POST, resourcePath);
 
         if (request != null) {
-            postRequest.bodyString(toJson(request), ContentType.APPLICATION_JSON);
+            String jsonString = toJson(request);
+            postRequest.bodyString(jsonString, ContentType.APPLICATION_JSON);
         }
 
         return execute(postRequest, responseType);
@@ -86,10 +87,26 @@ class Http {
         Request postRequest = createRequest(RequestMethod.POST, resourcePath);
 
         if (request != null) {
-            postRequest.bodyString(toJson(request), ContentType.APPLICATION_JSON);
+            String jsonString = toJson(request);
+            postRequest.bodyString(jsonString, ContentType.APPLICATION_JSON);
         }
 
         execute(postRequest);
+    }
+
+    /**
+     * Updates an existing resource using PUT and return the parsed response.
+     *
+     * @param resourcePath the location of the resource e.g. /order/123
+     * @param request the Object which needs to be serialised and sent as payload, may be null
+     */
+    public void put(String resourcePath, Object request) {
+        Request putRequest = createRequest(RequestMethod.PUT, resourcePath);
+
+        if (request != null) {
+            String jsonString = toJson(request);
+            putRequest.bodyString(jsonString, ContentType.APPLICATION_JSON);
+        }
     }
 
     /**
@@ -104,7 +121,8 @@ class Http {
         Request putRequest = createRequest(RequestMethod.PUT, resourcePath);
 
         if (request != null) {
-            putRequest.bodyString(toJson(request), ContentType.APPLICATION_JSON);
+            String jsonString = toJson(request);
+            putRequest.bodyString(jsonString, ContentType.APPLICATION_JSON);
         }
 
         return execute(putRequest, responseType);
@@ -122,6 +140,21 @@ class Http {
         return execute(getRequest, responseType);
     }
 
+    /**
+     * Parse an incoming request and deserialise the body
+     *
+     * @param requestBody the incoming Http request body
+     * @param dataType the type to which to deserialise the body content
+     *
+     * @return the converted object
+     */
+    public <T> T handleRequest(String requestBody, final Class<T> dataType) {
+        try {
+            return JsonParser.toObject(requestBody, dataType);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
     /**
      * Convert object to string representation.
      *

@@ -1,6 +1,7 @@
 package com.worldpay.sdk;
 
 import com.worldpay.gateway.clearwater.client.core.dto.request.OrderRequest;
+import com.worldpay.gateway.clearwater.client.core.dto.request.RefundOrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
 
 /**
@@ -8,7 +9,16 @@ import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
  */
 public class OrderService extends AbstractService {
 
-    OrderService(Http http) {
+    private final String ORDERS_URL = "/orders";
+
+    private final String REFUND_URL = "/orders/%s/refund";
+
+    /**
+     * Constructor
+     *
+     * @param http {@link Http}
+     */
+    protected OrderService(Http http) {
         super(http);
     }
 
@@ -20,7 +30,7 @@ public class OrderService extends AbstractService {
      * @return {@link OrderResponse} object
      */
     public OrderResponse create(OrderRequest orderRequest) {
-        return http.post("/orders", orderRequest, OrderResponse.class);
+        return http.post(ORDERS_URL, orderRequest, OrderResponse.class);
     }
 
     /**
@@ -30,5 +40,16 @@ public class OrderService extends AbstractService {
      */
     public void refund(String orderCode) {
         http.post("/orders/" + orderCode + "/refund", null);
+    }
+
+    /**
+     * Partially Refund the order identified by order code by the amount given
+     *
+     * @param orderCode the order to be refunded
+     * @param amount    the amount to be refunded
+     */
+    public void refund(String orderCode, int amount) {
+        RefundOrderRequest refundRequest =  new RefundOrderRequest(amount);
+        http.post("/orders/" + orderCode + "/refund", refundRequest);
     }
 }

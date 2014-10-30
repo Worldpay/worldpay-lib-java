@@ -5,7 +5,9 @@ import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.WorldPayHttpHeaders;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -87,6 +89,17 @@ class Http {
      *
      * @param resourcePath the location of the resource e.g. /order/123
      * @param request      the Object which needs to be serialised and sent as payload, may be null
+     */
+    public void put(String resourcePath, Object request) {
+        HttpURLConnection putRequest = createRequest(RequestMethod.PUT, resourcePath, request);
+        execute(putRequest);
+    }
+
+    /**
+     * Updates an existing resource using PUT and return the parsed response.
+     *
+     * @param resourcePath the location of the resource e.g. /order/123
+     * @param request      the Object which needs to be serialised and sent as payload, may be null
      * @param responseType the type of the return value
      *
      * @return the converted object
@@ -107,6 +120,22 @@ class Http {
     public <T> T get(String resourcePath, final Class<T> responseType) {
         HttpURLConnection getRequest = createRequest(RequestMethod.GET, resourcePath, responseType);
         return execute(getRequest, responseType);
+    }
+
+    /**
+     * Parse an incoming request and deserialise the body
+     *
+     * @param requestBody the incoming Http request body
+     * @param dataType    the type to which to deserialise the body content
+     *
+     * @return the converted object
+     */
+    public <T> T handleRequest(String requestBody, final Class<T> dataType) {
+        try {
+            return JsonParser.toObject(requestBody, dataType);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -152,11 +181,10 @@ class Http {
     /**
      * Create an appropriate request.
      *
-     * @param method  the request method
-     * @param uri     the resource uri
-     * @param request request body
+     * @param method the request method
+     * @param uri    the resource uri
      *
-     * @return new http url connection request object
+     * @return new request object
      */
     private HttpURLConnection createRequest(RequestMethod method, String uri, Object request) {
         String fullUri = baseUri + uri;
@@ -192,7 +220,6 @@ class Http {
                     httpURLConnection.setRequestMethod("DELETE");
                     break;
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -226,6 +253,12 @@ class Http {
         return null;
     }
 
+    /**
+     * Examines the {@code response} and throws {@link WorldpayException} if an error response is detected
+     *
+     * @throws IOException       if it fails to parse the error message contained in the response
+     * @throws WorldpayException if an erroneous response is detected
+     */
     private void errorHandler(HttpURLConnection connection) throws IOException {
         if (connection.getResponseCode() >= 300) {
             InputStream is = connection.getErrorStream();

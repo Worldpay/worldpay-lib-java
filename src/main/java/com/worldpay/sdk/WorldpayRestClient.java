@@ -72,13 +72,6 @@ public class WorldpayRestClient {
     }
 
     /**
-     * Returns an {@link TransferService} for interacting with transfer end point
-     *
-     * @return the transfer service
-     */
-    public TransferService getTransferService() { return new TransferService(http); }
-
-    /**
      * Returns an {@link SettingsService} for interacting with settings end point
      *
      * @return the settings service

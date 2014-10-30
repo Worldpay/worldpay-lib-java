@@ -85,7 +85,7 @@ class Http {
     }
 
     /**
-     * Updates an existing resource using PUT and return the parsed response.
+     * Updates an existing resource using PUT
      *
      * @param resourcePath the location of the resource e.g. /order/123
      * @param request      the Object which needs to be serialised and sent as payload, may be null
@@ -123,7 +123,7 @@ class Http {
     }
 
     /**
-     * Parse an incoming request and deserialise the body
+     * Parse an incoming request and deserialize the body
      *
      * @param requestBody the incoming Http request body
      * @param dataType    the type to which to deserialise the body content

@@ -71,4 +71,24 @@ public class WorldpayRestClient {
         return new OrderService(http);
     }
 
+    /**
+     * Returns an {@link TransferService} for interacting with transfer end point
+     *
+     * @return the transfer service
+     */
+    public TransferService getTransferService() { return new TransferService(http); }
+
+    /**
+     * Returns an {@link SettingsService} for interacting with settings end point
+     *
+     * @return the settings service
+     */
+    public SettingsService getSettingsService() { return new SettingsService(http); }
+
+    /**
+     * Returns an {@Link WebhookService} for handling incoming webhook requests
+     *
+     * @return the webhook service
+     */
+    public WebhookService getWebhookService() { return new WebhookService(http); }
 }

@@ -55,6 +55,7 @@ public class OrderServiceTest {
 
     @Test
     public void shouldCreateOrderForValidToken() {
+
         OrderRequest orderRequest = createOrderRequest();
         orderRequest.setToken(createToken());
 
@@ -62,6 +63,10 @@ public class OrderServiceTest {
         assertThat(response.getOrderCode(), is(notNullValue()));
         assertThat(response.getAmount(), is(1999));
         assertThat(response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+
+        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
+        assertThat("Amount", response.getAmount(), is(1999));
+        assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
     }
 
     @Test
@@ -70,7 +75,7 @@ public class OrderServiceTest {
         orderRequest.setToken(createToken());
 
         String orderCode = orderService.create(orderRequest).getOrderCode();
-        assertThat(orderCode, is(notNullValue()));
+        assertThat("Order code", orderCode, is(notNullValue()));
 
         orderService.refund(orderCode);
     }
@@ -81,7 +86,7 @@ public class OrderServiceTest {
         orderRequest.setToken(createToken());
 
         String orderCode = orderService.create(orderRequest).getOrderCode();
-        assertThat(orderCode, is(notNullValue()));
+        assertThat("Order code", orderCode, is(notNullValue()));
 
         orderService.refund(orderCode,1);
     }
@@ -105,7 +110,7 @@ public class OrderServiceTest {
         try {
             orderService.create(orderRequest);
         } catch (WorldpayException e) {
-            assertThat(e.getApiError().getCustomCode(), is("TKN_NOT_FOUND"));
+            assertThat("Valid token", e.getApiError().getCustomCode(), is("TKN_NOT_FOUND"));
         }
     }
 

@@ -15,7 +15,7 @@ class AbstractService {
      *
      * @param http
      */
-    AbstractService(Http http) {
+    protected AbstractService(Http http) {
         this.http = http;
     }
 

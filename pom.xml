@@ -38,11 +38,6 @@
             <artifactId>clearwater-client-core</artifactId>
             <version>${dep.clearwater-client-core.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>fluent-hc</artifactId>
-            <version>${dep.org.apache.httpcomponents.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

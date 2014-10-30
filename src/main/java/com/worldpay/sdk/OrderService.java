@@ -3,6 +3,7 @@ package com.worldpay.sdk;
 import com.worldpay.gateway.clearwater.client.core.dto.request.OrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.RefundOrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
+import com.worldpay.gateway.clearwater.client.ui.dto.order.Transaction;
 
 /**
  * Service used for the order related operations.
@@ -42,5 +43,9 @@ public class OrderService extends AbstractService {
     public void refund(String orderCode, int amount) {
         RefundOrderRequest refundRequest =  new RefundOrderRequest(amount);
         http.post("/orders/" + orderCode + "/refund", refundRequest);
+    }
+
+    public Transaction get(String orderCode) {
+        return http.get("/orders/" + orderCode, Transaction.class);
     }
 }

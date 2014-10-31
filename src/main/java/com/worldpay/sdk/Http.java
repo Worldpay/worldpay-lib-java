@@ -138,6 +138,11 @@ class Http {
         }
     }
 
+    public void delete(String resourcePath) {
+        HttpURLConnection putRequest = createRequest(RequestMethod.DELETE, resourcePath, null);
+        execute(putRequest);
+    }
+
     /**
      * Convert object to string representation.
      *
@@ -200,13 +205,14 @@ class Http {
             httpURLConnection.setRequestProperty(WorldPayHttpHeaders.ACCEPT, APPLICATION_JSON);
             httpURLConnection.setRequestProperty(WorldPayHttpHeaders.AUTHORIZATION, serviceKey);
             httpURLConnection.setRequestProperty(WorldPayHttpHeaders.CONTENT_TYPE, APPLICATION_JSON);
+            DataOutputStream dataOutputStream = null;
             switch (method) {
                 case GET:
                     httpURLConnection.setRequestMethod("GET");
                     break;
                 case POST:
                     httpURLConnection.setRequestMethod("POST");
-                    DataOutputStream dataOutputStream = new DataOutputStream(httpURLConnection.getOutputStream());
+                    dataOutputStream = new DataOutputStream(httpURLConnection.getOutputStream());
                     if (request != null) {
                         dataOutputStream.writeBytes(toJson(request));
                     }
@@ -215,6 +221,12 @@ class Http {
                     break;
                 case PUT:
                     httpURLConnection.setRequestMethod("PUT");
+                    dataOutputStream = new DataOutputStream(httpURLConnection.getOutputStream());
+                    if (request != null) {
+                        dataOutputStream.writeBytes(toJson(request));
+                    }
+                    dataOutputStream.flush();
+                    dataOutputStream.close();
                     break;
                 case DELETE:
                     httpURLConnection.setRequestMethod("DELETE");

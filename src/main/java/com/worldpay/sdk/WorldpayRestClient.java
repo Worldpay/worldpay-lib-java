@@ -84,4 +84,11 @@ public class WorldpayRestClient {
      * @return the webhook service
      */
     public WebhookService getWebhookService() { return new WebhookService(http); }
+
+    /**
+     * Returns an {@Link TokenService} for handling token requests
+     *
+     * @return the token service
+     */
+    public TokenService getTokenService() { return new TokenService(http); }
 }

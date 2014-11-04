@@ -10,7 +10,10 @@ import com.worldpay.gateway.clearwater.client.ui.dto.response.WebhookResponse;
  */
 public class WebhookService extends AbstractService {
 
-    public static final String WEBHOOK_URL = "/merchants/%s/settings/webhooks";
+    public static final String WEBHOOK_URL = "/merchants/%s/settings/webhooks/%s";
+
+    public static final String EMPTY = "";
+
     /**
      * Constructor
      *
@@ -32,10 +35,14 @@ public class WebhookService extends AbstractService {
     }
 
     public WebhookResponse create(String merchantId, WebhookRequest request) {
-        return http.post(String.format(WEBHOOK_URL, merchantId), request, WebhookResponse.class);
+        return http.post(String.format(WEBHOOK_URL, merchantId, EMPTY), request, WebhookResponse.class);
     }
 
     public WebhookListResponse getWebhooks(String merchantId) {
-        return http.get(String.format(WEBHOOK_URL, merchantId), WebhookListResponse.class);
+        return http.get(String.format(WEBHOOK_URL, merchantId, EMPTY), WebhookListResponse.class);
+    }
+
+    public WebhookResponse update(String merchantId, WebhookRequest request, String webhookId) {
+        return http.put(String.format(WEBHOOK_URL, merchantId, webhookId), request, WebhookResponse.class);
     }
 }

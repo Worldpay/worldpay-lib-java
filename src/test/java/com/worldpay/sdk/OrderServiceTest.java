@@ -4,30 +4,31 @@ import com.worldpay.gateway.clearwater.client.core.dto.CountryCode;
 import com.worldpay.gateway.clearwater.client.core.dto.CurrencyCode;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
+import com.worldpay.gateway.clearwater.client.core.dto.common.OrderStatus;
 import com.worldpay.gateway.clearwater.client.core.dto.request.CardRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.OrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.TokenRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
 import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
+import com.worldpay.gateway.clearwater.client.ui.dto.common.SortDirection;
+import com.worldpay.gateway.clearwater.client.ui.dto.common.SortProperty;
 import com.worldpay.gateway.clearwater.client.ui.dto.order.Transaction;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.PropertyUtils;
 import com.worldpay.sdk.util.WorldPayHttpHeaders;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.DataOutputStream;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 public class OrderServiceTest {
 
@@ -46,6 +47,15 @@ public class OrderServiceTest {
      */
     private static final String TEST_CVC = "123";
 
+    public static final String FROM_DATE = "2013-10-01";
+
+    public static final String TO_DATE = "2014-11-01";
+
+    public static final String ENVIRONMENT = "TEST";
+
+    /**
+     * Service under test
+     */
     private OrderService orderService;
 
     @Before
@@ -88,19 +98,34 @@ public class OrderServiceTest {
         String orderCode = orderService.create(orderRequest).getOrderCode();
         assertThat("Order code", orderCode, is(notNullValue()));
 
-        orderService.refund(orderCode,1);
+        orderService.refund(orderCode, 1);
     }
 
     @Test
     public void shouldGetOrderForValidToken() {
         OrderRequest orderRequest = createOrderRequest();
         orderRequest.setToken(createToken());
-
         String orderCode = orderService.create(orderRequest).getOrderCode();
         assertThat(orderCode, is(notNullValue()));
-        //System.out.println("orderCode :" + orderCode);
-        Transaction response = orderService.get(orderCode);
+        Transaction response = orderService.getOrder(orderCode);
         System.out.println(response);
+    }
+
+    @Test
+    public void shouldGetOrdersForValidToken() {
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.setToken(createToken());
+        String orderCode = orderService.create(orderRequest).getOrderCode();
+        assertThat(orderCode, is(notNullValue()));
+        Object response = orderService
+            .getOrders(PropertyUtils.getProperty("merchantId"), ENVIRONMENT, FROM_DATE, TO_DATE,
+                       OrderStatus.SUCCESS.name(), 0, SortDirection.ASC.name(), SortProperty.CREATE_DATE.name(),
+                       Boolean.FALSE);
+        HashMap entry = (HashMap) response;
+        List orders = (ArrayList) entry.get("orders");
+
+        assertThat("orders should be there", orders, is(notNullValue()));
+        assertThat("number of orders should be more than one", orders.size(), is(greaterThan(0)));
     }
 
     @Test
@@ -113,8 +138,6 @@ public class OrderServiceTest {
             assertThat("Valid token", e.getApiError().getCustomCode(), is("TKN_NOT_FOUND"));
         }
     }
-
-
 
 
     private OrderRequest createOrderRequest() {

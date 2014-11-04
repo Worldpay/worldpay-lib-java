@@ -108,7 +108,7 @@ public class OrderServiceTest {
         String orderCode = orderService.create(orderRequest).getOrderCode();
         assertThat(orderCode, is(notNullValue()));
         Transaction response = orderService.getOrder(orderCode);
-        System.out.println(response);
+        assertThat("orders should be there", response, is(notNullValue()));
     }
 
     @Test

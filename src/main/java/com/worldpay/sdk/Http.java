@@ -3,6 +3,7 @@ package com.worldpay.sdk;
 import com.worldpay.gateway.clearwater.client.core.dto.response.ApiError;
 import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
 import com.worldpay.sdk.util.JsonParser;
+import com.worldpay.sdk.util.PropertyUtils;
 import com.worldpay.sdk.util.WorldPayHttpHeaders;
 
 import java.io.DataOutputStream;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Properties;
 
 /**
  * Class to handle HTTP requests and responses.
@@ -30,6 +32,8 @@ class Http {
      * JSON header value.
      */
     private static final String APPLICATION_JSON = "application/json";
+
+    public static final String COMMA = ",";
 
     private enum RequestMethod {
         DELETE,
@@ -205,6 +209,8 @@ class Http {
             httpURLConnection.setRequestProperty(WorldPayHttpHeaders.ACCEPT, APPLICATION_JSON);
             httpURLConnection.setRequestProperty(WorldPayHttpHeaders.AUTHORIZATION, serviceKey);
             httpURLConnection.setRequestProperty(WorldPayHttpHeaders.CONTENT_TYPE, APPLICATION_JSON);
+            httpURLConnection
+                .setRequestProperty(WorldPayHttpHeaders.WP_CLIENT_USER_AGENT, getWorldPayClientUserAgentDetails());
             DataOutputStream dataOutputStream = null;
             switch (method) {
                 case GET:
@@ -248,16 +254,6 @@ class Http {
         try {
             errorHandler(connection);
             InputStream is = connection.getInputStream();
-/*            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = br.readLine()) != null) {
-                response.append(inputLine);
-            }
-            br.close();
-
-            System.out.println(response.toString());*/
             return JsonParser.toObject(is, responseType);
         } catch (IOException e) {
             e.printStackTrace();
@@ -277,5 +273,26 @@ class Http {
             ApiError error = JsonParser.toObject(is, ApiError.class);
             throw new WorldpayException(error, "API error: " + error.getMessage());
         }
+    }
+
+    /**
+     * Properties required for Worldpay. Reads from system properites and worldpay.properties.
+     *
+     * @return string of properies with key=value,key=value,...
+     */
+    private String getWorldPayClientUserAgentDetails() {
+        Properties systemProperties = System.getProperties();
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("os.name=" + systemProperties.getProperty("os.name") + COMMA);
+        buffer.append("os.version=" + systemProperties.getProperty("os.version") + COMMA);
+        buffer.append("os.arch=" + systemProperties.getProperty("os.arch") + COMMA);
+        buffer.append("lang.version=" + systemProperties.getProperty("java.vm.specification.version") + COMMA);
+        buffer.append("lib.version=" + PropertyUtils.getProperty("lib.version") + COMMA);
+        buffer.append("api.version=" + PropertyUtils.getProperty("api.version") + COMMA);
+        buffer.append("lang=" + PropertyUtils.getProperty("language") + COMMA);
+        buffer.append("owner=" + PropertyUtils.getProperty("owner") + COMMA);
+        buffer.append("java.vendor=" + systemProperties.getProperty("java.vendor") + COMMA);
+        buffer.append("jvm.vendor=" + systemProperties.getProperty("java.vm.vendor"));
+        return buffer.toString();
     }
 }

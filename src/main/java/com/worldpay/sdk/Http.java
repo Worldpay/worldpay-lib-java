@@ -35,6 +35,9 @@ class Http {
 
     public static final String COMMA = ",";
 
+    /**
+     * Enumeration for HTTP methods.
+     */
     private enum RequestMethod {
         DELETE,
         GET,

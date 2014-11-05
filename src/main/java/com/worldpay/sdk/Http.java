@@ -5,6 +5,8 @@ import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.PropertyUtils;
 import com.worldpay.sdk.util.WorldPayHttpHeaders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -17,6 +19,11 @@ import java.util.Properties;
  * Class to handle HTTP requests and responses.
  */
 class Http {
+
+    /**
+     * Property for logger component.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Http.class);
 
     /**
      * Connection timeout in milliseconds.
@@ -242,7 +249,7 @@ class Http {
                     break;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Problem with the connection", e);
         }
         return httpURLConnection;
     }
@@ -259,7 +266,7 @@ class Http {
             InputStream is = connection.getInputStream();
             return JsonParser.toObject(is, responseType);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Problem with the response", e);
         }
         return null;
     }

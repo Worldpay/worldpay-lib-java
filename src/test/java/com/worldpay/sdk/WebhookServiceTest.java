@@ -11,7 +11,6 @@ import com.worldpay.gateway.clearwater.client.ui.dto.response.WebhookResponse;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.PropertyUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -52,7 +51,6 @@ public class WebhookServiceTest {
     }
 
     @Test
-
     public void shouldHandleNotification() {
         String requestBody = getNotificationString();
 
@@ -72,7 +70,6 @@ public class WebhookServiceTest {
     }
 
     @Test
-    @Ignore
     public void shouldCreateWebhook() {
         WebhookRequest request = new WebhookRequest();
         List<String> events = new ArrayList<String>();
@@ -85,7 +82,6 @@ public class WebhookServiceTest {
     }
 
     @Test
-    @Ignore
     public void shouldNotCreateWebhookWithInvalidEvent() {
         WebhookRequest request = new WebhookRequest();
         List<String> events = new ArrayList<String>();
@@ -101,7 +97,6 @@ public class WebhookServiceTest {
     }
 
     @Test
-    @Ignore
     public void shouldNotCreateWebhookWithInvalidWebhookUrl() {
         WebhookRequest request = new WebhookRequest();
         List<String> events = new ArrayList<String>();
@@ -117,14 +112,12 @@ public class WebhookServiceTest {
     }
 
     @Test
-    @Ignore
     public void shouldGetWebhooksForValidMerchant() {
         WebhookListResponse response = webhookService.getWebhooks(PropertyUtils.getProperty("merchantId"));
         assertThat("webhooks for the given merchant", response.getWebHooks().size(), is(greaterThan(0)));
     }
 
     @Test
-    @Ignore
     public void shouldNotGetWebhooksForInvalidMerchant() {
         try {
             webhookService.getWebhooks("invalid-merchant");
@@ -132,7 +125,6 @@ public class WebhookServiceTest {
             assertThat("Access should be denied", e.getApiError().getCustomCode(), is("ACCESS_DENIED"));
             assertThat("Access should be denied", e.getApiError().getMessage(), is("Access is denied"));
         }
-
     }
 
 

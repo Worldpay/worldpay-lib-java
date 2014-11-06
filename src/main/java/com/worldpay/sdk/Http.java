@@ -152,6 +152,11 @@ class Http {
         }
     }
 
+    /**
+     * Deletes an existing resource using DELETE http method.
+     *
+     * @param resourcePath the location of the resource e.g. /orders/123
+     */
     public void delete(String resourcePath) {
         HttpURLConnection putRequest = createRequest(RequestMethod.DELETE, resourcePath, null);
         execute(putRequest);

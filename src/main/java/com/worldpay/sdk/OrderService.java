@@ -3,7 +3,9 @@ package com.worldpay.sdk;
 import com.worldpay.gateway.clearwater.client.core.dto.request.OrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.RefundOrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
+import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
 import com.worldpay.gateway.clearwater.client.ui.dto.order.Transaction;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Service used for the order related operations.
@@ -40,7 +42,8 @@ public class OrderService extends AbstractService {
      * @param orderCode Order code
      */
     public void refund(String orderCode) {
-        http.post("/orders/" + orderCode + "/refund", null);
+        validateOrder(orderCode);
+        http.post(String.format(REFUND_URL, orderCode), null);
     }
 
     /**
@@ -50,8 +53,8 @@ public class OrderService extends AbstractService {
      * @param amount    the amount to be refunded
      */
     public void refund(String orderCode, int amount) {
-        RefundOrderRequest refundRequest = new RefundOrderRequest(amount);
-        http.post("/orders/" + orderCode + "/refund", refundRequest);
+        validateOrder(orderCode);
+        http.post(String.format(REFUND_URL, orderCode), new RefundOrderRequest(amount));
     }
 
     /**
@@ -62,6 +65,7 @@ public class OrderService extends AbstractService {
      * @return {@link Transaction} object
      */
     public Transaction getOrder(String orderCode) {
+        validateOrder(orderCode);
         return http.get("/orders/" + orderCode, Transaction.class);
     }
 
@@ -87,5 +91,16 @@ public class OrderService extends AbstractService {
             "/orders?merchantId=" + merchantId + "&environment=" + environment + "&fromDate=" + fromDate + "&toDate="
             + toDate + "&paymentStatus=" + paymentStatus + "&sortDirection=" + sortDirection + "&sortProperty="
             + sortProperty + "&pageNumber=" + pageNumber + "&csv=" + csv, Object.class);
+    }
+
+    /**
+     * Validates the order code. This method throws WorldpayException if the order code is null or empty.
+     *
+     * @param orderCode order code to be validated.
+     */
+    private void validateOrder(String orderCode) {
+        if (StringUtils.isEmpty(orderCode)) {
+            throw new WorldpayException("order code should be empty");
+        }
     }
 }

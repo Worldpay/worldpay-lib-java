@@ -99,17 +99,6 @@ class Http {
     }
 
     /**
-     * Updates an existing resource using PUT
-     *
-     * @param resourcePath the location of the resource e.g. /order/123
-     * @param request      the Object which needs to be serialised and sent as payload, may be null
-     */
-    public void put(String resourcePath, Object request) {
-        HttpURLConnection putRequest = createRequest(RequestMethod.PUT, resourcePath, request);
-        execute(putRequest);
-    }
-
-    /**
      * Updates an existing resource using PUT and return the parsed response.
      *
      * @param resourcePath the location of the resource e.g. /order/123
@@ -134,32 +123,6 @@ class Http {
     public <T> T get(String resourcePath, final Class<T> responseType) {
         HttpURLConnection getRequest = createRequest(RequestMethod.GET, resourcePath, responseType);
         return execute(getRequest, responseType);
-    }
-
-    /**
-     * Parse an incoming request and deserialize the body
-     *
-     * @param requestBody the incoming Http request body
-     * @param dataType    the type to which to deserialise the body content
-     *
-     * @return the converted object
-     */
-    public <T> T handleRequest(String requestBody, final Class<T> dataType) {
-        try {
-            return JsonParser.toObject(requestBody, dataType);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Deletes an existing resource using DELETE http method.
-     *
-     * @param resourcePath the location of the resource e.g. /orders/123
-     */
-    public void delete(String resourcePath) {
-        HttpURLConnection putRequest = createRequest(RequestMethod.DELETE, resourcePath, null);
-        execute(putRequest);
     }
 
     /**

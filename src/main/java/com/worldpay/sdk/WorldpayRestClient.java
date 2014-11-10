@@ -72,20 +72,6 @@ public class WorldpayRestClient {
     }
 
     /**
-     * Returns an {@link SettingsService} for interacting with settings end point
-     *
-     * @return the settings service
-     */
-    public SettingsService getSettingsService() { return new SettingsService(http); }
-
-    /**
-     * Returns an {@Link WebhookService} for handling incoming webhook requests
-     *
-     * @return the webhook service
-     */
-    public WebhookService getWebhookService() { return new WebhookService(http); }
-
-    /**
      * Returns an {@Link TokenService} for handling token requests
      *
      * @return the token service

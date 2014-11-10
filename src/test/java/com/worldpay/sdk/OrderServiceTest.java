@@ -102,33 +102,6 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void shouldGetOrderForValidToken() {
-        OrderRequest orderRequest = createOrderRequest();
-        orderRequest.setToken(createToken());
-        String orderCode = orderService.create(orderRequest).getOrderCode();
-        assertThat(orderCode, is(notNullValue()));
-        Transaction response = orderService.getOrder(orderCode);
-        assertThat("orders should be there", response, is(notNullValue()));
-    }
-
-    @Test
-    public void shouldGetOrdersForValidToken() {
-        OrderRequest orderRequest = createOrderRequest();
-        orderRequest.setToken(createToken());
-        String orderCode = orderService.create(orderRequest).getOrderCode();
-        assertThat(orderCode, is(notNullValue()));
-        Object response = orderService
-            .getOrders(PropertyUtils.getProperty("merchantId"), ENVIRONMENT, FROM_DATE, TO_DATE,
-                       OrderStatus.SUCCESS.name(), 0, SortDirection.ASC.name(), SortProperty.CREATE_DATE.name(),
-                       Boolean.FALSE);
-        HashMap entry = (HashMap) response;
-        List orders = (ArrayList) entry.get("orders");
-
-        assertThat("orders should be there", orders, is(notNullValue()));
-        assertThat("number of orders should be more than one", orders.size(), is(greaterThan(0)));
-    }
-
-    @Test
     public void shouldThrowExceptionForInvalidToken() {
         OrderRequest orderRequest = createOrderRequest();
         orderRequest.setToken("invalid-token");

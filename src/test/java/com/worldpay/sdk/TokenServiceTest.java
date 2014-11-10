@@ -38,60 +38,17 @@ public class TokenServiceTest {
         tokenService = new WorldpayRestClient(PropertyUtils.serviceKey()).getTokenService();
     }
 
-    /**
-     * This test is for validating the Token API to create token.
-     */
-    @Test
-    public void shouldCreateToken() {
-        TokenRequest request = createTokenRequest();
-        TokenResponse response = tokenService.create(request);
 
-        assertThat(response.getToken(), is(notNullValue()));
-        assertThat(response.getPaymentMethod(), is(notNullValue()));
-    }
-
-    /**
-     * This test is for validating the Token API to delete the existing token
-     */
-    @Test
-    public void shouldDeleteValidToken() {
-        TokenRequest request = createTokenRequest();
-        TokenResponse response = tokenService.create(request);
-
-        assertThat(response.getToken(), is(notNullValue()));
-        assertThat(response.getPaymentMethod(), is(notNullValue()));
-
-        tokenService.delete(response.getToken());
-    }
-
-    /**
-     * This test is for validating the Token API to delete the non existing token.
-     * The Token API throws WorldpayException with the custom code TKN_NOT_FOUND
-     */
-    @Test
-    public void shouldNotDeleteInValidToken() {
-        try {
-            tokenService.delete("invalid-token");
-        } catch (WorldpayException e) {
-            assertThat("Invalid token", e.getApiError().getCustomCode(), is("TKN_NOT_FOUND"));
-        }
-    }
 
     /**
      * This test is for validating the Token API to retrieve the existing token.
      */
     @Test
     public void shouldGetValidToken() {
-        TokenRequest request = createTokenRequest();
-        TokenResponse response = tokenService.create(request);
-
-        assertThat(response.getToken(), is(notNullValue()));
-        assertThat(response.getPaymentMethod(), is(notNullValue()));
-
-        TokenResponse responseToken = tokenService.get(response.getToken());
+        TokenResponse responseToken = tokenService.get(PropertyUtils.getProperty("tokenId"));
         assertThat(responseToken.getToken(), is(notNullValue()));
         assertThat(responseToken.getPaymentMethod(), is(notNullValue()));
-        assertThat("Contains the same token", response.getToken().equals(responseToken.getToken()));
+        assertThat("Contains the same token", PropertyUtils.getProperty("tokenId").equals(responseToken.getToken()));
     }
 
     /**
@@ -105,56 +62,5 @@ public class TokenServiceTest {
         } catch (WorldpayException e) {
             assertThat("Invalid token", e.getApiError().getCustomCode(), is("TKN_NOT_FOUND"));
         }
-    }
-
-    /**
-     * This test is for validating the Token API to update the CVC.
-     * The Token API throws WorldpayException with the custom code TKN_NOT_FOUND
-     */
-    @Test
-    public void shouldUpdateCVCForValidToken() {
-        TokenRequest request = createTokenRequest();
-        TokenResponse response = tokenService.create(request);
-
-        assertThat(response.getToken(), is(notNullValue()));
-        assertThat(response.getPaymentMethod(), is(notNullValue()));
-
-        TokenUpdateRequest tokenUpdateRequest = new TokenUpdateRequest();
-        tokenUpdateRequest.setCvc("321");
-        tokenUpdateRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
-        tokenService.update(response.getToken(), tokenUpdateRequest);
-    }
-
-    /**
-     * This test is for validating the Token API to update the CVC.
-     * The Token API throws WorldpayException with the custom code TKN_NOT_FOUND
-     */
-    @Test
-    public void shouldUpdateCVCForInvalidToken() {
-        TokenUpdateRequest tokenUpdateRequest = new TokenUpdateRequest();
-        tokenUpdateRequest.setCvc("321");
-        tokenUpdateRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
-        try {
-            tokenService.update("invalid-token", tokenUpdateRequest);
-        } catch (WorldpayException e) {
-            assertThat("Invalid token", e.getApiError().getCustomCode(), is("TKN_NOT_FOUND"));
-        }
-    }
-
-    private TokenRequest createTokenRequest() {
-        TokenRequest tokenRequest = new TokenRequest();
-        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
-        tokenRequest.setPaymentMethod(createCardRequest());
-        return tokenRequest;
-    }
-
-    private CardRequest createCardRequest() {
-        CardRequest cardRequest = new CardRequest();
-        cardRequest.setCardNumber(TEST_MASTERCARD_NUMBER);
-        cardRequest.setCvc(TEST_CVC);
-        cardRequest.setName("javalib client");
-        cardRequest.setExpiryMonth(2);
-        cardRequest.setExpiryYear(2018);
-        return cardRequest;
     }
 }

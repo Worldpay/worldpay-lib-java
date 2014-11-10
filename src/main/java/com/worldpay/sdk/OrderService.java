@@ -41,7 +41,7 @@ public class OrderService extends AbstractService {
      * @param orderCode Order code
      */
     public void refund(String orderCode) {
-        validateOrder(orderCode);
+        validate(orderCode);
         http.post(String.format(REFUND_URL, orderCode), null);
     }
 
@@ -52,7 +52,7 @@ public class OrderService extends AbstractService {
      * @param amount    the amount to be refunded
      */
     public void refund(String orderCode, int amount) {
-        validateOrder(orderCode);
+        validate(orderCode);
         http.post(String.format(REFUND_URL, orderCode), new RefundOrderRequest(amount));
     }
 
@@ -61,7 +61,7 @@ public class OrderService extends AbstractService {
      *
      * @param orderCode order code to be validated.
      */
-    private void validateOrder(String orderCode) {
+    private void validate(String orderCode) {
         if (StringUtils.isEmpty(orderCode)) {
             throw new WorldpayException("order code should be empty");
         }

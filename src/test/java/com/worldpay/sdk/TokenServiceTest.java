@@ -56,6 +56,19 @@ public class TokenServiceTest {
      * The Token API throws WorldpayException with the custom code TKN_NOT_FOUND
      */
     @Test
+    public void getTokenWithEmptyString() {
+        try {
+            tokenService.get("");
+        } catch (WorldpayException e) {
+            assertThat("Invalid token", e.getMessage(), is("token id should be empty"));
+        }
+    }
+
+    /**
+     * This test is for validating the Token API to retrieve the non existing token.
+     * The Token API throws WorldpayException with the custom code TKN_NOT_FOUND
+     */
+    @Test
     public void shouldNotGetInValidToken() {
         try {
             tokenService.get("invalid-token");

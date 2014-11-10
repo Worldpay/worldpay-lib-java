@@ -38,11 +38,11 @@ public class TokenService extends AbstractService {
     /**
      * Validates the order code. This method throws WorldpayException if the order code is null or empty.
      *
-     * @param orderCode order code to be validated.
+     * @param token token id to be validated.
      */
-    private void validate(String orderCode) {
-        if (StringUtils.isEmpty(orderCode)) {
-            throw new WorldpayException("order code should be empty");
+    private void validate(String token) {
+        if (StringUtils.isEmpty(token)) {
+            throw new WorldpayException("token id should be empty");
         }
     }
 }

@@ -1,10 +1,7 @@
 package com.worldpay.sdk;
 
-import com.worldpay.gateway.clearwater.client.core.dto.request.CardRequest;
-import com.worldpay.gateway.clearwater.client.core.dto.request.TokenRequest;
-import com.worldpay.gateway.clearwater.client.core.dto.request.TokenUpdateRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
-import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
+import com.worldpay.gateway.clearwater.service.core.exception.WpgException;
 import com.worldpay.sdk.util.PropertyUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,16 +16,6 @@ import static org.hamcrest.Matchers.notNullValue;
 public class TokenServiceTest {
 
     /**
-     * Test Master card number.
-     */
-    private static final String TEST_MASTERCARD_NUMBER = "5555 5555 5555 4444";
-
-    /**
-     * Card Verification code.
-     */
-    private static final String TEST_CVC = "123";
-
-    /**
      * Service under test
      */
     private TokenService tokenService;
@@ -37,7 +24,6 @@ public class TokenServiceTest {
     public void setup() {
         tokenService = new WorldpayRestClient(PropertyUtils.serviceKey()).getTokenService();
     }
-
 
 
     /**
@@ -59,7 +45,7 @@ public class TokenServiceTest {
     public void getTokenWithEmptyString() {
         try {
             tokenService.get("");
-        } catch (WorldpayException e) {
+        } catch (WpgException e) {
             assertThat("Invalid token", e.getMessage(), is("token id should be empty"));
         }
     }
@@ -72,8 +58,8 @@ public class TokenServiceTest {
     public void shouldNotGetInValidToken() {
         try {
             tokenService.get("invalid-token");
-        } catch (WorldpayException e) {
-            assertThat("Invalid token", e.getApiError().getCustomCode(), is("TKN_NOT_FOUND"));
+        } catch (WpgException e) {
+            assertThat("Invalid token", e.getMessage(), is("API error: Token invalid-token does not exist"));
         }
     }
 }

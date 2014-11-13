@@ -1,7 +1,7 @@
 package com.worldpay.sdk;
 
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
-import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
+import com.worldpay.gateway.clearwater.service.core.exception.WpgException;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -42,7 +42,7 @@ public class TokenService extends AbstractService {
      */
     private void validate(String token) {
         if (StringUtils.isEmpty(token)) {
-            throw new WorldpayException("token id should be empty");
+            throw new WpgException("token id should be empty", 1);
         }
     }
 }

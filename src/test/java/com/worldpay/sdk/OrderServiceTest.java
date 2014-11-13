@@ -1,19 +1,15 @@
 package com.worldpay.sdk;
 
-import com.worldpay.gateway.clearwater.client.core.dto.CountryCode;
-import com.worldpay.gateway.clearwater.client.core.dto.CurrencyCode;
+import com.worldpay.api.client.common.enums.CountryCode;
+import com.worldpay.api.client.common.enums.CurrencyCode;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
-import com.worldpay.gateway.clearwater.client.core.dto.common.OrderStatus;
 import com.worldpay.gateway.clearwater.client.core.dto.request.CardRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.OrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.TokenRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
-import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
-import com.worldpay.gateway.clearwater.client.ui.dto.common.SortDirection;
-import com.worldpay.gateway.clearwater.client.ui.dto.common.SortProperty;
-import com.worldpay.gateway.clearwater.client.ui.dto.order.Transaction;
+import com.worldpay.gateway.clearwater.service.core.exception.WpgException;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.PropertyUtils;
 import com.worldpay.sdk.util.WorldPayHttpHeaders;
@@ -24,11 +20,11 @@ import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class OrderServiceTest {
 
@@ -46,12 +42,6 @@ public class OrderServiceTest {
      * Card Verification code.
      */
     private static final String TEST_CVC = "123";
-
-    public static final String FROM_DATE = "2013-10-01";
-
-    public static final String TO_DATE = "2014-11-01";
-
-    public static final String ENVIRONMENT = "TEST";
 
     /**
      * Service under test
@@ -107,8 +97,8 @@ public class OrderServiceTest {
         orderRequest.setToken("invalid-token");
         try {
             orderService.create(orderRequest);
-        } catch (WorldpayException e) {
-            assertThat("Valid token", e.getApiError().getCustomCode(), is("TKN_NOT_FOUND"));
+        } catch (WpgException e) {
+            assertThat("Valid token", e.getMessage(), is("API error: Token invalid-token does not exist"));
         }
     }
 

@@ -2,6 +2,7 @@ package com.worldpay.sdk;
 
 import com.worldpay.api.client.common.enums.CountryCode;
 import com.worldpay.api.client.common.enums.CurrencyCode;
+import com.worldpay.api.client.error.exception.WorldpayException;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
 import com.worldpay.gateway.clearwater.client.core.dto.request.CardRequest;
@@ -9,7 +10,6 @@ import com.worldpay.gateway.clearwater.client.core.dto.request.OrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.TokenRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
-import com.worldpay.gateway.clearwater.service.core.exception.WpgException;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.PropertyUtils;
 import com.worldpay.sdk.util.WorldPayHttpHeaders;
@@ -97,8 +97,8 @@ public class OrderServiceTest {
         orderRequest.setToken("invalid-token");
         try {
             orderService.create(orderRequest);
-        } catch (WpgException e) {
-            assertThat("Valid token", e.getMessage(), is("API error: Token invalid-token does not exist"));
+        } catch (WorldpayException e) {
+            assertThat("Valid token", e.getApiError().getCustomCode(), is("TKN_NOT_FOUND"));
         }
     }
 

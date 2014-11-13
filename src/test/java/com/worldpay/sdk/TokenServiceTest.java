@@ -1,7 +1,7 @@
 package com.worldpay.sdk;
 
+import com.worldpay.api.client.error.exception.WorldpayException;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
-import com.worldpay.gateway.clearwater.service.core.exception.WpgException;
 import com.worldpay.sdk.util.PropertyUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class TokenServiceTest {
     public void getTokenWithEmptyString() {
         try {
             tokenService.get("");
-        } catch (WpgException e) {
+        } catch (WorldpayException e) {
             assertThat("Invalid token", e.getMessage(), is("token id should be empty"));
         }
     }
@@ -58,8 +58,8 @@ public class TokenServiceTest {
     public void shouldNotGetInValidToken() {
         try {
             tokenService.get("invalid-token");
-        } catch (WpgException e) {
-            assertThat("Invalid token", e.getMessage(), is("API error: Token invalid-token does not exist"));
+        } catch (WorldpayException e) {
+            assertThat("Invalid token", e.getApiError().getCustomCode(), is("TKN_NOT_FOUND"));
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.worldpay.sdk;
 
 import com.worldpay.api.client.error.dto.ApiError;
-import com.worldpay.gateway.clearwater.service.core.exception.WpgException;
+import com.worldpay.api.client.error.exception.WorldpayException;
 
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.PropertyUtils;
@@ -241,16 +241,16 @@ class Http {
     }
 
     /**
-     * Examines the {@code response} and throws {@link WpgException} if an error response is detected
+     * Examines the {@code response} and throws {@link WorldpayException} if an error response is detected
      *
      * @throws IOException       if it fails to parse the error message contained in the response
-     * @throws WpgException if an erroneous response is detected
+     * @throws WorldpayException if an erroneous response is detected
      */
     private void errorHandler(HttpURLConnection connection) throws IOException {
         if (connection.getResponseCode() >= 300) {
             InputStream is = connection.getErrorStream();
             ApiError error = JsonParser.toObject(is, ApiError.class);
-            throw new WpgException("API error: " + error.getMessage(), error.getHttpStatusCode());
+             throw new WorldpayException(error, "API error: " + error.getMessage());
         }
     }
 

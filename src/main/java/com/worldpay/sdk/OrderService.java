@@ -1,9 +1,9 @@
 package com.worldpay.sdk;
 
+import com.worldpay.api.client.error.exception.WorldpayException;
 import com.worldpay.gateway.clearwater.client.core.dto.request.OrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.RefundOrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
-import com.worldpay.gateway.clearwater.service.core.exception.WpgException;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -63,7 +63,7 @@ public class OrderService extends AbstractService {
      */
     private void validate(String orderCode) {
         if (StringUtils.isEmpty(orderCode)) {
-            throw new WpgException("order code should be empty", 1);
+            throw new WorldpayException("order code should be empty");
         }
     }
 }

@@ -8,7 +8,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <version>0.1.4-SNAPSHOT</version>
+    <version>0.1.5-SNAPSHOT</version>
     <packaging>jar</packaging>
     <groupId>com.worldpay</groupId>
     <artifactId>worldpay-lib-java</artifactId>

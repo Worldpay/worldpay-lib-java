@@ -15,12 +15,9 @@
     <name>Worldpay Java Client</name>
     <properties>
         <dep.clearwater-client-core.version>0.10.4-SNAPSHOT</dep.clearwater-client-core.version>
-        <dep.clearwater-client-ui.version>0.10.4-SNAPSHOT</dep.clearwater-client-ui.version>
-        <dep.util-error.version>0.0.1-SNAPSHOT</dep.util-error.version>
         <dep.worldpay-client-error.version>0.0.1</dep.worldpay-client-error.version>
         <dep.worldpay-client-common.version>0.0.1</dep.worldpay-client-common.version>
         <dep.worldpay-common-utils.version>0.0.1</dep.worldpay-common-utils.version>
-        <dep.clearwater-dl.version>0.10.5-SNAPSHOT</dep.clearwater-dl.version>
     </properties>
 
     <scm>

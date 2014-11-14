@@ -14,7 +14,7 @@
     <artifactId>worldpay-lib-java</artifactId>
     <name>Worldpay Java Client</name>
     <properties>
-        <dep.clearwater-client-core.version>0.10.4-SNAPSHOT</dep.clearwater-client-core.version>
+        <dep.clearwater-client-core.version>0.10.5-SNAPSHOT</dep.clearwater-client-core.version>
         <dep.worldpay-client-error.version>0.0.1</dep.worldpay-client-error.version>
         <dep.worldpay-client-common.version>0.0.1</dep.worldpay-client-common.version>
         <dep.worldpay-common-utils.version>0.0.1</dep.worldpay-common-utils.version>
@@ -51,16 +51,6 @@
             <groupId>com.worldpay.gateway.clearwater</groupId>
             <artifactId>clearwater-client-core</artifactId>
             <version>${dep.clearwater-client-core.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.worldpay.api.commons</groupId>
-                    <artifactId>worldpay-common-utils</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.worldpay.api.client</groupId>
-                    <artifactId>worldpay-client-common</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.worldpay.api.client</groupId>

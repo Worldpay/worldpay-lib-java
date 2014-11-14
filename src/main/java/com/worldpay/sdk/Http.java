@@ -2,8 +2,9 @@ package com.worldpay.sdk;
 
 import com.worldpay.api.client.error.dto.ApiError;
 import com.worldpay.api.client.error.exception.WorldpayException;
+import com.worldpay.sdk.util.HttpUrlConnection;
 import com.worldpay.sdk.util.JsonParser;
-import com.worldpay.sdk.util.WorldPayHttpHeaders;
+import com.worldpay.sdk.util.WorldpayLibraryConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Properties;
 
 /**
  * Class to handle HTTP requests and responses.
@@ -24,64 +24,22 @@ class Http {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(Http.class);
 
-    /**
-     * Connection timeout in milliseconds.
-     */
-    private static final int CONNECTION_TIMEOUT = 10000;
+    private static final String systemProperties;
 
-    /**
-     * Socket timeout in milliseconds.
-     */
-    private static final int SOCKET_TIMEOUT = 10000;
-
-    /**
-     * JSON header value.
-     */
-    private static final String APPLICATION_JSON = "application/json";
-
-    public static final String COMMA = ",";
-
-    public static final String GET = "GET";
-
-    public static final String POST = "POST";
-
-    public static final String PUT = "PUT";
-
-    public static final String DELETE = "DELETE";
-
-    public static final int HTTP_ERROR_CODE_300 = 300;
-
-    public static final String OS_NAME = "os.name";
-
-    public static final String OS_VERSION = "os.version";
-
-    public static final String OS_ARCH = "os.arch";
-
-    public static final String LANG_VERSION = "lang.version";
-
-    public static final String JAVA_VENDOR = "java.vendor";
-
-    public static final String JVM_VENDOR = "jvm.vendor";
-
-    public static final String JAVA_VM_VENDOR = "java.vm.vendor";
-
-    public static final String LIB_VERSION = "lib.version";
-
-    public static final String LIB_VERSION_VALUE = "1.2";
-
-    public static final String API_VERSION = "api.version";
-
-    public static final String API_VERSION_VALUE = "V1";
-
-    public static final String OWNER = "owner";
-
-    public static final String OWNER_VALUE = "Worldpay";
-
-    public static final String JAVA_VM_SPECIFICATION_VERSION = "java.vm.specification.version";
-
-    public static final String EQUALS = "=";
-
-    public static final String EOF = "\\u001a";
+    static {
+        StringBuilder builder = new StringBuilder();
+        builder.append(WorldpayLibraryConstants.OS_NAME_PROP + WorldpayLibraryConstants.COMMA);
+        builder.append(WorldpayLibraryConstants.OS_VERSION_PROP + WorldpayLibraryConstants.COMMA);
+        builder.append(WorldpayLibraryConstants.OS_ARCH_PROP + WorldpayLibraryConstants.COMMA);
+        builder.append(WorldpayLibraryConstants.LANG_VERSION_PROP + WorldpayLibraryConstants.COMMA);
+        builder.append(WorldpayLibraryConstants.LIB_VERSION_PROP + WorldpayLibraryConstants.COMMA);
+        builder.append(WorldpayLibraryConstants.API_VERSION_PROP + WorldpayLibraryConstants.COMMA);
+        builder.append(WorldpayLibraryConstants.OWNER_PROP + WorldpayLibraryConstants.COMMA);
+        builder.append(WorldpayLibraryConstants.JAVA_VENDOR_PROP + WorldpayLibraryConstants.COMMA);
+        builder.append(WorldpayLibraryConstants.JVM_VENDOR_PROP);
+        builder.append(WorldpayLibraryConstants.EOF);
+        systemProperties = builder.toString();
+    }
 
     /**
      * Enumeration for HTTP methods.
@@ -216,45 +174,32 @@ class Http {
      */
     private HttpURLConnection createRequest(RequestMethod method, String uri, Object request) {
         String fullUri = baseUri + uri;
-        HttpURLConnection httpURLConnection = null;
-        URL url = null;
+        HttpURLConnection httpURLConnection = HttpUrlConnection.getConnection(fullUri);
         try {
-            url = new URL(fullUri);
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setDoOutput(true);
-            httpURLConnection.setDoInput(true);
-            httpURLConnection.setConnectTimeout(CONNECTION_TIMEOUT);
-            httpURLConnection.setReadTimeout(SOCKET_TIMEOUT);
-            httpURLConnection.setRequestProperty(WorldPayHttpHeaders.ACCEPT, APPLICATION_JSON);
-            httpURLConnection.setRequestProperty(WorldPayHttpHeaders.AUTHORIZATION, serviceKey);
-            httpURLConnection.setRequestProperty(WorldPayHttpHeaders.CONTENT_TYPE, APPLICATION_JSON);
-            httpURLConnection
-                .setRequestProperty(WorldPayHttpHeaders.WP_CLIENT_USER_AGENT, getWorldPayClientUserAgentDetails());
+            httpURLConnection.setRequestProperty(WorldpayLibraryConstants.AUTHORIZATION, serviceKey);
+            httpURLConnection.setRequestProperty(WorldpayLibraryConstants.WP_CLIENT_USER_AGENT, systemProperties);
+
             DataOutputStream dataOutputStream = null;
             switch (method) {
                 case GET:
-                    httpURLConnection.setRequestMethod(GET);
+                    httpURLConnection.setRequestMethod(WorldpayLibraryConstants.GET);
                     break;
                 case POST:
-                    httpURLConnection.setRequestMethod(POST);
+                    httpURLConnection.setRequestMethod(WorldpayLibraryConstants.POST);
                     dataOutputStream = new DataOutputStream(httpURLConnection.getOutputStream());
                     if (request != null) {
                         dataOutputStream.writeBytes(toJson(request));
                     }
-                    dataOutputStream.flush();
-                    dataOutputStream.close();
                     break;
                 case PUT:
-                    httpURLConnection.setRequestMethod(PUT);
+                    httpURLConnection.setRequestMethod(WorldpayLibraryConstants.PUT);
                     dataOutputStream = new DataOutputStream(httpURLConnection.getOutputStream());
                     if (request != null) {
                         dataOutputStream.writeBytes(toJson(request));
                     }
-                    dataOutputStream.flush();
-                    dataOutputStream.close();
                     break;
                 case DELETE:
-                    httpURLConnection.setRequestMethod(DELETE);
+                    httpURLConnection.setRequestMethod(WorldpayLibraryConstants.DELETE);
                     break;
             }
         } catch (IOException e) {
@@ -288,31 +233,10 @@ class Http {
      * @throws WorldpayException if an erroneous response is detected
      */
     private void errorHandler(HttpURLConnection connection) throws IOException {
-        if (connection.getResponseCode() >= HTTP_ERROR_CODE_300) {
+        if (connection.getResponseCode() >= WorldpayLibraryConstants.HTTP_ERROR_CODE_300) {
             InputStream is = connection.getErrorStream();
             ApiError error = JsonParser.toObject(is, ApiError.class);
             throw new WorldpayException(error, "API error: " + error.getMessage());
         }
-    }
-
-    /**
-     * Properties required for Worldpay. Reads from system properites and worldpay.properties.
-     *
-     * @return string of properies with key=value,key=value,...
-     */
-    private String getWorldPayClientUserAgentDetails() {
-        Properties systemProperties = System.getProperties();
-        StringBuilder builder = new StringBuilder();
-        builder.append(OS_NAME + EQUALS + systemProperties.getProperty(OS_NAME) + COMMA);
-        builder.append(OS_VERSION + EQUALS + systemProperties.getProperty(OS_VERSION) + COMMA);
-        builder.append(OS_ARCH + EQUALS + systemProperties.getProperty(OS_ARCH) + COMMA);
-        builder.append(LANG_VERSION + EQUALS + systemProperties.getProperty(JAVA_VM_SPECIFICATION_VERSION) + COMMA);
-        builder.append(LIB_VERSION + EQUALS + LIB_VERSION_VALUE + COMMA);
-        builder.append(API_VERSION + EQUALS + API_VERSION_VALUE + COMMA);
-        builder.append(OWNER + EQUALS + OWNER_VALUE + COMMA);
-        builder.append(JAVA_VENDOR + EQUALS + systemProperties.getProperty(JAVA_VENDOR) + COMMA);
-        builder.append(JVM_VENDOR + EQUALS + systemProperties.getProperty(JAVA_VM_VENDOR));
-        builder.append(EOF);
-        return builder.toString();
     }
 }

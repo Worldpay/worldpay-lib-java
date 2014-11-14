@@ -10,9 +10,10 @@ import com.worldpay.gateway.clearwater.client.core.dto.request.OrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.TokenRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
+import com.worldpay.sdk.util.HttpUrlConnection;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.PropertyUtils;
-import com.worldpay.sdk.util.WorldPayHttpHeaders;
+import com.worldpay.sdk.util.WorldpayLibraryConstants;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -142,20 +143,12 @@ public class OrderServiceTest {
         final String json = JsonParser.toJson(tokenRequest);
 
         String fullUri = PropertyUtils.getProperty("tokenUrl");
-        HttpURLConnection httpURLConnection = null;
-        URL url = null;
+        HttpURLConnection httpURLConnection = HttpUrlConnection.getConnection(fullUri);
         try {
-            url = new URL(fullUri);
-            httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod("POST");
-            httpURLConnection.setDoOutput(true);
-            httpURLConnection.setDoInput(true);
-            httpURLConnection.setRequestProperty(WorldPayHttpHeaders.ACCEPT, APPLICATION_JSON);
-            httpURLConnection.setRequestProperty(WorldPayHttpHeaders.CONTENT_TYPE, APPLICATION_JSON);
             DataOutputStream dataOutputStream = new DataOutputStream(httpURLConnection.getOutputStream());
             dataOutputStream.writeBytes(json);
-            dataOutputStream.flush();
-            dataOutputStream.close();
+
             TokenResponse tokenResponse = JsonParser.toObject(httpURLConnection.getInputStream(), TokenResponse.class);
 
             return tokenResponse.getToken();

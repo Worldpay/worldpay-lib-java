@@ -50,7 +50,7 @@ public class WorldpayRestClient {
             throw new IllegalArgumentException("serviceKey cannot be null");
         }
 
-        this.http = new Http(baseUrl, serviceKey);
+        this.http = new Http(baseUrl + "/v1", serviceKey);
     }
 
     /**
@@ -72,16 +72,9 @@ public class WorldpayRestClient {
     }
 
     /**
-     * Returns an {@link SettingsService} for interacting with settings end point
+     * Returns an {@Link TokenService} for handling token requests
      *
-     * @return the settings service
+     * @return the token service
      */
-    public SettingsService getSettingsService() { return new SettingsService(http); }
-
-    /**
-     * Returns an {@Link WebhookService} for handling incoming webhook requests
-     *
-     * @return the webhook service
-     */
-    public WebhookService getWebhookService() { return new WebhookService(http); }
+    public TokenService getTokenService() { return new TokenService(http); }
 }

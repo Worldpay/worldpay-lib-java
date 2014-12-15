@@ -8,7 +8,7 @@
     <artifactId>worldpay-lib-java</artifactId>
     <name>Worldpay Java Client</name>
     <properties>
-        <dep.clearwater-client-core.version>0.10.5-SNAPSHOT</dep.clearwater-client-core.version>
+        <dep.clearwater-client-core.version>0.10.1</dep.clearwater-client-core.version>
         <dep.worldpay-client-error.version>0.0.1</dep.worldpay-client-error.version>
         <dep.worldpay-client-common.version>0.0.1</dep.worldpay-client-common.version>
         <dep.worldpay-common-utils.version>0.0.1</dep.worldpay-common-utils.version>

@@ -50,7 +50,7 @@ public class WorldpayRestClient {
             throw new IllegalArgumentException("serviceKey cannot be null");
         }
 
-        this.http = new Http(baseUrl + "/v1", serviceKey);
+        this.http = new Http(baseUrl, serviceKey);
     }
 
     /**
@@ -72,7 +72,7 @@ public class WorldpayRestClient {
     }
 
     /**
-     * Returns an {@Link TokenService} for handling token requests
+     * Returns an {@link TokenService} for handling token requests
      *
      * @return the token service
      */

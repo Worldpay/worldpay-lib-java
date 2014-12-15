@@ -1,28 +1,25 @@
 package com.worldpay.sdk;
 
-import com.worldpay.gateway.clearwater.client.core.dto.CountryCode;
-import com.worldpay.gateway.clearwater.client.core.dto.CurrencyCode;
+import com.worldpay.api.client.common.enums.CountryCode;
+import com.worldpay.api.client.common.enums.CurrencyCode;
+import com.worldpay.api.client.error.exception.WorldpayException;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
 import com.worldpay.gateway.clearwater.client.core.dto.request.CardRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.OrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.TokenRequest;
-import com.worldpay.gateway.clearwater.client.core.dto.response.ApiError;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
-import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
+import com.worldpay.sdk.util.HttpUrlConnection;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.PropertyUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
+import com.worldpay.sdk.util.WorldpayLibraryConstants;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
+import java.io.DataOutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,10 +35,18 @@ public class OrderServiceTest {
     private static final String TEST_MASTERCARD_NUMBER = "5555 5555 5555 4444";
 
     /**
+     * JSON header value.
+     */
+    private static final String APPLICATION_JSON = "application/json";
+
+    /**
      * Card Verification code.
      */
     private static final String TEST_CVC = "123";
 
+    /**
+     * Service under test
+     */
     private OrderService orderService;
 
     @Before
@@ -56,6 +61,9 @@ public class OrderServiceTest {
         orderRequest.setToken(createToken());
 
         OrderResponse response = orderService.create(orderRequest);
+        assertThat(response.getOrderCode(), is(notNullValue()));
+        assertThat(response.getAmount(), is(1999));
+        assertThat(response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
 
         assertThat("Response code", response.getOrderCode(), is(notNullValue()));
         assertThat("Amount", response.getAmount(), is(1999));
@@ -81,20 +89,20 @@ public class OrderServiceTest {
         String orderCode = orderService.create(orderRequest).getOrderCode();
         assertThat("Order code", orderCode, is(notNullValue()));
 
-        orderService.refund(orderCode,1);
+        orderService.refund(orderCode, 1);
     }
 
     @Test
     public void shouldThrowExceptionForInvalidToken() {
         OrderRequest orderRequest = createOrderRequest();
         orderRequest.setToken("invalid-token");
-
         try {
             orderService.create(orderRequest);
         } catch (WorldpayException e) {
             assertThat("Valid token", e.getApiError().getCustomCode(), is("TKN_NOT_FOUND"));
         }
     }
+
 
     private OrderRequest createOrderRequest() {
         OrderRequest orderRequest = new OrderRequest();
@@ -132,31 +140,20 @@ public class OrderServiceTest {
 
         tokenRequest.setPaymentMethod(cardRequest);
 
+        final String json = JsonParser.toJson(tokenRequest);
+
+        String fullUri = PropertyUtils.getProperty("tokenUrl");
+        HttpURLConnection httpURLConnection = HttpUrlConnection.getConnection(fullUri);
         try {
-            final String json = JsonParser.toJson(tokenRequest);
-            TokenResponse tokenResponse = Request.Post(PropertyUtils.getProperty("tokenUrl"))
-                     .bodyString(json, ContentType.APPLICATION_JSON)
-                     .execute()
-                     .handleResponse(new ResponseHandler<TokenResponse>() {
-                         public TokenResponse handleResponse(HttpResponse response) throws IOException {
-                             HttpEntity entity = response.getEntity();
-                             StatusLine statusLine = response.getStatusLine();
+            httpURLConnection.setRequestMethod("POST");
+            DataOutputStream dataOutputStream = new DataOutputStream(httpURLConnection.getOutputStream());
+            dataOutputStream.writeBytes(json);
 
-                             if (statusLine.getStatusCode() >= 300) {
-                                 ApiError error = JsonParser.toObject(entity.getContent(), ApiError.class);
-                                 throw new WorldpayException(error, "API exception: " + error.getMessage());
-                             }
-
-                             return JsonParser.toObject(entity.getContent(), TokenResponse.class);
-                         }
-                     });
+            TokenResponse tokenResponse = JsonParser.toObject(httpURLConnection.getInputStream(), TokenResponse.class);
 
             return tokenResponse.getToken();
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
-
 }

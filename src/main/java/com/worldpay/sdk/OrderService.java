@@ -1,6 +1,7 @@
 package com.worldpay.sdk;
 
 import com.worldpay.api.common.util.AssertUtils;
+import com.worldpay.gateway.clearwater.client.core.dto.request.OrderAuthorizationRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.OrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.RefundOrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
@@ -10,8 +11,19 @@ import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
  */
 public class OrderService extends AbstractService {
 
+    /**
+     * URL for CREATE order
+     */
     private final String ORDERS_URL = "/orders";
 
+    /**
+     * URL for Authorise 3DS order
+     */
+    private final String AUTHORIZE_3DS_URL = "/orders/%s";
+
+    /**
+     * URL for REFUND ORDER
+     */
     private final String REFUND_URL = "/orders/%s/refund";
 
     /**
@@ -45,6 +57,18 @@ public class OrderService extends AbstractService {
     }
 
     /**
+     * Authorize the given order using 3DS
+     *
+     * @param orderCode                 The order to authorize
+     * @param orderAuthorizationRequest The request details
+     */
+    public void authorize3Ds(String orderCode, OrderAuthorizationRequest orderAuthorizationRequest) {
+
+        validateOrderAuthorizationRequest(orderAuthorizationRequest);
+        http.put(String.format(AUTHORIZE_3DS_URL, orderCode), orderAuthorizationRequest,null);
+    }
+
+    /**
      * Partially Refund the order identified by order code by the amount given
      *
      * @param orderCode the order to be refunded
@@ -53,5 +77,24 @@ public class OrderService extends AbstractService {
     public void refund(String orderCode, int amount) {
         AssertUtils.hasText(orderCode, "Order Code");
         http.post(String.format(REFUND_URL, orderCode), new RefundOrderRequest(amount));
+    }
+
+    /**
+     * Validate a OrderAuthorizationRequest
+     *
+     * @param orderAuthorizationRequest The OrderAuthorizationRequest to be validated
+     */
+    private void validateOrderAuthorizationRequest(OrderAuthorizationRequest orderAuthorizationRequest) {
+
+        AssertUtils.notNull(orderAuthorizationRequest, "Order Authorization Request");
+        AssertUtils.hasText(orderAuthorizationRequest.getThreeDSResponseCode(), "Three DS Response Code");
+        AssertUtils
+            .hasText(orderAuthorizationRequest.getThreeDSecureInfo().getShopperSessionId(), "Shopper Session Id");
+        AssertUtils.hasText(orderAuthorizationRequest.getThreeDSecureInfo().getShopperAcceptHeader(),
+                            "Shoppper Accept Header");
+        AssertUtils
+            .hasText(orderAuthorizationRequest.getThreeDSecureInfo().getShopperUserAgent(), "Shopper User Agent");
+        AssertUtils
+            .hasText(orderAuthorizationRequest.getThreeDSecureInfo().getShopperIpAddress(), "Shopper Ip Address");
     }
 }

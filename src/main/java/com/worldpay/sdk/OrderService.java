@@ -87,7 +87,9 @@ public class OrderService extends AbstractService {
     private void validateOrderAuthorizationRequest(OrderAuthorizationRequest orderAuthorizationRequest) {
 
         AssertUtils.notNull(orderAuthorizationRequest, "Order Authorization Request");
+
         AssertUtils.hasText(orderAuthorizationRequest.getThreeDSResponseCode(), "Three DS Response Code");
+        AssertUtils.notNull(orderAuthorizationRequest.getThreeDSecureInfo(), "Three D Secure Info");
         AssertUtils
             .hasText(orderAuthorizationRequest.getThreeDSecureInfo().getShopperSessionId(), "Shopper Session Id");
         AssertUtils.hasText(orderAuthorizationRequest.getThreeDSecureInfo().getShopperAcceptHeader(),

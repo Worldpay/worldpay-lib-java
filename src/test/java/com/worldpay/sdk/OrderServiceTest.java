@@ -7,19 +7,18 @@ import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
 import com.worldpay.gateway.clearwater.client.core.dto.request.CardRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.OrderRequest;
+import com.worldpay.gateway.clearwater.client.core.dto.request.ThreeDSecureInfo;
 import com.worldpay.gateway.clearwater.client.core.dto.request.TokenRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
 import com.worldpay.sdk.util.HttpUrlConnection;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.PropertyUtils;
-import com.worldpay.sdk.util.WorldpayLibraryConstants;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +70,39 @@ public class OrderServiceTest {
     }
 
     @Test
+    public void shouldCreateOrderForValidTokenAndThreeDS() {
+
+        OrderRequest orderRequest = createOrderRequestWithThreeDS();
+        orderRequest.setToken(createToken());
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat(response.getOrderCode(), is(notNullValue()));
+        assertThat(response.getAmount(), is(1999));
+        assertThat(response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+
+        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
+        assertThat("Amount", response.getAmount(), is(1999));
+        assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+    }
+
+    @Test(expected = WorldpayException.class)
+    public void shouldThrowExceptionIfThreeDSEnabledButInfoInvalid() {
+
+        OrderRequest orderRequest = createOrderRequestWithThreeDS();
+        orderRequest.setThreeDSecureInfo(null);
+        orderRequest.setToken(createToken());
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat(response.getOrderCode(), is(notNullValue()));
+        assertThat(response.getAmount(), is(1999));
+        assertThat(response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+
+        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
+        assertThat("Amount", response.getAmount(), is(1999));
+        assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+    }
+
+    @Test
     public void shouldRefundOrder() {
         OrderRequest orderRequest = createOrderRequest();
         orderRequest.setToken(createToken());
@@ -103,6 +135,24 @@ public class OrderServiceTest {
         }
     }
 
+
+    /**
+     * Create an order request with three DS enabled
+     * @return
+     */
+    private OrderRequest createOrderRequestWithThreeDS(){
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.setRequired3DS(true);
+
+        ThreeDSecureInfo threeDSecureInfo = new ThreeDSecureInfo();
+        threeDSecureInfo.setShopperAcceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        threeDSecureInfo.setShopperIpAddress("195.35.90.111");
+        threeDSecureInfo.setShopperSessionId("021ui8ib1");
+        threeDSecureInfo.setShopperUserAgent("Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5 (.NET CLR 3.5.30729)");
+        orderRequest.setThreeDSecureInfo(threeDSecureInfo);
+
+        return orderRequest;
+    }
 
     private OrderRequest createOrderRequest() {
         OrderRequest orderRequest = new OrderRequest();

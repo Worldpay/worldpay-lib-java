@@ -12,7 +12,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
 
 /**
  * Class to handle HTTP requests and responses.
@@ -109,6 +108,19 @@ class Http {
     public <T> T put(String resourcePath, Object request, final Class<T> responseType) {
         HttpURLConnection putRequest = createRequest(RequestMethod.PUT, resourcePath, request);
         return execute(putRequest, responseType);
+    }
+
+    /**
+     * Updates an existing resource using PUT with no return.
+     *
+     * @param resourcePath the location of the resource e.g. /order/123
+     * @param request      the Object which needs to be serialised and sent as payload, may be null
+     *
+     * @return the converted object
+     */
+    public void put(String resourcePath, Object request){
+        HttpURLConnection putRequest = createRequest(RequestMethod.PUT, resourcePath, request);
+        execute(putRequest);
     }
 
     /**

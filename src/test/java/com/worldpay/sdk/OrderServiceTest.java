@@ -142,7 +142,7 @@ public class OrderServiceTest {
      */
     private OrderRequest createOrderRequestWithThreeDS(){
         OrderRequest orderRequest = createOrderRequest();
-        orderRequest.setRequired3DS(true);
+        orderRequest.setIs3DSOrder(true);
 
         ThreeDSecureInfo threeDSecureInfo = new ThreeDSecureInfo();
         threeDSecureInfo.setShopperAcceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");

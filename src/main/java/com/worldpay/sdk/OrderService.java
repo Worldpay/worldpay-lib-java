@@ -65,7 +65,8 @@ public class OrderService extends AbstractService {
     public void authorize3Ds(String orderCode, OrderAuthorizationRequest orderAuthorizationRequest) {
 
         validateOrderAuthorizationRequest(orderAuthorizationRequest);
-        http.put(String.format(AUTHORIZE_3DS_URL, orderCode), orderAuthorizationRequest,null);
+        http.put(String.format(AUTHORIZE_3DS_URL, orderCode), orderAuthorizationRequest);
+
     }
 
     /**

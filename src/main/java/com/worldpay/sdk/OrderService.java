@@ -5,6 +5,7 @@ import com.worldpay.gateway.clearwater.client.core.dto.request.OrderAuthorizatio
 import com.worldpay.gateway.clearwater.client.core.dto.request.OrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.RefundOrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
+import com.worldpay.gateway.clearwater.client.ui.dto.order.Transaction;
 
 /**
  * Service used for the order related operations.
@@ -25,6 +26,11 @@ public class OrderService extends AbstractService {
      * URL for REFUND ORDER
      */
     private final String REFUND_URL = "/orders/%s/refund";
+
+    /**
+     * URL for REFUND ORDER
+     */
+    private final String FIND_ORDER__URL = "/orders/%s";
 
     /**
      * Constructor
@@ -54,6 +60,16 @@ public class OrderService extends AbstractService {
     public void refund(String orderCode) {
         AssertUtils.hasText(orderCode, "Order Code");
         http.post(String.format(REFUND_URL, orderCode), null);
+    }
+
+    /**
+     * Find the order identified by order code.
+     *
+     * @param orderCode Order code
+     */
+    public Transaction findOrder(String orderCode) {
+        AssertUtils.hasText(orderCode, "Order Code");
+        return http.get(String.format(FIND_ORDER__URL, orderCode), Transaction.class);
     }
 
     /**

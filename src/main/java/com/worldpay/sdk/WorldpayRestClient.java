@@ -36,6 +36,13 @@ public class WorldpayRestClient {
     private Http http;
 
     /**
+     * Default constructor
+     */
+    public WorldpayRestClient(){
+
+    }
+
+    /**
      * Create a new client with the specified base URL and the service key.
      *
      * @param baseUrl URL for connecting to the service, cannot be null
@@ -77,4 +84,17 @@ public class WorldpayRestClient {
      * @return the token service
      */
     public TokenService getTokenService() { return new TokenService(http); }
+
+    /**
+     * Return an instance of WorldpayRestClient
+     *
+     * @param baseUrl    the base URL
+     * @param serviceKey a service key
+     *
+     * @return a new instance of WorldpayRestClient
+     */
+    public WorldpayRestClient getInstance(String baseUrl, String serviceKey) {
+
+        return new WorldpayRestClient(baseUrl, serviceKey);
+    }
 }

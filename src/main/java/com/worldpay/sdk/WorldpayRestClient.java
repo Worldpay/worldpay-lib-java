@@ -93,7 +93,7 @@ public class WorldpayRestClient {
      *
      * @return a new instance of WorldpayRestClient
      */
-    public WorldpayRestClient getInstance(String baseUrl, String serviceKey) {
+    public static WorldpayRestClient getInstance(String baseUrl, String serviceKey) {
 
         return new WorldpayRestClient(baseUrl, serviceKey);
     }

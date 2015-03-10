@@ -17,6 +17,7 @@
         <dep.worldpay-client-error.version>0.0.1</dep.worldpay-client-error.version>
         <dep.worldpay-client-common.version>0.0.1</dep.worldpay-client-common.version>
         <dep.worldpay-common-utils.version>0.0.4</dep.worldpay-common-utils.version>
+        <skip_IT>false</skip_IT>
     </properties>
 
     <scm>
@@ -122,18 +123,41 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.14.1</version>
+                <version>2.12.4</version>
                 <configuration>
-                    <disableXmlReport>true</disableXmlReport>
-                    <useFile>false</useFile>
+                    <useSystemClassLoader>true</useSystemClassLoader>
+                    <useManifestOnlyJar>false</useManifestOnlyJar>
+                    <argLine>-XX:MaxPermSize=1024m</argLine>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.12.4</version>
+                <configuration>
+                    <useSystemClassLoader>true</useSystemClassLoader>
+                    <useManifestOnlyJar>false</useManifestOnlyJar>
+                    <skip>${skip_IT}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
-                    <mavenExecutorId>forked-path</mavenExecutorId>
+                    <scmCommentPrefix>[RELEASE]</scmCommentPrefix>
+                    <preparationGoals>clean verify install</preparationGoals>
+                    <releaseProfiles>release</releaseProfiles>
                 </configuration>
             </plugin>
 

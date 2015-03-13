@@ -3,9 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
-        <groupId>com.worldpay.api.root</groupId>
-        <artifactId>worldpay-root</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <artifactId>clearwater-root</artifactId>
+        <groupId>com.worldpay.gateway.clearwater</groupId>
+        <version>0.12.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -16,14 +16,16 @@
     <name>Worldpay: Java Client</name>
     <properties>
         <!-- Github location details -->
+        <github.owner>Worldpay</github.owner>
+
         <github.repository>worldpay-lib-java</github.repository>
         <git.dotGitDirectory>${project.basedir}/.git</git.dotGitDirectory>
 
         <dep.clearwater-client-core.version>0.11.0</dep.clearwater-client-core.version>
         <dep.clearwater-client-ui.version>0.11.0</dep.clearwater-client-ui.version>
-        <dep.worldpay-client-error.version>0.0.3-SNAPSHOT</dep.worldpay-client-error.version>
-        <dep.worldpay-client-common.version>0.0.4-SNAPSHOT</dep.worldpay-client-common.version>
-        <dep.worldpay-common-utils.version>0.0.8-SNAPSHOT</dep.worldpay-common-utils.version>
+        <dep.worldpay-client-error.version>0.0.1</dep.worldpay-client-error.version>
+        <dep.worldpay-client-common.version>0.0.1</dep.worldpay-client-common.version>
+        <dep.worldpay-common-utils.version>0.0.4</dep.worldpay-common-utils.version>
     </properties>
 
     <scm>

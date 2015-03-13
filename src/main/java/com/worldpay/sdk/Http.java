@@ -40,18 +40,15 @@ class Http {
     private static final String systemProperties;
 
     static {
-        StringBuilder builder = new StringBuilder();
-        builder.append(WorldpayLibraryConstants.OS_NAME_PROP + WorldpayLibraryConstants.COMMA);
-        builder.append(WorldpayLibraryConstants.OS_VERSION_PROP + WorldpayLibraryConstants.COMMA);
-        builder.append(WorldpayLibraryConstants.OS_ARCH_PROP + WorldpayLibraryConstants.COMMA);
-        builder.append(WorldpayLibraryConstants.LANG_VERSION_PROP + WorldpayLibraryConstants.COMMA);
-        builder.append(WorldpayLibraryConstants.LIB_VERSION_PROP + WorldpayLibraryConstants.COMMA);
-        builder.append(WorldpayLibraryConstants.API_VERSION_PROP + WorldpayLibraryConstants.COMMA);
-        builder.append(WorldpayLibraryConstants.OWNER_PROP + WorldpayLibraryConstants.COMMA);
-        builder.append(WorldpayLibraryConstants.JAVA_VENDOR_PROP + WorldpayLibraryConstants.COMMA);
-        builder.append(WorldpayLibraryConstants.JVM_VENDOR_PROP);
-        builder.append(WorldpayLibraryConstants.EOF);
-        systemProperties = builder.toString();
+        systemProperties = WorldpayLibraryConstants.OS_NAME_PROP + WorldpayLibraryConstants.COMMA
+                           + WorldpayLibraryConstants.OS_VERSION_PROP + WorldpayLibraryConstants.COMMA
+                           + WorldpayLibraryConstants.OS_ARCH_PROP + WorldpayLibraryConstants.COMMA
+                           + WorldpayLibraryConstants.LANG_VERSION_PROP + WorldpayLibraryConstants.COMMA
+                           + WorldpayLibraryConstants.LIB_VERSION_PROP + WorldpayLibraryConstants.COMMA
+                           + WorldpayLibraryConstants.API_VERSION_PROP + WorldpayLibraryConstants.COMMA
+                           + WorldpayLibraryConstants.OWNER_PROP + WorldpayLibraryConstants.COMMA
+                           + WorldpayLibraryConstants.JAVA_VENDOR_PROP + WorldpayLibraryConstants.COMMA
+                           + WorldpayLibraryConstants.JVM_VENDOR_PROP + WorldpayLibraryConstants.EOF;
     }
 
     /**
@@ -129,10 +126,8 @@ class Http {
      *
      * @param resourcePath the location of the resource e.g. /order/123
      * @param request      the Object which needs to be serialised and sent as payload, may be null
-     *
-     * @return the converted object
      */
-    public void put(String resourcePath, Object request){
+    public void put(String resourcePath, Object request) {
         HttpURLConnection putRequest = createRequest(RequestMethod.PUT, resourcePath, request);
         execute(putRequest);
     }
@@ -205,7 +200,7 @@ class Http {
             httpURLConnection.setRequestProperty(WorldpayLibraryConstants.AUTHORIZATION, serviceKey);
             httpURLConnection.setRequestProperty(WorldpayLibraryConstants.WP_CLIENT_USER_AGENT, systemProperties);
 
-            DataOutputStream dataOutputStream = null;
+            DataOutputStream dataOutputStream;
             switch (method) {
                 case GET:
                     httpURLConnection.setRequestMethod(WorldpayLibraryConstants.GET);

@@ -27,7 +27,7 @@ class AbstractService {
     /**
      * Create a new service with the http connector.
      *
-     * @param http
+     * @param http {@link Http}
      */
     protected AbstractService(Http http) {
         this.http = http;

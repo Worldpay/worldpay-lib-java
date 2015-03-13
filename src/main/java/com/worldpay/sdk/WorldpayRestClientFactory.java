@@ -22,7 +22,7 @@ public class WorldpayRestClientFactory {
     /**
      * Create a new instance of WorldpayRestClient
      *
-     * @param url        the eurl
+     * @param url        the url
      * @param serviceKey the security key
      *
      * @return a new WorldpayRestClient

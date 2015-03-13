@@ -26,7 +26,7 @@ public class TokenService extends AbstractService {
     /**
      * url for token
      */
-    private final String TOKENS_URL = "/tokens";
+    private static final String TOKENS_URL = "/tokens";
 
     /**
      * Constructor

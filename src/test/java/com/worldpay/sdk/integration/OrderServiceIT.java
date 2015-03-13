@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-package com.worldpay.sdk;
+package com.worldpay.sdk.integration;
 
 import com.worldpay.api.client.common.enums.CountryCode;
 import com.worldpay.api.client.common.enums.CurrencyCode;
@@ -22,10 +22,13 @@ import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
 import com.worldpay.gateway.clearwater.client.core.dto.request.*;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
+import com.worldpay.sdk.OrderService;
+import com.worldpay.sdk.WorldpayRestClient;
 import com.worldpay.sdk.util.HttpUrlConnection;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.PropertyUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.DataOutputStream;
@@ -37,7 +40,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class OrderServiceTest {
+public class OrderServiceIT {
 
     /**
      * Test Master card number.
@@ -83,6 +86,7 @@ public class OrderServiceTest {
     }
 
     @Test
+    @Ignore
     public void shouldCreateOrderForValidTokenAndThreeDS() {
 
         OrderRequest orderRequest = createOrderRequestWithThreeDS();
@@ -143,9 +147,10 @@ public class OrderServiceTest {
 
     /**
      * Create an order request with three DS enabled
-     * @return
+     *
+     * @return {@link OrderRequest}
      */
-    private OrderRequest createOrderRequestWithThreeDS(){
+    private OrderRequest createOrderRequestWithThreeDS() {
         OrderRequest orderRequest = createOrderRequest();
         orderRequest.setIs3DSOrder(true);
 
@@ -175,7 +180,8 @@ public class OrderServiceTest {
      *
      * @return return the test OrderAuthorizationRequest
      */
-    private OrderAuthorizationRequest createOrderAuthorizationRequest(ThreeDSecureInfo threeDSecureInfo, String threeDsResponseCode) {
+    private OrderAuthorizationRequest createOrderAuthorizationRequest(ThreeDSecureInfo threeDSecureInfo,
+                                                                      String threeDsResponseCode) {
         OrderAuthorizationRequest orderAuthorizationRequest = new OrderAuthorizationRequest();
         orderAuthorizationRequest.setThreeDSResponseCode(threeDsResponseCode);
         orderAuthorizationRequest.setThreeDSecureInfo(threeDSecureInfo);
@@ -184,7 +190,8 @@ public class OrderServiceTest {
 
     /**
      * Create a test OrderRequest
-     * @return
+     *
+     * @return {@link OrderRequest}
      */
     private OrderRequest createOrderRequest() {
         OrderRequest orderRequest = new OrderRequest();

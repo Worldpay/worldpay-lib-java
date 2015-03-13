@@ -12,10 +12,12 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-package com.worldpay.sdk;
+package com.worldpay.sdk.integration;
 
 import com.worldpay.api.client.error.exception.WorldpayException;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
+import com.worldpay.sdk.TokenService;
+import com.worldpay.sdk.WorldpayRestClient;
 import com.worldpay.sdk.util.PropertyUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +29,7 @@ import static org.hamcrest.Matchers.notNullValue;
 /**
  * This is the test class for TokenService.
  */
-public class TokenServiceTest {
+public class TokenServiceIT {
 
     /**
      * Service under test

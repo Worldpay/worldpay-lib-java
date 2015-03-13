@@ -29,22 +29,22 @@ public class OrderService extends AbstractService {
     /**
      * URL for CREATE order
      */
-    private final String ORDERS_URL = "/orders";
+    private static final String ORDERS_URL = "/orders";
 
     /**
      * URL for Authorise 3DS order
      */
-    private final String AUTHORIZE_3DS_URL = "/orders/%s";
+    private static final String AUTHORIZE_3DS_URL = "/orders/%s";
 
     /**
      * URL for REFUND ORDER
      */
-    private final String REFUND_URL = "/orders/%s/refund";
+    private static final String REFUND_URL = "/orders/%s/refund";
 
     /**
      * URL for REFUND ORDER
      */
-    private final String FIND_ORDER__URL = "/orders/%s";
+    private static final String FIND_ORDER__URL = "/orders/%s";
 
     /**
      * Constructor
@@ -96,7 +96,6 @@ public class OrderService extends AbstractService {
 
         validateOrderAuthorizationRequest(orderAuthorizationRequest);
         http.put(String.format(AUTHORIZE_3DS_URL, orderCode), orderAuthorizationRequest);
-
     }
 
     /**

@@ -1,3 +1,17 @@
+/*
+ * Copyright 2013 Worldpay
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
+ */
+
 package com.worldpay.sdk;
 
 import com.worldpay.api.client.error.dto.ApiError;
@@ -12,7 +26,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
 
 /**
  * Class to handle HTTP requests and responses.
@@ -27,18 +40,15 @@ class Http {
     private static final String systemProperties;
 
     static {
-        StringBuilder builder = new StringBuilder();
-        builder.append(WorldpayLibraryConstants.OS_NAME_PROP + WorldpayLibraryConstants.COMMA);
-        builder.append(WorldpayLibraryConstants.OS_VERSION_PROP + WorldpayLibraryConstants.COMMA);
-        builder.append(WorldpayLibraryConstants.OS_ARCH_PROP + WorldpayLibraryConstants.COMMA);
-        builder.append(WorldpayLibraryConstants.LANG_VERSION_PROP + WorldpayLibraryConstants.COMMA);
-        builder.append(WorldpayLibraryConstants.LIB_VERSION_PROP + WorldpayLibraryConstants.COMMA);
-        builder.append(WorldpayLibraryConstants.API_VERSION_PROP + WorldpayLibraryConstants.COMMA);
-        builder.append(WorldpayLibraryConstants.OWNER_PROP + WorldpayLibraryConstants.COMMA);
-        builder.append(WorldpayLibraryConstants.JAVA_VENDOR_PROP + WorldpayLibraryConstants.COMMA);
-        builder.append(WorldpayLibraryConstants.JVM_VENDOR_PROP);
-        builder.append(WorldpayLibraryConstants.EOF);
-        systemProperties = builder.toString();
+        systemProperties = WorldpayLibraryConstants.OS_NAME_PROP + WorldpayLibraryConstants.COMMA
+                           + WorldpayLibraryConstants.OS_VERSION_PROP + WorldpayLibraryConstants.COMMA
+                           + WorldpayLibraryConstants.OS_ARCH_PROP + WorldpayLibraryConstants.COMMA
+                           + WorldpayLibraryConstants.LANG_VERSION_PROP + WorldpayLibraryConstants.COMMA
+                           + WorldpayLibraryConstants.LIB_VERSION_PROP + WorldpayLibraryConstants.COMMA
+                           + WorldpayLibraryConstants.API_VERSION_PROP + WorldpayLibraryConstants.COMMA
+                           + WorldpayLibraryConstants.OWNER_PROP + WorldpayLibraryConstants.COMMA
+                           + WorldpayLibraryConstants.JAVA_VENDOR_PROP + WorldpayLibraryConstants.COMMA
+                           + WorldpayLibraryConstants.JVM_VENDOR_PROP + WorldpayLibraryConstants.EOF;
     }
 
     /**
@@ -112,6 +122,17 @@ class Http {
     }
 
     /**
+     * Updates an existing resource using PUT with no return.
+     *
+     * @param resourcePath the location of the resource e.g. /order/123
+     * @param request      the Object which needs to be serialised and sent as payload, may be null
+     */
+    public void put(String resourcePath, Object request) {
+        HttpURLConnection putRequest = createRequest(RequestMethod.PUT, resourcePath, request);
+        execute(putRequest);
+    }
+
+    /**
      * Return the representation obtained by GET.
      *
      * @param resourcePath the location of the resource e.g. /order/123
@@ -179,7 +200,7 @@ class Http {
             httpURLConnection.setRequestProperty(WorldpayLibraryConstants.AUTHORIZATION, serviceKey);
             httpURLConnection.setRequestProperty(WorldpayLibraryConstants.WP_CLIENT_USER_AGENT, systemProperties);
 
-            DataOutputStream dataOutputStream = null;
+            DataOutputStream dataOutputStream;
             switch (method) {
                 case GET:
                     httpURLConnection.setRequestMethod(WorldpayLibraryConstants.GET);

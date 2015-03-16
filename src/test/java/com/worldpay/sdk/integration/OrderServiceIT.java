@@ -1,25 +1,38 @@
-package com.worldpay.sdk;
+/*
+ * Copyright 2013 Worldpay
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
+ */
+
+package com.worldpay.sdk.integration;
 
 import com.worldpay.api.client.common.enums.CountryCode;
 import com.worldpay.api.client.common.enums.CurrencyCode;
 import com.worldpay.api.client.error.exception.WorldpayException;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
-import com.worldpay.gateway.clearwater.client.core.dto.request.CardRequest;
-import com.worldpay.gateway.clearwater.client.core.dto.request.OrderRequest;
-import com.worldpay.gateway.clearwater.client.core.dto.request.TokenRequest;
+import com.worldpay.gateway.clearwater.client.core.dto.request.*;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
+import com.worldpay.sdk.OrderService;
+import com.worldpay.sdk.WorldpayRestClient;
 import com.worldpay.sdk.util.HttpUrlConnection;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.PropertyUtils;
-import com.worldpay.sdk.util.WorldpayLibraryConstants;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +40,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class OrderServiceTest {
+public class OrderServiceIT {
 
     /**
      * Test Master card number.
@@ -43,6 +56,11 @@ public class OrderServiceTest {
      * Card Verification code.
      */
     private static final String TEST_CVC = "123";
+
+    /**
+     * Test OrderCode
+     */
+    private static final String TEST_ORDER_CODE = "orderCode";
 
     /**
      * Service under test
@@ -61,10 +79,33 @@ public class OrderServiceTest {
         orderRequest.setToken(createToken());
 
         OrderResponse response = orderService.create(orderRequest);
-        assertThat(response.getOrderCode(), is(notNullValue()));
-        assertThat(response.getAmount(), is(1999));
-        assertThat(response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
 
+        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
+        assertThat("Amount", response.getAmount(), is(1999));
+        assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+    }
+
+    @Test
+    @Ignore
+    public void shouldCreateOrderForValidTokenAndThreeDS() {
+
+        OrderRequest orderRequest = createOrderRequestWithThreeDS();
+        orderRequest.setToken(createToken());
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
+        assertThat("Amount", response.getAmount(), is(1999));
+        assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+    }
+
+    @Test(expected = WorldpayException.class)
+    public void shouldThrowExceptionIfThreeDSEnabledButInfoInvalid() {
+
+        OrderRequest orderRequest = createOrderRequestWithThreeDS();
+        orderRequest.setThreeDSecureInfo(null);
+        orderRequest.setToken(createToken());
+
+        OrderResponse response = orderService.create(orderRequest);
         assertThat("Response code", response.getOrderCode(), is(notNullValue()));
         assertThat("Amount", response.getAmount(), is(1999));
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
@@ -104,6 +145,54 @@ public class OrderServiceTest {
     }
 
 
+    /**
+     * Create an order request with three DS enabled
+     *
+     * @return {@link OrderRequest}
+     */
+    private OrderRequest createOrderRequestWithThreeDS() {
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.setIs3DSOrder(true);
+
+        ThreeDSecureInfo threeDSecureInfo = createThreeDsSecureInfo();
+        orderRequest.setThreeDSecureInfo(threeDSecureInfo);
+
+        return orderRequest;
+    }
+
+    /**
+     * Create a test ThreeDSecureInfo
+     *
+     * @return the test ThreeDSecureInfo
+     */
+    private ThreeDSecureInfo createThreeDsSecureInfo() {
+        ThreeDSecureInfo threeDSecureInfo = new ThreeDSecureInfo();
+        threeDSecureInfo.setShopperAcceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        threeDSecureInfo.setShopperIpAddress("195.35.90.111");
+        threeDSecureInfo.setShopperSessionId("021ui8ib1");
+        threeDSecureInfo.setShopperUserAgent(
+            "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5 (.NET CLR 3.5.30729)");
+        return threeDSecureInfo;
+    }
+
+    /**
+     * Create a test OrderAuthorizationRequest
+     *
+     * @return return the test OrderAuthorizationRequest
+     */
+    private OrderAuthorizationRequest createOrderAuthorizationRequest(ThreeDSecureInfo threeDSecureInfo,
+                                                                      String threeDsResponseCode) {
+        OrderAuthorizationRequest orderAuthorizationRequest = new OrderAuthorizationRequest();
+        orderAuthorizationRequest.setThreeDSResponseCode(threeDsResponseCode);
+        orderAuthorizationRequest.setThreeDSecureInfo(threeDSecureInfo);
+        return orderAuthorizationRequest;
+    }
+
+    /**
+     * Create a test OrderRequest
+     *
+     * @return {@link OrderRequest}
+     */
     private OrderRequest createOrderRequest() {
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setAmount(1999);

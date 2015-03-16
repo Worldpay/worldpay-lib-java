@@ -15,22 +15,19 @@
 package com.worldpay.sdk;
 
 /**
- * Parent service class.
+ * Test class to help test OrderController
  */
-class AbstractService {
+public class WorldpayRestClientFactory {
 
     /**
-     * Http component.
-     */
-    protected Http http;
-
-    /**
-     * Create a new service with the http connector.
+     * Create a new instance of WorldpayRestClient
      *
-     * @param http {@link Http}
+     * @param url        the url
+     * @param serviceKey the security key
+     *
+     * @return a new WorldpayRestClient
      */
-    protected AbstractService(Http http) {
-        this.http = http;
+    public WorldpayRestClient createWorldpayRestClient(String url, String serviceKey) {
+        return new WorldpayRestClient(url, serviceKey);
     }
-
 }

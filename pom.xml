@@ -22,7 +22,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <version>0.1.5</version>
+    <version>0.1.6-SNAPSHOT</version>
     <packaging>jar</packaging>
     <groupId>com.worldpay</groupId>
     <artifactId>worldpay-lib-java</artifactId>
@@ -42,7 +42,7 @@
         <connection>${github.connection}</connection>
         <developerConnection>${github.developerConnection}</developerConnection>
         <url>${github.url}</url>
-        <tag>worldpay-lib-java-0.1.5</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencies>

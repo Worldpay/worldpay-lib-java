@@ -31,13 +31,13 @@ try {
     OrderResponse orderResponse = restClient.getOrderService().create(orderRequest);
     System.out.println("Order code: " + orderResponse.getOrderCode());
 } catch (WorldpayException e) {
-    System.out.println("Error code: " + e.getError().getCustomCode());
-    System.out.println("Error description: " + e.getError().getDescription());
-    System.out.println("Error message: " + e.getError().getMessage());
+    System.out.println("Error code: " + e.getApiError().getCustomCode());
+    System.out.println("Error description: " + e.getApiError().getDescription());
+    System.out.println("Error message: " + e.getApiError().getMessage());
 }
 ```
 
 Alternatively, the client can also be initialized with the REST service URL as well as the service key e.g.
 ```java
-WorldpayGateway restClient = new WorldpayGateway("https://api.worldpay.com/v1", "YOUR_SERVICE_KEY");
+WorldpayRestClient restClient = new WorldpayRestClient("https://api.worldpay.com/v1", "YOUR_SERVICE_KEY");
 ```

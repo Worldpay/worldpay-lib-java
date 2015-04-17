@@ -15,17 +15,22 @@
 package com.worldpay.sdk.util;
 
 /**
- * Created by Sudhakar on 14/11/2014.
+ * Constants
  */
 public final class WorldpayLibraryConstants {
 
+    /**
+     * Hiding constructor
+     */
     private WorldpayLibraryConstants(){
         // this prevents from creating instances of this class
     }
+
     /**
      * Connection timeout in milliseconds.
      */
     public static final int CONNECTION_TIMEOUT = 10000;
+
     /**
      * Socket timeout in milliseconds.
      */

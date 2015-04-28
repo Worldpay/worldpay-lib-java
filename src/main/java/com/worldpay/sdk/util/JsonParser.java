@@ -14,6 +14,7 @@
 
 package com.worldpay.sdk.util;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.InputStream;
@@ -27,6 +28,10 @@ public final class JsonParser {
      * Parser.
      */
     private static final ObjectMapper PARSER = new ObjectMapper();
+
+    static {
+        PARSER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     /**
      * Private constructor.

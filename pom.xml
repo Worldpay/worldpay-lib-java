@@ -32,7 +32,6 @@
         <git.dotGitDirectory>${project.basedir}/.git</git.dotGitDirectory>
 
         <dep.worldpay-client-core.version>0.0.1-SNAPSHOT</dep.worldpay-client-core.version>
-        <dep.worldpay-client-error.version>0.0.4</dep.worldpay-client-error.version>
         <dep.worldpay-client-common.version>0.0.7</dep.worldpay-client-common.version>
         <dep.worldpay-common-utils.version>0.0.10</dep.worldpay-common-utils.version>
     </properties>
@@ -46,12 +45,6 @@
 
     <dependencies>
         <!-- Worldpay dependencies -->
-        <dependency>
-            <groupId>com.worldpay.api.client</groupId>
-            <artifactId>worldpay-client-error</artifactId>
-            <version>${dep.worldpay-client-error.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>com.worldpay.api.client</groupId>
             <artifactId>worldpay-client-core</artifactId>

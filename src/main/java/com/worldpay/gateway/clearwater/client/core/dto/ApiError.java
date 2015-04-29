@@ -22,7 +22,10 @@ import java.util.Objects;
  */
 public class ApiError implements Serializable {
 
-    private static final long serialVersionUID = 3946490182182240913L;
+    /**
+     * Serial version id
+     */
+    private static final long serialVersionUID = -3675514359995483511L;
 
     /**
      * http internal server error

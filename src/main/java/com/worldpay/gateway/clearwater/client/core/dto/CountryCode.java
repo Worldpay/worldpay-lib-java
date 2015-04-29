@@ -15,7 +15,6 @@
 package com.worldpay.gateway.clearwater.client.core.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.worldpay.api.client.common.util.Constants;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -282,13 +281,13 @@ public enum CountryCode {
     /**
      * Static map for lookup later
      */
-    private static final Map<String, com.worldpay.api.client.common.enums.CountryCode> COUNTRY_CODE_MAP = new HashMap<String, com.worldpay.api.client.common.enums.CountryCode>();
+    private static final Map<String, CountryCode> COUNTRY_CODE_MAP = new HashMap<String, CountryCode>();
 
     /**
      * Builds map
      */
     static {
-        for (com.worldpay.api.client.common.enums.CountryCode countryCode : values()) {
+        for (CountryCode countryCode : values()) {
             COUNTRY_CODE_MAP.put(countryCode.name(), countryCode);
         }
     }
@@ -310,13 +309,13 @@ public enum CountryCode {
      * @return {@code CountryCode}
      */
     @JsonCreator
-    public static com.worldpay.api.client.common.enums.CountryCode fromValue(String value) {
+    public static CountryCode fromValue(String value) {
         // Since Country code is mandatory only in context of an address
         if (value == null || value.trim().length() == 0) {
             return null;
         }
-        String trimmedString = value.replaceAll("\\s+", Constants.EMPTY_STRING);
-        final com.worldpay.api.client.common.enums.CountryCode countryCode = COUNTRY_CODE_MAP.get(trimmedString.toUpperCase());
+        String trimmedString = value.replaceAll("\\s+", "");
+        final CountryCode countryCode = COUNTRY_CODE_MAP.get(trimmedString.toUpperCase());
         if (countryCode == null) {
             throw new IllegalArgumentException("Invalid Country Code");
         }

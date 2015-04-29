@@ -22,9 +22,9 @@ import com.worldpay.gateway.clearwater.client.core.dto.ApiError;
 public class WorldpayException extends RuntimeException {
 
     /**
-     * Serial UID.
+     * Serial version id
      */
-    private static final long serialVersionUID = 4435144765837644002L;
+    private static final long serialVersionUID = -2133902866208985142L;
 
     /**
      * Api error

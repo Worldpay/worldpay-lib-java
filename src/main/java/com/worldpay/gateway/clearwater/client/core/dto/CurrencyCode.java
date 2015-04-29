@@ -15,7 +15,6 @@
 package com.worldpay.gateway.clearwater.client.core.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.worldpay.api.client.common.util.Constants;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -151,13 +150,13 @@ public enum CurrencyCode {
     /**
      * Static map for lookup later
      */
-    private static final Map<String, com.worldpay.api.client.common.enums.CurrencyCode> CURRENCY_CODE_MAP = new HashMap<String, com.worldpay.api.client.common.enums.CurrencyCode>();
+    private static final Map<String, CurrencyCode> CURRENCY_CODE_MAP = new HashMap<String, CurrencyCode>();
 
     /**
      * Builds map
      */
     static {
-        for (com.worldpay.api.client.common.enums.CurrencyCode currencyCode : values()) {
+        for (CurrencyCode currencyCode : values()) {
             CURRENCY_CODE_MAP.put(currencyCode.name(), currencyCode);
         }
     }
@@ -183,11 +182,11 @@ public enum CurrencyCode {
      * @return {@code CurrencyCode}
      */
     @JsonCreator
-    public static com.worldpay.api.client.common.enums.CurrencyCode fromValue(String value) {
+    public static CurrencyCode fromValue(String value) {
         if (value == null || value.trim().length() == 0) {
             throw new IllegalArgumentException("Currency can't be null/empty");
         }
-        String trimmedString = value.replaceAll("\\s+", Constants.EMPTY_STRING);
+        String trimmedString = value.replaceAll("\\s+", "");
         return CURRENCY_CODE_MAP.get(trimmedString.toUpperCase());
     }
 }

@@ -14,8 +14,8 @@
 
 package com.worldpay.sdk;
 
-import com.worldpay.api.client.error.dto.ApiError;
-import com.worldpay.api.client.error.exception.WorldpayException;
+import com.worldpay.gateway.clearwater.client.core.dto.ApiError;
+import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
 import com.worldpay.sdk.util.HttpUrlConnection;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.WorldpayLibraryConstants;

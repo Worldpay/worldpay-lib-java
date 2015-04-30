@@ -14,8 +14,8 @@
 
 package com.worldpay.sdk.integration;
 
-import com.worldpay.api.client.error.exception.WorldpayException;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
+import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
 import com.worldpay.sdk.TokenService;
 import com.worldpay.sdk.WorldpayRestClient;
 import com.worldpay.sdk.util.PropertyUtils;

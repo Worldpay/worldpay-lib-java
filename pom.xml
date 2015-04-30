@@ -13,7 +13,8 @@
   ~ See the License for the specific language governing permissions and limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
         <groupId>com.worldpay.api.root</groupId>
@@ -27,12 +28,16 @@
     <groupId>com.worldpay</groupId>
     <artifactId>worldpay-lib-java</artifactId>
     <name>Worldpay: Java Client</name>
+    <organization>
+        <name>Worldpay</name>
+        <url>https://online.worldpay.com/</url>
+    </organization>
+
     <properties>
         <github.repository>worldpay-lib-java</github.repository>
         <git.dotGitDirectory>${project.basedir}/.git</git.dotGitDirectory>
 
         <dep.worldpay-client-core.version>0.0.1-SNAPSHOT</dep.worldpay-client-core.version>
-        <dep.worldpay-client-error.version>0.0.4</dep.worldpay-client-error.version>
         <dep.worldpay-client-common.version>0.0.7</dep.worldpay-client-common.version>
         <dep.worldpay-common-utils.version>0.0.10</dep.worldpay-common-utils.version>
     </properties>
@@ -46,12 +51,6 @@
 
     <dependencies>
         <!-- Worldpay dependencies -->
-        <dependency>
-            <groupId>com.worldpay.api.client</groupId>
-            <artifactId>worldpay-client-error</artifactId>
-            <version>${dep.worldpay-client-error.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>com.worldpay.api.client</groupId>
             <artifactId>worldpay-client-core</artifactId>
@@ -79,11 +78,40 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Build-Time>${maven.build.timestamp}</Build-Time>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration combine.self="override">
                     <archive>
                         <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
+                        <manifestEntries>
+                            <Build-Time>${maven.build.timestamp}</Build-Time>
+                        </manifestEntries>
                     </archive>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -122,6 +150,11 @@
                             </javaApiLinks>
                             <quiet>true</quiet>
                             <failOnError>false</failOnError>
+                            <archive>
+                                <manifest>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                </manifest>
+                            </archive>
                         </configuration>
                     </execution>
                 </executions>

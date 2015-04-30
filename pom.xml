@@ -27,6 +27,11 @@
     <groupId>com.worldpay</groupId>
     <artifactId>worldpay-lib-java</artifactId>
     <name>Worldpay: Java Client</name>
+    <organization>
+        <name>Worldpay</name>
+        <url>https://online.worldpay.com/</url>
+    </organization>
+
     <properties>
         <github.repository>worldpay-lib-java</github.repository>
         <git.dotGitDirectory>${project.basedir}/.git</git.dotGitDirectory>
@@ -76,6 +81,7 @@
                 <configuration combine.self="override">
                     <archive>
                         <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
                     <descriptorRefs>

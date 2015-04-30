@@ -41,3 +41,9 @@ Alternatively, the client can also be initialized with the REST service URL as w
 ```java
 WorldpayRestClient restClient = new WorldpayRestClient("https://api.worldpay.com/v1", "YOUR_SERVICE_KEY");
 ```
+
+Use following API to get the Current SDK Library Version (available in v1.8 onwards only) in use:
+```Java
+WorldpayRestClient restClient = new WorldpayRestClient("YOUR_SERVICE_KEY");
+String worldpaySdkVersion = restClient.getVersion();
+```

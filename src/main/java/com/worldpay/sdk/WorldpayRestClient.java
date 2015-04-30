@@ -18,9 +18,9 @@ import com.worldpay.sdk.util.PropertyUtils;
 
 /**
  * Main interface for interacting with the Worldpay Payment Gateway REST service.<br><br>
- *
+ * <p/>
  * Example:
- *
+ * <p/>
  * <pre>
  *
  *   WorldpayRestClient restClient = new WorldpayRestClient("YOUR_SERVICE_KEY");
@@ -52,7 +52,7 @@ public class WorldpayRestClient {
     /**
      * Create a new client with the specified base URL and the service key.
      *
-     * @param baseUrl URL for connecting to the service, cannot be null
+     * @param baseUrl    URL for connecting to the service, cannot be null
      * @param serviceKey the service key for authentication, cannot be null
      */
     public WorldpayRestClient(String baseUrl, String serviceKey) {
@@ -90,5 +90,16 @@ public class WorldpayRestClient {
      *
      * @return the token service
      */
-    public TokenService getTokenService() { return new TokenService(http); }
+    public TokenService getTokenService() {
+        return new TokenService(http);
+    }
+
+    /**
+     * Returns the current Version of Worldpay SDK, if any issues, returns "N/A"
+     *
+     * @return Get Current version of SDK
+     */
+    public String getVersion() {
+        return http.getVersion();
+    }
 }

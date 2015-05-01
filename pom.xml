@@ -74,8 +74,6 @@
             <artifactId>worldpay-common-utils</artifactId>
             <version>${dep.worldpay-common-utils.version}</version>
         </dependency>
-
-
     </dependencies>
     <build>
         <plugins>

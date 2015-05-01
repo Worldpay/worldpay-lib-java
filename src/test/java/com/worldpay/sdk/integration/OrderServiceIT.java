@@ -16,6 +16,7 @@ package com.worldpay.sdk.integration;
 
 import com.worldpay.api.client.common.enums.CountryCode;
 import com.worldpay.api.client.common.enums.CurrencyCode;
+import com.worldpay.api.client.common.enums.OrderStatus;
 import com.worldpay.api.client.error.exception.WorldpayException;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
@@ -96,6 +98,23 @@ public class OrderServiceIT {
         assertThat("Response code", response.getOrderCode(), is(notNullValue()));
         assertThat("Amount", response.getAmount(), is(1999));
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+    }
+
+    @Test
+    public void shouldAuthorizeThreeDSOrder() {
+        OrderRequest orderRequest = createOrderRequestWithThreeDS();
+        orderRequest.setName("3D");
+        orderRequest.setToken(createToken());
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Order code", response.getOrderCode(), notNullValue());
+        assertThat("Order Status", response.getPaymentStatus(), equalTo(OrderStatus.PRE_AUTHORIZED.toString()));
+
+        OrderAuthorizationRequest orderAuthorizationRequest = createOrderAuthorizationRequest(orderRequest.getThreeDSecureInfo(), "IDENTIFIED");
+        OrderResponse authorizeRespone = orderService.authorize3Ds(response.getOrderCode(), orderAuthorizationRequest);
+        assertThat("Response", authorizeRespone, notNullValue());
+        assertThat("Order code", authorizeRespone.getOrderCode(), equalTo(response.getOrderCode()));
+        assertThat("Order Status", authorizeRespone.getPaymentStatus(), equalTo(OrderStatus.SUCCESS.toString()));
     }
 
     @Test(expected = WorldpayException.class)

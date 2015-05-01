@@ -17,7 +17,6 @@ package com.worldpay.sdk.integration;
 import com.worldpay.api.client.common.enums.CountryCode;
 import com.worldpay.api.client.common.enums.CurrencyCode;
 import com.worldpay.api.client.common.enums.OrderStatus;
-import com.worldpay.api.client.error.exception.WorldpayException;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
 import com.worldpay.gateway.clearwater.client.core.dto.request.*;
@@ -39,9 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 public class OrderServiceIT {
 
@@ -111,7 +108,8 @@ public class OrderServiceIT {
         assertThat("Order code", response.getOrderCode(), notNullValue());
         assertThat("Order Status", response.getPaymentStatus(), equalTo(OrderStatus.PRE_AUTHORIZED.toString()));
 
-        OrderAuthorizationRequest orderAuthorizationRequest = createOrderAuthorizationRequest(orderRequest.getThreeDSecureInfo(), "IDENTIFIED");
+        OrderAuthorizationRequest orderAuthorizationRequest =
+            createOrderAuthorizationRequest(orderRequest.getThreeDSecureInfo(), "IDENTIFIED");
         OrderResponse authorizeRespone = orderService.authorize3Ds(response.getOrderCode(), orderAuthorizationRequest);
         assertThat("Response", authorizeRespone, notNullValue());
         assertThat("Order code", authorizeRespone.getOrderCode(), equalTo(response.getOrderCode()));

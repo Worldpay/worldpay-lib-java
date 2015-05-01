@@ -64,16 +64,17 @@
         </dependency>
 
         <dependency>
+            <groupId>com.worldpay.api.client</groupId>
+            <artifactId>worldpay-client-common</artifactId>
+            <version>${dep.worldpay-client-common.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.worldpay.api.commons</groupId>
             <artifactId>worldpay-common-utils</artifactId>
             <version>${dep.worldpay-common-utils.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.worldpay.api.client</groupId>
-            <artifactId>worldpay-client-common</artifactId>
-            <version>${dep.worldpay-client-common.version}</version>
-        </dependency>
 
     </dependencies>
     <build>

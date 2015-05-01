@@ -80,6 +80,8 @@ public class OrderService extends AbstractService {
      * Find the order identified by order code.
      *
      * @param orderCode Order code
+     *
+     * @return {@link Transaction}
      */
     public Transaction findOrder(String orderCode) {
         AssertUtils.hasText(orderCode, "Order Code");
@@ -91,11 +93,13 @@ public class OrderService extends AbstractService {
      *
      * @param orderCode                 The order to authorize
      * @param orderAuthorizationRequest The request details
+     *
+     * @return {@link OrderResponse}
      */
-    public void authorize3Ds(String orderCode, OrderAuthorizationRequest orderAuthorizationRequest) {
+    public OrderResponse authorize3Ds(String orderCode, OrderAuthorizationRequest orderAuthorizationRequest) {
 
         validateOrderAuthorizationRequest(orderAuthorizationRequest);
-        http.put(String.format(AUTHORIZE_3DS_URL, orderCode), orderAuthorizationRequest);
+        return http.put(String.format(AUTHORIZE_3DS_URL, orderCode), orderAuthorizationRequest, OrderResponse.class);
     }
 
     /**

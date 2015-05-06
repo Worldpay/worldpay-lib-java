@@ -14,11 +14,9 @@
 
 package com.worldpay.sdk.integration;
 
+import com.worldpay.api.client.common.enums.OrderStatus;
 import com.worldpay.gateway.clearwater.client.core.dto.CountryCode;
 import com.worldpay.gateway.clearwater.client.core.dto.CurrencyCode;
-import com.worldpay.api.client.common.enums.CountryCode;
-import com.worldpay.api.client.common.enums.CurrencyCode;
-import com.worldpay.api.client.common.enums.OrderStatus;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
 import com.worldpay.gateway.clearwater.client.core.dto.request.*;
@@ -45,9 +43,6 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 
 public class OrderServiceIT {
 
@@ -90,7 +85,8 @@ public class OrderServiceIT {
         assertThat("Response code", response.getOrderCode(), is(notNullValue()));
         assertThat("Amount", response.getAmount(), is(1999));
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
-        assertThat("Card Type", ((CardResponse)response.getPaymentResponse()).getCardType(), equalTo("MASTERCARD_CREDIT"));
+        assertThat("Card Type", ((CardResponse) response.getPaymentResponse()).getCardType(),
+                   equalTo("MASTERCARD_CREDIT"));
     }
 
     @Test
@@ -197,7 +193,8 @@ public class OrderServiceIT {
         Transaction authorizedResponse = orderService.findOrder(response.getOrderCode());
         assertThat("Response", authorizedResponse, notNullValue());
         assertThat("Order Response", authorizedResponse.getOrderResponse(), notNullValue());
-        assertThat("Status", authorizedResponse.getOrderResponse().getPaymentStatus(), equalTo(OrderStatus.CANCELLED.toString()));
+        assertThat("Status", authorizedResponse.getOrderResponse().getPaymentStatus(),
+                   equalTo(OrderStatus.CANCELLED.toString()));
     }
 
     @Test
@@ -218,8 +215,8 @@ public class OrderServiceIT {
         Transaction authorizedResponse = orderService.findOrder(response.getOrderCode());
         assertThat("Response", authorizedResponse, notNullValue());
         assertThat("Order Response", authorizedResponse.getOrderResponse(), notNullValue());
-        assertThat("Status", authorizedResponse.getOrderResponse().getPaymentStatus(), equalTo(
-            OrderStatus.SUCCESS.toString()));
+        assertThat("Status", authorizedResponse.getOrderResponse().getPaymentStatus(),
+                   equalTo(OrderStatus.SUCCESS.toString()));
         assertThat("Amount", authorizedResponse.getOrderResponse().getAmount(), is(900));
         assertThat("Authorized amount", authorizedResponse.getOrderResponse().getAuthorizedAmount(), is(1999));
     }
@@ -241,7 +238,8 @@ public class OrderServiceIT {
         Transaction authorizedResponse = orderService.findOrder(response.getOrderCode());
         assertThat("Response", authorizedResponse, notNullValue());
         assertThat("Order Response", authorizedResponse.getOrderResponse(), notNullValue());
-        assertThat("Status", authorizedResponse.getOrderResponse().getPaymentStatus(), equalTo(OrderStatus.SUCCESS.toString()));
+        assertThat("Status", authorizedResponse.getOrderResponse().getPaymentStatus(),
+                   equalTo(OrderStatus.SUCCESS.toString()));
         assertThat("Amount", authorizedResponse.getOrderResponse().getAmount(), is(1999));
         assertThat("Authorized amount", authorizedResponse.getOrderResponse().getAuthorizedAmount(), is(1999));
     }

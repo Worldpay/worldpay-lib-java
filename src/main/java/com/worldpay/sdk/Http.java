@@ -148,6 +148,17 @@ class Http {
     }
 
     /**
+     * Delete an existing resource using DELETE with no return.
+     *
+     * @param resourcePath the location of the resource e.g. /order/123
+     * @param request      the Object which needs to be serialised and sent as payload, may be null
+     */
+    public void delete(String resourcePath, Object request) {
+        HttpURLConnection putRequest = createRequest(RequestMethod.DELETE, resourcePath, request);
+        execute(putRequest);
+    }
+
+    /**
      * Convert object to string representation.
      *
      * @param request object to convert

@@ -74,6 +74,9 @@ public class OrderServiceIT {
         orderService = new WorldpayRestClient(PropertyUtils.serviceKey()).getOrderService();
     }
 
+    /**
+     * This test for creating an order with valid token
+     */
     @Test
     public void shouldCreateOrderForValidToken() {
 
@@ -89,6 +92,9 @@ public class OrderServiceIT {
                    equalTo("MASTERCARD_CREDIT"));
     }
 
+    /**
+     * Test for creating 3DS order with valid token and 3DS information.
+     */
     @Test
     @Ignore
     public void shouldCreateOrderForValidTokenAndThreeDS() {
@@ -102,6 +108,10 @@ public class OrderServiceIT {
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
     }
 
+    /**
+     * This is the test for creating the 3D Order.
+     * This test expects authorize3Ds to return {@link OrderResponse} and order status should be Success.
+     */
     @Test
     public void shouldAuthorizeThreeDSOrder() {
         OrderRequest orderRequest = createOrderRequestWithThreeDS();
@@ -120,6 +130,9 @@ public class OrderServiceIT {
         assertThat("Order Status", authorizeRespone.getPaymentStatus(), equalTo(OrderStatus.SUCCESS.toString()));
     }
 
+    /**
+     * This is test for testing 3DS order with invalid 3DS relevant information.
+     */
     @Test(expected = WorldpayException.class)
     public void shouldThrowExceptionIfThreeDSEnabledButInfoInvalid() {
 
@@ -133,6 +146,9 @@ public class OrderServiceIT {
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
     }
 
+    /**
+     * This is the test for full refund an order
+     */
     @Test
     public void shouldRefundOrder() {
         OrderRequest orderRequest = createOrderRequest();
@@ -144,6 +160,9 @@ public class OrderServiceIT {
         orderService.refund(orderCode);
     }
 
+    /**
+     * This is the test for partial refund an order
+     */
     @Test
     public void shouldPartialRefundOrder() {
         OrderRequest orderRequest = createOrderRequest();
@@ -155,6 +174,10 @@ public class OrderServiceIT {
         orderService.refund(orderCode, 1);
     }
 
+    /**
+     * This is the test for creating an order with invalid token.
+     * Expects API error
+     */
     @Test
     public void shouldThrowExceptionForInvalidToken() {
         OrderRequest orderRequest = createOrderRequest();
@@ -166,6 +189,10 @@ public class OrderServiceIT {
         }
     }
 
+    /**
+     * This is the test for creating the authorize only Order.
+     * This test expects create to return {@link OrderResponse} and order status should be AUTHORIZED.
+     */
     @Test
     public void shouldAuthorizeOnlyOrder() {
         OrderRequest orderRequest = createOrderRequest();
@@ -178,6 +205,10 @@ public class OrderServiceIT {
         assertThat("Order status", response.getPaymentStatus(), equalTo(OrderStatus.AUTHORIZED.toString()));
     }
 
+    /**
+     * This is the test for cancelling the authorize only Order.
+     * This test expects create to return {@link OrderResponse} and order status should be CANCELLED.
+     */
     @Test
     public void shouldCancelAuthorizeOnlyOrder() {
         OrderRequest orderRequest = createOrderRequest();
@@ -197,6 +228,10 @@ public class OrderServiceIT {
                    equalTo(OrderStatus.CANCELLED.toString()));
     }
 
+    /**
+     * This is the test for partial capture the authorize only Order.
+     * This test expects create to return {@link OrderResponse} and order status should be SUCCESS.
+     */
     @Test
     public void shouldPartialCaptureAuthorizeOnlyOrder() {
         OrderRequest orderRequest = createOrderRequest();
@@ -221,6 +256,10 @@ public class OrderServiceIT {
         assertThat("Authorized amount", authorizedResponse.getOrderResponse().getAuthorizedAmount(), is(1999));
     }
 
+    /**
+     * This is the test for full capture the authorize only Order.
+     * This test expects create to return {@link OrderResponse} and order status should be SUCCESS.
+     */
     @Test
     public void shouldFullCaptureAuthorizeOnlyOrder() {
         OrderRequest orderRequest = createOrderRequest();
@@ -244,6 +283,10 @@ public class OrderServiceIT {
         assertThat("Authorized amount", authorizedResponse.getOrderResponse().getAuthorizedAmount(), is(1999));
     }
 
+    /**
+     * This is the test for over capture the authorize only Order.
+     * This test expects API error.
+     */
     @Test
     public void shouldExcessCaptureAuthorizeOnlyOrder() {
         expectedException.expect(WorldpayException.class);
@@ -334,6 +377,11 @@ public class OrderServiceIT {
         return orderRequest;
     }
 
+    /**
+     * Create a token
+     *
+     * @return token
+     */
     private String createToken() {
         TokenRequest tokenRequest = new TokenRequest();
         tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));

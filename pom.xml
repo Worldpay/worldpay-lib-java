@@ -13,17 +13,16 @@
   ~ See the License for the specific language governing permissions and limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
         <groupId>com.worldpay.api.root</groupId>
         <artifactId>worldpay-root</artifactId>
-        <version>0.0.5</version>
+        <version>0.0.6</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <version>0.1.8-SNAPSHOT</version>
+    <version>0.1.9-SNAPSHOT</version>
     <packaging>jar</packaging>
     <groupId>com.worldpay</groupId>
     <artifactId>worldpay-lib-java</artifactId>
@@ -37,7 +36,7 @@
         <github.repository>worldpay-lib-java</github.repository>
         <git.dotGitDirectory>${project.basedir}/.git</git.dotGitDirectory>
 
-        <dep.worldpay-client-core.version>0.0.1-SNAPSHOT</dep.worldpay-client-core.version>
+        <dep.worldpay-client-core.version>0.0.1</dep.worldpay-client-core.version>
         <dep.worldpay-client-common.version>0.0.7</dep.worldpay-client-common.version>
         <dep.worldpay-common-utils.version>0.0.10</dep.worldpay-common-utils.version>
     </properties>

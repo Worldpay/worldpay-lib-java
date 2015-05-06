@@ -14,12 +14,15 @@
 
 package com.worldpay.sdk.integration;
 
+import com.worldpay.gateway.clearwater.client.core.dto.CountryCode;
+import com.worldpay.gateway.clearwater.client.core.dto.CurrencyCode;
 import com.worldpay.api.client.common.enums.CountryCode;
 import com.worldpay.api.client.common.enums.CurrencyCode;
 import com.worldpay.api.client.common.enums.OrderStatus;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
 import com.worldpay.gateway.clearwater.client.core.dto.request.*;
+import com.worldpay.gateway.clearwater.client.core.dto.response.CardResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
 import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
@@ -42,6 +45,9 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class OrderServiceIT {
 
@@ -49,11 +55,6 @@ public class OrderServiceIT {
      * Test Master card number.
      */
     private static final String TEST_MASTERCARD_NUMBER = "5555 5555 5555 4444";
-
-    /**
-     * JSON header value.
-     */
-    private static final String APPLICATION_JSON = "application/json";
 
     /**
      * Card Verification code.
@@ -89,6 +90,7 @@ public class OrderServiceIT {
         assertThat("Response code", response.getOrderCode(), is(notNullValue()));
         assertThat("Amount", response.getAmount(), is(1999));
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+        assertThat("Card Type", ((CardResponse)response.getPaymentResponse()).getCardType(), equalTo("MASTERCARD_CREDIT"));
     }
 
     @Test

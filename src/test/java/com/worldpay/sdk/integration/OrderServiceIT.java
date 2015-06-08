@@ -14,10 +14,9 @@
 
 package com.worldpay.sdk.integration;
 
-import com.worldpay.api.client.error.exception.WorldpayException;
+import com.worldpay.api.client.common.enums.OrderStatus;
 import com.worldpay.gateway.clearwater.client.core.dto.CountryCode;
 import com.worldpay.gateway.clearwater.client.core.dto.CurrencyCode;
-import com.worldpay.api.client.common.enums.OrderStatus;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
 import com.worldpay.gateway.clearwater.client.core.dto.common.MerchantUrlConfig;
@@ -25,6 +24,7 @@ import com.worldpay.gateway.clearwater.client.core.dto.request.*;
 import com.worldpay.gateway.clearwater.client.core.dto.response.CardResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
+import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
 import com.worldpay.sdk.OrderService;
 import com.worldpay.sdk.WorldpayRestClient;
 import com.worldpay.sdk.util.HttpUrlConnection;
@@ -58,14 +58,6 @@ public class OrderServiceIT {
     private static final String TEST_CVC = "123";
 
     /**
-     * Test OrderCode
-     */
-    private static final String TEST_ORDER_CODE = "orderCode";
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    /**
      * Apm Name
      */
     private static final String APM_NAME = "paypal";
@@ -94,6 +86,9 @@ public class OrderServiceIT {
      * Service under test
      */
     private OrderService orderService;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setup() {
@@ -156,7 +151,23 @@ public class OrderServiceIT {
     }
 
     /**
-     * This is test for testing 3DS order with invalid 3DS relevant information.
+     * This is the test for testing 3DS order with invalid 3DS relevant information.
+     */
+    @Test(expected = WorldpayException.class)
+    public void shouldThrowExceptionIfThreeDSEnabledButInfoInvalid() {
+
+        OrderRequest orderRequest = createOrderRequestWithThreeDS();
+        orderRequest.setThreeDSecureInfo(null);
+        orderRequest.setToken(createToken());
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
+        assertThat("Amount", response.getAmount(), is(1999));
+        assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+    }
+
+    /**
+     * This is the test for testing Alternate Payment Methods such as PayPal.
      */
     @Test
     public  void shouldCreateOrderForValidTokenAndAlternatePaymentMethod(){
@@ -169,19 +180,6 @@ public class OrderServiceIT {
         assertThat("Amount", response.getAmount(), is(1999));
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
         assertThat("Redirect URL", response.getRedirectURL(), is(notNullValue()));
-    }
-
-    @Test(expected = WorldpayException.class)
-    public void shouldThrowExceptionIfThreeDSEnabledButInfoInvalid() {
-
-        OrderRequest orderRequest = createOrderRequestWithThreeDS();
-        orderRequest.setThreeDSecureInfo(null);
-        orderRequest.setToken(createToken());
-
-        OrderResponse response = orderService.create(orderRequest);
-        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
-        assertThat("Amount", response.getAmount(), is(1999));
-        assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
     }
 
     /**
@@ -342,10 +340,14 @@ public class OrderServiceIT {
         return getToken(tokenRequest);
     }
 
+    /**
+     * Create a token for an alternate payment method.
+     *
+     * @return Alternate Payment Method Token
+     */
     private String createApmToken() {
         TokenRequest tokenRequest = new TokenRequest();
         tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
-        //tokenRequest.setClientKey("L_C_53344c8a-851c-40ed-acfd-356862d480c0");
 
         AlternatePaymentMethod alternatePaymentMethod = new AlternatePaymentMethod();
         alternatePaymentMethod.setApmName(APM_NAME);
@@ -355,12 +357,19 @@ public class OrderServiceIT {
         apmFields.put("bankId", "some value");
         apmFields.put("someOtherId", "some value");
 
-        //alternatePaymentMethod.setApmFields(apmFields);
+        alternatePaymentMethod.setApmFields(apmFields);
 
         tokenRequest.setPaymentMethod(alternatePaymentMethod);
         return getToken(tokenRequest);
     }
 
+    /**
+     * Post request to fetch token.
+     *
+     * @param tokenRequest the request to get a token
+     *
+     * @return token value
+     */
     private String getToken(TokenRequest tokenRequest) {
         final String json = JsonParser.toJson(tokenRequest);
 

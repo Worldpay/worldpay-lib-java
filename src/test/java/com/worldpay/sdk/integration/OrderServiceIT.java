@@ -66,22 +66,22 @@ public class OrderServiceIT {
     /**
      * Success url
      */
-    public static final String SUCCESS_URL = "http://www.wp.com/success";
+    private static final String SUCCESS_URL = "http://www.wp.com/success";
 
     /**
      * Cancel url
      */
-    public static final String CANCEL_URL = "http://www.wp.com/cancel";
+    private static final String CANCEL_URL = "http://www.wp.com/cancel";
 
     /**
      * Failure url
      */
-    public static final String FAILURE_URL = "http://www.wp.com/failure";
+    private static final String FAILURE_URL = "http://www.wp.com/failure";
 
     /**
      * Pending url
      */
-    public static final String PENDING_URL = "http://www.wp.com/pending";
+    private static final String PENDING_URL = "http://www.wp.com/pending";
 
     /**
      * Service under test

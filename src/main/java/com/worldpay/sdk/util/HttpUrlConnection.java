@@ -14,7 +14,7 @@
 
 package com.worldpay.sdk.util;
 
-import com.worldpay.api.client.error.exception.WorldpayException;
+import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +27,8 @@ public class HttpUrlConnection {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpUrlConnection.class);
 
     public static HttpURLConnection getConnection(String fullUri) {
-        HttpURLConnection httpURLConnection = null;
-        URL url = null;
+        HttpURLConnection httpURLConnection;
+        URL url;
         try {
             url = new URL(fullUri);
             httpURLConnection = (HttpURLConnection) url.openConnection();

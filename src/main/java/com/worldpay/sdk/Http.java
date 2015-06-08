@@ -14,8 +14,8 @@
 
 package com.worldpay.sdk;
 
-import com.worldpay.api.client.error.dto.ApiError;
-import com.worldpay.api.client.error.exception.WorldpayException;
+import com.worldpay.gateway.clearwater.client.core.dto.ApiError;
+import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
 import com.worldpay.sdk.util.HttpUrlConnection;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.WorldpayLibraryConstants;
@@ -26,6 +26,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 /**
  * Class to handle HTTP requests and responses.
@@ -44,7 +47,6 @@ class Http {
                            + WorldpayLibraryConstants.OS_VERSION_PROP + WorldpayLibraryConstants.COMMA
                            + WorldpayLibraryConstants.OS_ARCH_PROP + WorldpayLibraryConstants.COMMA
                            + WorldpayLibraryConstants.LANG_VERSION_PROP + WorldpayLibraryConstants.COMMA
-                           + WorldpayLibraryConstants.LIB_VERSION_PROP + WorldpayLibraryConstants.COMMA
                            + WorldpayLibraryConstants.API_VERSION_PROP + WorldpayLibraryConstants.COMMA
                            + WorldpayLibraryConstants.OWNER_PROP + WorldpayLibraryConstants.COMMA
                            + WorldpayLibraryConstants.JAVA_VENDOR_PROP + WorldpayLibraryConstants.COMMA
@@ -146,6 +148,17 @@ class Http {
     }
 
     /**
+     * Delete an existing resource using DELETE with no return.
+     *
+     * @param resourcePath the location of the resource e.g. /order/123
+     * @param request      the Object which needs to be serialised and sent as payload, may be null
+     */
+    public void delete(String resourcePath, Object request) {
+        HttpURLConnection putRequest = createRequest(RequestMethod.DELETE, resourcePath, request);
+        execute(putRequest);
+    }
+
+    /**
      * Convert object to string representation.
      *
      * @param request object to convert
@@ -198,7 +211,9 @@ class Http {
         HttpURLConnection httpURLConnection = HttpUrlConnection.getConnection(fullUri);
         try {
             httpURLConnection.setRequestProperty(WorldpayLibraryConstants.AUTHORIZATION, serviceKey);
-            httpURLConnection.setRequestProperty(WorldpayLibraryConstants.WP_CLIENT_USER_AGENT, systemProperties);
+            final String propertiesWithVersion =
+                systemProperties.concat(WorldpayLibraryConstants.COMMA).concat(getVersion());
+            httpURLConnection.setRequestProperty(WorldpayLibraryConstants.WP_CLIENT_USER_AGENT, propertiesWithVersion);
 
             DataOutputStream dataOutputStream;
             switch (method) {
@@ -258,6 +273,35 @@ class Http {
             InputStream is = connection.getErrorStream();
             ApiError error = JsonParser.toObject(is, ApiError.class);
             throw new WorldpayException(error, "API error: " + error.getMessage());
+        }
+    }
+
+    /**
+     * Looks up the manifest file and pulls the version out
+     *
+     * @return Version
+     */
+    public String getVersion() {
+        Class clazz = this.getClass();
+        String className = clazz.getSimpleName() + ".class";
+        String classPath = clazz.getResource(className).toString();
+        final String versionNotAvailable = "N/A";
+        if (!classPath.startsWith("jar")) {
+            // Class not from JAR
+            return versionNotAvailable;
+        }
+        String manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
+        try {
+            Manifest manifest = new Manifest(new URL(manifestPath).openStream());
+            Attributes attr = manifest.getMainAttributes();
+            final String attrValue = attr.getValue("Implementation-Version");
+            if (attrValue != null && attrValue.trim().length() > 0) {
+                return attrValue;
+            } else {
+                return versionNotAvailable;
+            }
+        } catch (IOException e) {
+            return versionNotAvailable;
         }
     }
 }

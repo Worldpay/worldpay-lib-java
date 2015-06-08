@@ -17,10 +17,12 @@ package com.worldpay.sdk.integration;
 import com.worldpay.api.client.error.exception.WorldpayException;
 import com.worldpay.gateway.clearwater.client.core.dto.CountryCode;
 import com.worldpay.gateway.clearwater.client.core.dto.CurrencyCode;
+import com.worldpay.api.client.common.enums.OrderStatus;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
 import com.worldpay.gateway.clearwater.client.core.dto.common.MerchantUrlConfig;
 import com.worldpay.gateway.clearwater.client.core.dto.request.*;
+import com.worldpay.gateway.clearwater.client.core.dto.response.CardResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
 import com.worldpay.sdk.OrderService;
@@ -29,7 +31,9 @@ import com.worldpay.sdk.util.HttpUrlConnection;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.PropertyUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
@@ -39,8 +43,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 public class OrderServiceIT {
 
@@ -48,11 +51,6 @@ public class OrderServiceIT {
      * Test Master card number.
      */
     private static final String TEST_MASTERCARD_NUMBER = "5555 5555 5555 4444";
-
-    /**
-     * JSON header value.
-     */
-    private static final String APPLICATION_JSON = "application/json";
 
     /**
      * Card Verification code.
@@ -63,6 +61,9 @@ public class OrderServiceIT {
      * Test OrderCode
      */
     private static final String TEST_ORDER_CODE = "orderCode";
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     /**
      * Apm Name
@@ -99,6 +100,9 @@ public class OrderServiceIT {
         orderService = new WorldpayRestClient(PropertyUtils.serviceKey()).getOrderService();
     }
 
+    /**
+     * This test for creating an order with valid token
+     */
     @Test
     public void shouldCreateOrderForValidToken() {
 
@@ -110,8 +114,13 @@ public class OrderServiceIT {
         assertThat("Response code", response.getOrderCode(), is(notNullValue()));
         assertThat("Amount", response.getAmount(), is(1999));
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+        assertThat("Card Type", ((CardResponse) response.getPaymentResponse()).getCardType(),
+                   equalTo("MASTERCARD_CREDIT"));
     }
 
+    /**
+     * Test for creating 3DS order with valid token and 3DS information.
+     */
     @Test
     public void shouldCreateOrderForValidTokenAndThreeDS() {
 
@@ -124,6 +133,31 @@ public class OrderServiceIT {
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
     }
 
+    /**
+     * This is the test for creating the 3D Order.
+     * This test expects authorize3Ds to return {@link OrderResponse} and order status should be Success.
+     */
+    @Test
+    public void shouldAuthorizeThreeDSOrder() {
+        OrderRequest orderRequest = createOrderRequestWithThreeDS();
+        orderRequest.setName("3D");
+        orderRequest.setToken(createToken());
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Order code", response.getOrderCode(), notNullValue());
+        assertThat("Order Status", response.getPaymentStatus(), equalTo(OrderStatus.PRE_AUTHORIZED.toString()));
+
+        OrderAuthorizationRequest orderAuthorizationRequest =
+            createOrderAuthorizationRequest(orderRequest.getThreeDSecureInfo(), "IDENTIFIED");
+        OrderResponse authorizeRespone = orderService.authorize3Ds(response.getOrderCode(), orderAuthorizationRequest);
+        assertThat("Response", authorizeRespone, notNullValue());
+        assertThat("Order code", authorizeRespone.getOrderCode(), equalTo(response.getOrderCode()));
+        assertThat("Order Status", authorizeRespone.getPaymentStatus(), equalTo(OrderStatus.SUCCESS.toString()));
+    }
+
+    /**
+     * This is test for testing 3DS order with invalid 3DS relevant information.
+     */
     @Test
     public  void shouldCreateOrderForValidTokenAndAlternatePaymentMethod(){
 
@@ -150,6 +184,9 @@ public class OrderServiceIT {
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
     }
 
+    /**
+     * This is the test for full refund an order
+     */
     @Test
     public void shouldRefundOrder() {
         OrderRequest orderRequest = createOrderRequest();
@@ -161,6 +198,9 @@ public class OrderServiceIT {
         orderService.refund(orderCode);
     }
 
+    /**
+     * This is the test for partial refund an order
+     */
     @Test
     public void shouldPartialRefundOrder() {
         OrderRequest orderRequest = createOrderRequest();
@@ -172,6 +212,10 @@ public class OrderServiceIT {
         orderService.refund(orderCode, 1);
     }
 
+    /**
+     * This is the test for creating an order with invalid token.
+     * Expects API error
+     */
     @Test
     public void shouldThrowExceptionForInvalidToken() {
         OrderRequest orderRequest = createOrderRequest();
@@ -277,6 +321,11 @@ public class OrderServiceIT {
         return address;
     }
 
+    /**
+     * Create a token
+     *
+     * @return token
+     */
     private String createToken() {
         TokenRequest tokenRequest = new TokenRequest();
         tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));

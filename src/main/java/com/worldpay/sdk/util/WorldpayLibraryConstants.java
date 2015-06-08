@@ -22,7 +22,7 @@ public final class WorldpayLibraryConstants {
     /**
      * Hiding constructor
      */
-    private WorldpayLibraryConstants(){
+    private WorldpayLibraryConstants() {
         // this prevents from creating instances of this class
     }
 
@@ -43,6 +43,7 @@ public final class WorldpayLibraryConstants {
     public static final java.lang.String CONTENT_TYPE = "Content-Type";
 
     public static final java.lang.String WP_CLIENT_USER_AGENT = "X-wp-client-user-agent";
+
     /**
      * JSON header value.
      */
@@ -66,13 +67,12 @@ public final class WorldpayLibraryConstants {
 
     public static final String OS_ARCH_PROP = "os.arch=" + System.getProperty("os.arch");
 
-    public static final String LANG_VERSION_PROP = "lang.version=" + System.getProperty("java.vm.specification.version");
+    public static final String LANG_VERSION_PROP =
+        "lang.version=" + System.getProperty("java.vm.specification.version");
 
     public static final String JAVA_VENDOR_PROP = "java.vendor=" + System.getProperty("java.vendor");
 
     public static final String JVM_VENDOR_PROP = "jvm.vendor=" + System.getProperty("java.vm.vendor");
-
-    public static final String LIB_VERSION_PROP = "lib.version=1.2";
 
     public static final String API_VERSION_PROP = "api.version=V1";
 

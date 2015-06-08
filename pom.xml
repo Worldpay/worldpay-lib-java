@@ -18,7 +18,7 @@
     <parent>
         <groupId>com.worldpay.api.root</groupId>
         <artifactId>worldpay-root</artifactId>
-        <version>0.0.5</version>
+        <version>0.0.6</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -27,6 +27,11 @@
     <groupId>com.worldpay</groupId>
     <artifactId>worldpay-lib-java</artifactId>
     <name>Worldpay: Java Client</name>
+    <organization>
+        <name>Worldpay</name>
+        <url>https://online.worldpay.com/</url>
+    </organization>
+
     <properties>
         <github.repository>worldpay-lib-java</github.repository>
         <git.dotGitDirectory>${project.basedir}/.git</git.dotGitDirectory>
@@ -53,9 +58,15 @@
         </dependency>
 
         <dependency>
-            <groupId>com.worldpay.api.client</groupId>
-            <artifactId>worldpay-client-core</artifactId>
-            <version>${dep.worldpay-client-core.version}</version>
+            <groupId>com.worldpay.gateway.clearwater</groupId>
+            <artifactId>clearwater-client-core</artifactId>
+            <version>${dep.clearwater-client-core.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

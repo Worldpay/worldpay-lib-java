@@ -14,11 +14,12 @@
 
 package com.worldpay.sdk.integration;
 
-import com.worldpay.api.client.common.enums.CountryCode;
-import com.worldpay.api.client.common.enums.CurrencyCode;
 import com.worldpay.api.client.error.exception.WorldpayException;
+import com.worldpay.gateway.clearwater.client.core.dto.CountryCode;
+import com.worldpay.gateway.clearwater.client.core.dto.CurrencyCode;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
+import com.worldpay.gateway.clearwater.client.core.dto.common.MerchantUrlConfig;
 import com.worldpay.gateway.clearwater.client.core.dto.request.*;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
@@ -28,13 +29,14 @@ import com.worldpay.sdk.util.HttpUrlConnection;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.PropertyUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -63,6 +65,31 @@ public class OrderServiceIT {
     private static final String TEST_ORDER_CODE = "orderCode";
 
     /**
+     * Apm Name
+     */
+    private static final String APM_NAME = "paypal";
+
+    /**
+     * Success url
+     */
+    public static final String SUCCESS_URL = "http://www.wp.com/success";
+
+    /**
+     * Cancel url
+     */
+    public static final String CANCEL_URL = "http://www.wp.com/cancel";
+
+    /**
+     * Failure url
+     */
+    public static final String FAILURE_URL = "http://www.wp.com/failure";
+
+    /**
+     * Pending url
+     */
+    public static final String PENDING_URL = "http://www.wp.com/pending";
+
+    /**
      * Service under test
      */
     private OrderService orderService;
@@ -86,7 +113,6 @@ public class OrderServiceIT {
     }
 
     @Test
-    @Ignore
     public void shouldCreateOrderForValidTokenAndThreeDS() {
 
         OrderRequest orderRequest = createOrderRequestWithThreeDS();
@@ -96,6 +122,19 @@ public class OrderServiceIT {
         assertThat("Response code", response.getOrderCode(), is(notNullValue()));
         assertThat("Amount", response.getAmount(), is(1999));
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+    }
+
+    @Test
+    public  void shouldCreateOrderForValidTokenAndAlternatePaymentMethod(){
+
+        OrderRequest orderRequest = createOrderRequestWithAPM();
+        orderRequest.setToken(createApmToken());
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
+        assertThat("Amount", response.getAmount(), is(1999));
+        assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+        assertThat("Redirect URL", response.getRedirectURL(), is(notNullValue()));
     }
 
     @Test(expected = WorldpayException.class)
@@ -161,6 +200,24 @@ public class OrderServiceIT {
     }
 
     /**
+     * Create an order request with an APM
+     *
+     * @return {@link OrderRequest}
+     */
+    private OrderRequest createOrderRequestWithAPM() {
+        OrderRequest orderRequest = createOrderRequest();
+
+        MerchantUrlConfig merchantUrlConfig = new MerchantUrlConfig();
+        merchantUrlConfig.setSuccessUrl(SUCCESS_URL);
+        merchantUrlConfig.setCancelUrl(CANCEL_URL);
+        merchantUrlConfig.setFailureUrl(FAILURE_URL);
+        merchantUrlConfig.setPendingUrl(PENDING_URL);
+        orderRequest.setMerchantUrlConfig(merchantUrlConfig);
+
+        return orderRequest;
+    }
+
+    /**
      * Create a test ThreeDSecureInfo
      *
      * @return the test ThreeDSecureInfo
@@ -199,14 +256,7 @@ public class OrderServiceIT {
         orderRequest.setCurrencyCode(CurrencyCode.GBP);
         orderRequest.setName("test name");
         orderRequest.setOrderDescription("test description");
-
-        Address address = new Address();
-        address.setAddress1("line 1");
-        address.setAddress2("line 2");
-        address.setCity("city");
-        address.setCountryCode(CountryCode.GB);
-        address.setPostalCode("AB1 2CD");
-        orderRequest.setBillingAddress(address);
+        orderRequest.setBillingAddress(createAddress());
 
         List<Entry> customerIdentifiers = new ArrayList<Entry>();
         Entry entry = new Entry("test key 1", "test value 1");
@@ -214,6 +264,17 @@ public class OrderServiceIT {
 
         orderRequest.setCustomerIdentifiers(customerIdentifiers);
         return orderRequest;
+    }
+
+    private Address createAddress(){
+        Address address = new Address();
+        address.setAddress1("line 1");
+        address.setAddress2("line 2");
+        address.setCity("city");
+        address.setCountryCode(CountryCode.GB);
+        address.setPostalCode("AB1 2CD");
+
+        return address;
     }
 
     private String createToken() {
@@ -229,6 +290,29 @@ public class OrderServiceIT {
 
         tokenRequest.setPaymentMethod(cardRequest);
 
+        return getToken(tokenRequest);
+    }
+
+    private String createApmToken() {
+        TokenRequest tokenRequest = new TokenRequest();
+        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
+        //tokenRequest.setClientKey("L_C_53344c8a-851c-40ed-acfd-356862d480c0");
+
+        AlternatePaymentMethod alternatePaymentMethod = new AlternatePaymentMethod();
+        alternatePaymentMethod.setApmName(APM_NAME);
+        alternatePaymentMethod.setShopperCountryCode(CountryCode.GB);
+
+        Map<String, String> apmFields = new HashMap<String, String>();
+        apmFields.put("bankId", "some value");
+        apmFields.put("someOtherId", "some value");
+
+        //alternatePaymentMethod.setApmFields(apmFields);
+
+        tokenRequest.setPaymentMethod(alternatePaymentMethod);
+        return getToken(tokenRequest);
+    }
+
+    private String getToken(TokenRequest tokenRequest) {
         final String json = JsonParser.toJson(tokenRequest);
 
         String fullUri = PropertyUtils.getProperty("tokenUrl");

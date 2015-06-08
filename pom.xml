@@ -33,8 +33,9 @@
 
         <dep.clearwater-client-core.version>0.14.1</dep.clearwater-client-core.version>
         <dep.clearwater-client-ui.version>0.14.1</dep.clearwater-client-ui.version>
+        <dep.worldpay-client-core.version>0.0.2-SNAPSHOT</dep.worldpay-client-core.version>
         <dep.worldpay-client-error.version>0.0.4</dep.worldpay-client-error.version>
-        <dep.worldpay-client-common.version>0.0.7</dep.worldpay-client-common.version>
+        <dep.worldpay-client-common.version>0.0.10-SNAPSHOT</dep.worldpay-client-common.version>
         <dep.worldpay-common-utils.version>0.0.10</dep.worldpay-common-utils.version>
     </properties>
 
@@ -54,10 +55,18 @@
         </dependency>
 
         <dependency>
+            <groupId>com.worldpay.api.client</groupId>
+            <artifactId>worldpay-client-core</artifactId>
+            <version>${dep.worldpay-client-core.version}</version>
+        </dependency>
+
+        <!--
+        <dependency>
             <groupId>com.worldpay.gateway.clearwater</groupId>
             <artifactId>clearwater-client-core</artifactId>
             <version>${dep.clearwater-client-core.version}</version>
         </dependency>
+        -->
 
         <dependency>
             <groupId>com.worldpay.gateway.clearwater</groupId>

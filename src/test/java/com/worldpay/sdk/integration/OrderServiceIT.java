@@ -19,6 +19,7 @@ import com.worldpay.gateway.clearwater.client.core.dto.CountryCode;
 import com.worldpay.gateway.clearwater.client.core.dto.CurrencyCode;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
+import com.worldpay.gateway.clearwater.client.core.dto.common.MerchantUrlConfig;
 import com.worldpay.gateway.clearwater.client.core.dto.request.*;
 import com.worldpay.gateway.clearwater.client.core.dto.response.CardResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
@@ -31,7 +32,6 @@ import com.worldpay.sdk.util.HttpUrlConnection;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.PropertyUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -39,7 +39,9 @@ import org.junit.rules.ExpectedException;
 import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -57,17 +59,37 @@ public class OrderServiceIT {
     private static final String TEST_CVC = "123";
 
     /**
-     * Test OrderCode
+     * Apm Name
      */
-    private static final String TEST_ORDER_CODE = "orderCode";
+    private static final String APM_NAME = "paypal";
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+    /**
+     * Success url
+     */
+    private static final String SUCCESS_URL = "http://www.wp.com/success";
+
+    /**
+     * Cancel url
+     */
+    private static final String CANCEL_URL = "http://www.wp.com/cancel";
+
+    /**
+     * Failure url
+     */
+    private static final String FAILURE_URL = "http://www.wp.com/failure";
+
+    /**
+     * Pending url
+     */
+    private static final String PENDING_URL = "http://www.wp.com/pending";
 
     /**
      * Service under test
      */
     private OrderService orderService;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setup() {
@@ -96,7 +118,6 @@ public class OrderServiceIT {
      * Test for creating 3DS order with valid token and 3DS information.
      */
     @Test
-    @Ignore
     public void shouldCreateOrderForValidTokenAndThreeDS() {
 
         OrderRequest orderRequest = createOrderRequestWithThreeDS();
@@ -131,7 +152,7 @@ public class OrderServiceIT {
     }
 
     /**
-     * This is test for testing 3DS order with invalid 3DS relevant information.
+     * This is the test for testing 3DS order with invalid 3DS relevant information.
      */
     @Test(expected = WorldpayException.class)
     public void shouldThrowExceptionIfThreeDSEnabledButInfoInvalid() {
@@ -144,6 +165,22 @@ public class OrderServiceIT {
         assertThat("Response code", response.getOrderCode(), is(notNullValue()));
         assertThat("Amount", response.getAmount(), is(1999));
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+    }
+
+    /**
+     * This is the test for testing alternate payment methods.
+     */
+    @Test
+    public void shouldCreateAlternatePaymentMethodOrderWithValidToken() {
+
+        OrderRequest orderRequest = createOrderRequestWithAPM();
+        orderRequest.setToken(createApmToken());
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
+        assertThat("Amount", response.getAmount(), is(1999));
+        assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+        assertThat("Redirect URL", response.getRedirectURL(), is(notNullValue()));
     }
 
     /**
@@ -322,6 +359,24 @@ public class OrderServiceIT {
     }
 
     /**
+     * Create an order request with an APM
+     *
+     * @return {@link OrderRequest}
+     */
+    private OrderRequest createOrderRequestWithAPM() {
+        OrderRequest orderRequest = createOrderRequest();
+
+        MerchantUrlConfig merchantUrlConfig = new MerchantUrlConfig();
+        merchantUrlConfig.setSuccessUrl(SUCCESS_URL);
+        merchantUrlConfig.setCancelUrl(CANCEL_URL);
+        merchantUrlConfig.setFailureUrl(FAILURE_URL);
+        merchantUrlConfig.setPendingUrl(PENDING_URL);
+        orderRequest.setMerchantUrlConfig(merchantUrlConfig);
+
+        return orderRequest;
+    }
+
+    /**
      * Create a test ThreeDSecureInfo
      *
      * @return the test ThreeDSecureInfo
@@ -360,14 +415,7 @@ public class OrderServiceIT {
         orderRequest.setCurrencyCode(CurrencyCode.GBP);
         orderRequest.setName("test name");
         orderRequest.setOrderDescription("test description");
-
-        Address address = new Address();
-        address.setAddress1("line 1");
-        address.setAddress2("line 2");
-        address.setCity("city");
-        address.setCountryCode(CountryCode.GB);
-        address.setPostalCode("AB1 2CD");
-        orderRequest.setBillingAddress(address);
+        orderRequest.setBillingAddress(createAddress());
 
         List<Entry> customerIdentifiers = new ArrayList<Entry>();
         Entry entry = new Entry("test key 1", "test value 1");
@@ -375,6 +423,17 @@ public class OrderServiceIT {
 
         orderRequest.setCustomerIdentifiers(customerIdentifiers);
         return orderRequest;
+    }
+
+    private Address createAddress(){
+        Address address = new Address();
+        address.setAddress1("line 1");
+        address.setAddress2("line 2");
+        address.setCity("city");
+        address.setCountryCode(CountryCode.GB);
+        address.setPostalCode("AB1 2CD");
+
+        return address;
     }
 
     /**
@@ -395,6 +454,40 @@ public class OrderServiceIT {
 
         tokenRequest.setPaymentMethod(cardRequest);
 
+        return getToken(tokenRequest);
+    }
+
+    /**
+     * Create a token for an alternate payment method.
+     *
+     * @return Alternate Payment Method Token
+     */
+    private String createApmToken() {
+        TokenRequest tokenRequest = new TokenRequest();
+        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
+
+        AlternatePaymentMethod alternatePaymentMethod = new AlternatePaymentMethod();
+        alternatePaymentMethod.setApmName(APM_NAME);
+        alternatePaymentMethod.setShopperCountryCode(CountryCode.GB);
+
+        Map<String, String> apmFields = new HashMap<String, String>();
+        apmFields.put("bankId", "some value");
+        apmFields.put("someOtherId", "some value");
+
+        alternatePaymentMethod.setApmFields(apmFields);
+
+        tokenRequest.setPaymentMethod(alternatePaymentMethod);
+        return getToken(tokenRequest);
+    }
+
+    /**
+     * Post request to fetch token.
+     *
+     * @param tokenRequest the request to get a token
+     *
+     * @return token value
+     */
+    private String getToken(TokenRequest tokenRequest) {
         final String json = JsonParser.toJson(tokenRequest);
 
         String fullUri = PropertyUtils.getProperty("tokenUrl");

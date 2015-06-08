@@ -15,6 +15,7 @@
 package com.worldpay.sdk;
 
 import com.worldpay.api.common.util.AssertUtils;
+import com.worldpay.gateway.clearwater.client.core.dto.request.CaptureOrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.OrderAuthorizationRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.OrderRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.request.RefundOrderRequest;
@@ -44,7 +45,17 @@ public class OrderService extends AbstractService {
     /**
      * URL for REFUND ORDER
      */
-    private static final String FIND_ORDER__URL = "/orders/%s";
+    private static final String FIND_ORDER_URL = "/orders/%s";
+
+    /**
+     * URL for CANCEL ORDER
+     */
+    private static final String CANCEL_ORDER_URL = "/orders/%s";
+
+    /**
+     * URL for CAPTURE ORDER
+     */
+    private static final String CAPTURE_URL = "/orders/%s/capture";
 
     /**
      * Constructor
@@ -80,10 +91,12 @@ public class OrderService extends AbstractService {
      * Find the order identified by order code.
      *
      * @param orderCode Order code
+     *
+     * @return {@link Transaction}
      */
     public Transaction findOrder(String orderCode) {
         AssertUtils.hasText(orderCode, "Order Code");
-        return http.get(String.format(FIND_ORDER__URL, orderCode), Transaction.class);
+        return http.get(String.format(FIND_ORDER_URL, orderCode), Transaction.class);
     }
 
     /**
@@ -91,11 +104,13 @@ public class OrderService extends AbstractService {
      *
      * @param orderCode                 The order to authorize
      * @param orderAuthorizationRequest The request details
+     *
+     * @return {@link OrderResponse}
      */
-    public void authorize3Ds(String orderCode, OrderAuthorizationRequest orderAuthorizationRequest) {
+    public OrderResponse authorize3Ds(String orderCode, OrderAuthorizationRequest orderAuthorizationRequest) {
 
         validateOrderAuthorizationRequest(orderAuthorizationRequest);
-        http.put(String.format(AUTHORIZE_3DS_URL, orderCode), orderAuthorizationRequest);
+        return http.put(String.format(AUTHORIZE_3DS_URL, orderCode), orderAuthorizationRequest, OrderResponse.class);
     }
 
     /**
@@ -107,6 +122,29 @@ public class OrderService extends AbstractService {
     public void refund(String orderCode, int amount) {
         AssertUtils.hasText(orderCode, "Order Code");
         http.post(String.format(REFUND_URL, orderCode), new RefundOrderRequest(amount));
+    }
+
+    /**
+     * Cancel the order identified by order code.
+     *
+     * @param orderCode Order code
+     */
+    public void cancel(String orderCode) {
+        AssertUtils.hasText(orderCode, "Order Code");
+        http.delete(String.format(CANCEL_ORDER_URL, orderCode), null);
+    }
+
+    /**
+     * Capture the authorized amount from the order identified by order code.
+     *
+     * @param captureOrderRequest {@link CaptureOrderRequest}
+     * @param orderCode           Order code
+     *
+     * @return {@link OrderResponse}
+     */
+    public OrderResponse capture(CaptureOrderRequest captureOrderRequest, String orderCode) {
+        AssertUtils.hasText(orderCode, "Order Code");
+        return http.post(String.format(CAPTURE_URL, orderCode), captureOrderRequest, OrderResponse.class);
     }
 
     /**

@@ -167,7 +167,7 @@ public class OrderServiceIT {
     }
 
     /**
-     * This is the test for testing Alternate Payment Methods such as PayPal.
+     * This is the test for testing alternate payment methods.
      */
     @Test
     public  void shouldCreateOrderForValidTokenAndAlternatePaymentMethod(){

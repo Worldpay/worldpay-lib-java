@@ -171,7 +171,7 @@ public class OrderServiceIT {
      * This is the test for testing alternate payment methods.
      */
     @Test
-    public  void shouldCreateOrderForValidTokenAndAlternatePaymentMethod(){
+    public void shouldCreateAlternatePaymentMethodOrderWithValidToken() {
 
         OrderRequest orderRequest = createOrderRequestWithAPM();
         orderRequest.setToken(createApmToken());

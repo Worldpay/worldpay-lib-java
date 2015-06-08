@@ -25,6 +25,7 @@ import com.worldpay.gateway.clearwater.client.core.dto.response.CardResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
 import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
+import com.worldpay.gateway.clearwater.client.ui.dto.order.Transaction;
 import com.worldpay.sdk.OrderService;
 import com.worldpay.sdk.WorldpayRestClient;
 import com.worldpay.sdk.util.HttpUrlConnection;
@@ -225,6 +226,122 @@ public class OrderServiceIT {
         }
     }
 
+    /**
+     * This is the test for creating the authorize only Order.
+     * This test expects create to return {@link OrderResponse} and order status should be AUTHORIZED.
+     */
+    @Test
+    public void shouldAuthorizeOnlyOrder() {
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.setToken(createToken());
+        orderRequest.setAuthorizeOnly(Boolean.TRUE);
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Order code", response.getOrderCode(), notNullValue());
+        assertThat("Amount", response.getAmount(), is(0));
+        assertThat("Order status", response.getPaymentStatus(), equalTo(OrderStatus.AUTHORIZED.toString()));
+    }
+
+    /**
+     * This is the test for cancelling the authorize only Order.
+     * This test expects create to return {@link OrderResponse} and order status should be CANCELLED.
+     */
+    @Test
+    public void shouldCancelAuthorizeOnlyOrder() {
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.setToken(createToken());
+        orderRequest.setAuthorizeOnly(Boolean.TRUE);
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Order code", response.getOrderCode(), notNullValue());
+        assertThat("Amount", response.getAmount(), is(0));
+        assertThat("Order status", response.getPaymentStatus(), equalTo(OrderStatus.AUTHORIZED.toString()));
+
+        orderService.cancel(response.getOrderCode());
+        Transaction authorizedResponse = orderService.findOrder(response.getOrderCode());
+        assertThat("Response", authorizedResponse, notNullValue());
+        assertThat("Order Response", authorizedResponse.getOrderResponse(), notNullValue());
+        assertThat("Status", authorizedResponse.getOrderResponse().getPaymentStatus(),
+                   equalTo(OrderStatus.CANCELLED.toString()));
+    }
+
+    /**
+     * This is the test for partial capture the authorize only Order.
+     * This test expects create to return {@link OrderResponse} and order status should be SUCCESS.
+     */
+    @Test
+    public void shouldPartialCaptureAuthorizeOnlyOrder() {
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.setToken(createToken());
+        orderRequest.setAuthorizeOnly(Boolean.TRUE);
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Order code", response.getOrderCode(), notNullValue());
+        assertThat("Order status", response.getPaymentStatus(), equalTo(OrderStatus.AUTHORIZED.toString()));
+        assertThat("Amount", response.getAmount(), is(0));
+        assertThat("Authorized amount", response.getAuthorizedAmount(), is(1999));
+
+        CaptureOrderRequest captureOrderRequest = new CaptureOrderRequest();
+        captureOrderRequest.setCaptureAmount(900);
+        orderService.capture(captureOrderRequest, response.getOrderCode());
+        Transaction authorizedResponse = orderService.findOrder(response.getOrderCode());
+        assertThat("Response", authorizedResponse, notNullValue());
+        assertThat("Order Response", authorizedResponse.getOrderResponse(), notNullValue());
+        assertThat("Status", authorizedResponse.getOrderResponse().getPaymentStatus(),
+                   equalTo(OrderStatus.SUCCESS.toString()));
+        assertThat("Amount", authorizedResponse.getOrderResponse().getAmount(), is(900));
+        assertThat("Authorized amount", authorizedResponse.getOrderResponse().getAuthorizedAmount(), is(1999));
+    }
+
+    /**
+     * This is the test for full capture the authorize only Order.
+     * This test expects create to return {@link OrderResponse} and order status should be SUCCESS.
+     */
+    @Test
+    public void shouldFullCaptureAuthorizeOnlyOrder() {
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.setToken(createToken());
+        orderRequest.setAuthorizeOnly(Boolean.TRUE);
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Order code", response.getOrderCode(), notNullValue());
+        assertThat("Order status", response.getPaymentStatus(), equalTo(OrderStatus.AUTHORIZED.toString()));
+        assertThat("Amount", response.getAmount(), is(0));
+        assertThat("Authorized amount", response.getAuthorizedAmount(), is(1999));
+
+        CaptureOrderRequest captureOrderRequest = new CaptureOrderRequest();
+        orderService.capture(captureOrderRequest, response.getOrderCode());
+        Transaction authorizedResponse = orderService.findOrder(response.getOrderCode());
+        assertThat("Response", authorizedResponse, notNullValue());
+        assertThat("Order Response", authorizedResponse.getOrderResponse(), notNullValue());
+        assertThat("Status", authorizedResponse.getOrderResponse().getPaymentStatus(),
+                   equalTo(OrderStatus.SUCCESS.toString()));
+        assertThat("Amount", authorizedResponse.getOrderResponse().getAmount(), is(1999));
+        assertThat("Authorized amount", authorizedResponse.getOrderResponse().getAuthorizedAmount(), is(1999));
+    }
+
+    /**
+     * This is the test for over capture the authorize only Order.
+     * This test expects API error.
+     */
+    @Test
+    public void shouldExcessCaptureAuthorizeOnlyOrder() {
+        expectedException.expect(WorldpayException.class);
+        expectedException.expectMessage("API error: Capture amount cannot be more than authorized order amount");
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.setToken(createToken());
+        orderRequest.setAuthorizeOnly(Boolean.TRUE);
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Order code", response.getOrderCode(), notNullValue());
+        assertThat("Order status", response.getPaymentStatus(), equalTo(OrderStatus.AUTHORIZED.toString()));
+        assertThat("Amount", response.getAmount(), is(0));
+        assertThat("Authorized amount", response.getAuthorizedAmount(), is(1999));
+
+        CaptureOrderRequest captureOrderRequest = new CaptureOrderRequest();
+        captureOrderRequest.setCaptureAmount(2000);
+        orderService.capture(captureOrderRequest, response.getOrderCode());
+    }
 
     /**
      * Create an order request with three DS enabled

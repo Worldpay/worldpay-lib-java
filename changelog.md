@@ -9,6 +9,7 @@ Worldpay REST API Java SDK
 * ``` com.worldpay.gateway.clearwater.client.core.dto.CountryCode ```
 * ``` com.worldpay.gateway.clearwater.client.core.dto.CurrencyCode ```
 
+####  DEPRECATED
 
 #### 0.1.7
 * Upgrade to use latest features of CW

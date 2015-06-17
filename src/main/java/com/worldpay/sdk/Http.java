@@ -19,8 +19,6 @@ import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
 import com.worldpay.sdk.util.HttpUrlConnection;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.WorldpayLibraryConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -34,11 +32,6 @@ import java.util.jar.Manifest;
  * Class to handle HTTP requests and responses.
  */
 class Http {
-
-    /**
-     * Property for logger component.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Http.class);
 
     private static final String systemProperties;
 
@@ -148,6 +141,17 @@ class Http {
     }
 
     /**
+     * Delete an existing resource using DELETE with no return.
+     *
+     * @param resourcePath the location of the resource e.g. /order/123
+     * @param request      the Object which needs to be serialised and sent as payload, may be null
+     */
+    public void delete(String resourcePath, Object request) {
+        HttpURLConnection putRequest = createRequest(RequestMethod.DELETE, resourcePath, request);
+        execute(putRequest);
+    }
+
+    /**
      * Convert object to string representation.
      *
      * @param request object to convert
@@ -228,7 +232,6 @@ class Http {
                     break;
             }
         } catch (IOException e) {
-            LOGGER.error("Problem with the connection", e);
             throw new WorldpayException(e.getMessage());
         }
         return httpURLConnection;
@@ -246,7 +249,6 @@ class Http {
             InputStream is = connection.getInputStream();
             return JsonParser.toObject(is, responseType);
         } catch (IOException e) {
-            LOGGER.error("Problem with the response", e);
             throw new WorldpayException(e.getMessage());
         }
     }

@@ -15,16 +15,12 @@
 package com.worldpay.sdk.util;
 
 import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class HttpUrlConnection {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpUrlConnection.class);
 
     public static HttpURLConnection getConnection(String fullUri) {
         HttpURLConnection httpURLConnection;
@@ -41,7 +37,6 @@ public class HttpUrlConnection {
             httpURLConnection
                 .setRequestProperty(WorldpayLibraryConstants.CONTENT_TYPE, WorldpayLibraryConstants.APPLICATION_JSON);
         } catch (IOException e) {
-            LOGGER.error("Problem with the connection", e);
             throw new WorldpayException(e.getMessage());
         }
         return httpURLConnection;

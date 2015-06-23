@@ -72,7 +72,7 @@ public final class WorldpayLibraryConstants {
 
     public static final String API_VERSION_PROP = "api.version=V1";
 
-    public static final String LANG_PROP = "Java";
+    public static final String LANG_PROP = "lang=Java";
 
     public static final String OWNER_PROP = "owner=Worldpay";
 

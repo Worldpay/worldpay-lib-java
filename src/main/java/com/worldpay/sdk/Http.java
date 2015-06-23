@@ -41,6 +41,7 @@ class Http {
                            + WorldpayLibraryConstants.OS_ARCH_PROP + WorldpayLibraryConstants.COMMA
                            + WorldpayLibraryConstants.LANG_VERSION_PROP + WorldpayLibraryConstants.COMMA
                            + WorldpayLibraryConstants.API_VERSION_PROP + WorldpayLibraryConstants.COMMA
+                           + WorldpayLibraryConstants.LANG_PROP + WorldpayLibraryConstants.COMMA
                            + WorldpayLibraryConstants.OWNER_PROP + WorldpayLibraryConstants.COMMA
                            + WorldpayLibraryConstants.JAVA_VENDOR_PROP + WorldpayLibraryConstants.COMMA
                            + WorldpayLibraryConstants.JVM_VENDOR_PROP + WorldpayLibraryConstants.EOF;

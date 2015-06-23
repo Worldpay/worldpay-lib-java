@@ -70,13 +70,15 @@ public final class WorldpayLibraryConstants {
     public static final String LANG_VERSION_PROP =
         "lang.version=" + System.getProperty("java.vm.specification.version");
 
+    public static final String API_VERSION_PROP = "api.version=V1";
+
+    public static final String LANG_PROP = "lang=Java";
+
+    public static final String OWNER_PROP = "owner=Worldpay";
+
     public static final String JAVA_VENDOR_PROP = "java.vendor=" + System.getProperty("java.vendor");
 
     public static final String JVM_VENDOR_PROP = "jvm.vendor=" + System.getProperty("java.vm.vendor");
-
-    public static final String API_VERSION_PROP = "api.version=V1";
-
-    public static final String OWNER_PROP = "owner=Worldpay";
 
     public static final String EOF = "\\u001a";
 }

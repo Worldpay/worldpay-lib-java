@@ -48,8 +48,8 @@ public class TokenServiceIT {
     @Test
     public void shouldGetValidToken() {
         TokenResponse responseToken = tokenService.get(PropertyUtils.getProperty("tokenId"));
-        assertThat(responseToken.getToken(), is(notNullValue()));
-        assertThat(responseToken.getPaymentMethod(), is(notNullValue()));
+        assertThat("Token Response", responseToken.getToken(), is(notNullValue()));
+        assertThat("Payment Method", responseToken.getPaymentMethod(), is(notNullValue()));
         assertThat("Contains the same token", PropertyUtils.getProperty("tokenId").equals(responseToken.getToken()));
     }
 

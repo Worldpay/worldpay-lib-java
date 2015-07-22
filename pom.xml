@@ -36,9 +36,9 @@
         <github.repository>worldpay-lib-java</github.repository>
         <git.dotGitDirectory>${project.basedir}/.git</git.dotGitDirectory>
 
-        <dep.worldpay-client-core.version>0.0.2</dep.worldpay-client-core.version>
-        <dep.worldpay-client-common.version>0.0.10</dep.worldpay-client-common.version>
-        <dep.worldpay-common-utils.version>0.0.10</dep.worldpay-common-utils.version>
+        <dep.worldpay-client-core.version>0.0.3</dep.worldpay-client-core.version>
+        <dep.worldpay-client-common.version>0.0.11</dep.worldpay-client-common.version>
+        <dep.worldpay-common-utils.version>0.0.11</dep.worldpay-common-utils.version>
     </properties>
 
     <scm>

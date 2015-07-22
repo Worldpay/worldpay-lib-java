@@ -18,6 +18,7 @@ import com.worldpay.api.client.common.enums.OrderStatus;
 import com.worldpay.gateway.clearwater.client.core.dto.CountryCode;
 import com.worldpay.gateway.clearwater.client.core.dto.CurrencyCode;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
+import com.worldpay.gateway.clearwater.client.core.dto.common.DeliveryAddress;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
 import com.worldpay.gateway.clearwater.client.core.dto.common.MerchantUrlConfig;
 import com.worldpay.gateway.clearwater.client.core.dto.request.*;
@@ -103,6 +104,15 @@ public class OrderServiceIT {
     public void shouldCreateOrderForValidToken() {
 
         OrderRequest orderRequest = createOrderRequest();
+        final DeliveryAddress deliveryAddress = new DeliveryAddress("first", "last");
+        deliveryAddress.setAddress1("address1");
+        deliveryAddress.setAddress2("address1");
+        deliveryAddress.setCity("London");
+        deliveryAddress.setPostalCode("EC4V3BJ");
+        deliveryAddress.setCountryCode(CountryCode.GB);
+        orderRequest.setDeliveryAddress(deliveryAddress);
+        final String emailAddress = "email@test.com";
+        orderRequest.setShopperEmailAddress(emailAddress);
         orderRequest.setToken(createToken());
 
         OrderResponse response = orderService.create(orderRequest);
@@ -112,6 +122,8 @@ public class OrderServiceIT {
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
         assertThat("Card Type", ((CardResponse) response.getPaymentResponse()).getCardType(),
                    equalTo("MASTERCARD_CREDIT"));
+        assertThat("Delivery address",response.getDeliveryAddress(), equalTo(deliveryAddress));
+        assertThat("shopper email", response.getShopperEmailAddress(), equalTo(emailAddress));
     }
 
     /**

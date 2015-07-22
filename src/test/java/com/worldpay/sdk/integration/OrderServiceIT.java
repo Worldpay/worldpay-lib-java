@@ -14,33 +14,37 @@
 
 package com.worldpay.sdk.integration;
 
+import com.worldpay.api.client.common.enums.OrderStatus;
 import com.worldpay.gateway.clearwater.client.core.dto.CountryCode;
 import com.worldpay.gateway.clearwater.client.core.dto.CurrencyCode;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
+import com.worldpay.gateway.clearwater.client.core.dto.common.MerchantUrlConfig;
 import com.worldpay.gateway.clearwater.client.core.dto.request.*;
 import com.worldpay.gateway.clearwater.client.core.dto.response.CardResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
 import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
+import com.worldpay.gateway.clearwater.client.ui.dto.order.Transaction;
 import com.worldpay.sdk.OrderService;
 import com.worldpay.sdk.WorldpayRestClient;
 import com.worldpay.sdk.util.HttpUrlConnection;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.PropertyUtils;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 public class OrderServiceIT {
 
@@ -55,15 +59,46 @@ public class OrderServiceIT {
     private static final String TEST_CVC = "123";
 
     /**
+     * Apm Name
+     */
+    private static final String APM_NAME = "paypal";
+
+    /**
+     * Success url
+     */
+    private static final String SUCCESS_URL = "http://www.wp.com/success";
+
+    /**
+     * Cancel url
+     */
+    private static final String CANCEL_URL = "http://www.wp.com/cancel";
+
+    /**
+     * Failure url
+     */
+    private static final String FAILURE_URL = "http://www.wp.com/failure";
+
+    /**
+     * Pending url
+     */
+    private static final String PENDING_URL = "http://www.wp.com/pending";
+
+    /**
      * Service under test
      */
     private OrderService orderService;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setup() {
         orderService = new WorldpayRestClient(PropertyUtils.serviceKey()).getOrderService();
     }
 
+    /**
+     * This test for creating an order with valid token
+     */
     @Test
     public void shouldCreateOrderForValidToken() {
 
@@ -75,11 +110,14 @@ public class OrderServiceIT {
         assertThat("Response code", response.getOrderCode(), is(notNullValue()));
         assertThat("Amount", response.getAmount(), is(1999));
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
-        assertThat("Card Type", ((CardResponse)response.getPaymentResponse()).getCardType(), equalTo("MASTERCARD_CREDIT"));
+        assertThat("Card Type", ((CardResponse) response.getPaymentResponse()).getCardType(),
+                   equalTo("MASTERCARD_CREDIT"));
     }
 
+    /**
+     * Test for creating 3DS order with valid token and 3DS information.
+     */
     @Test
-    @Ignore
     public void shouldCreateOrderForValidTokenAndThreeDS() {
 
         OrderRequest orderRequest = createOrderRequestWithThreeDS();
@@ -91,6 +129,31 @@ public class OrderServiceIT {
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
     }
 
+    /**
+     * This is the test for creating the 3D Order.
+     * This test expects authorize3Ds to return {@link OrderResponse} and order status should be Success.
+     */
+    @Test
+    public void shouldAuthorizeThreeDSOrder() {
+        OrderRequest orderRequest = createOrderRequestWithThreeDS();
+        orderRequest.setName("3D");
+        orderRequest.setToken(createToken());
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Order code", response.getOrderCode(), notNullValue());
+        assertThat("Order Status", response.getPaymentStatus(), equalTo(OrderStatus.PRE_AUTHORIZED.toString()));
+
+        OrderAuthorizationRequest orderAuthorizationRequest =
+            createOrderAuthorizationRequest(orderRequest.getThreeDSecureInfo(), "IDENTIFIED");
+        OrderResponse authorizeRespone = orderService.authorize3Ds(response.getOrderCode(), orderAuthorizationRequest);
+        assertThat("Response", authorizeRespone, notNullValue());
+        assertThat("Order code", authorizeRespone.getOrderCode(), equalTo(response.getOrderCode()));
+        assertThat("Order Status", authorizeRespone.getPaymentStatus(), equalTo(OrderStatus.SUCCESS.toString()));
+    }
+
+    /**
+     * This is the test for testing 3DS order with invalid 3DS relevant information.
+     */
     @Test(expected = WorldpayException.class)
     public void shouldThrowExceptionIfThreeDSEnabledButInfoInvalid() {
 
@@ -104,6 +167,25 @@ public class OrderServiceIT {
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
     }
 
+    /**
+     * This is the test for testing alternate payment methods.
+     */
+    @Test
+    public void shouldCreateAlternatePaymentMethodOrderWithValidToken() {
+
+        OrderRequest orderRequest = createOrderRequestWithAPM();
+        orderRequest.setToken(createApmToken());
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
+        assertThat("Amount", response.getAmount(), is(1999));
+        assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+        assertThat("Redirect URL", response.getRedirectURL(), is(notNullValue()));
+    }
+
+    /**
+     * This is the test for full refund an order
+     */
     @Test
     public void shouldRefundOrder() {
         OrderRequest orderRequest = createOrderRequest();
@@ -115,6 +197,9 @@ public class OrderServiceIT {
         orderService.refund(orderCode);
     }
 
+    /**
+     * This is the test for partial refund an order
+     */
     @Test
     public void shouldPartialRefundOrder() {
         OrderRequest orderRequest = createOrderRequest();
@@ -126,6 +211,10 @@ public class OrderServiceIT {
         orderService.refund(orderCode, 1);
     }
 
+    /**
+     * This is the test for creating an order with invalid token.
+     * Expects API error
+     */
     @Test
     public void shouldThrowExceptionForInvalidToken() {
         OrderRequest orderRequest = createOrderRequest();
@@ -137,6 +226,122 @@ public class OrderServiceIT {
         }
     }
 
+    /**
+     * This is the test for creating the authorize only Order.
+     * This test expects create to return {@link OrderResponse} and order status should be AUTHORIZED.
+     */
+    @Test
+    public void shouldAuthorizeOnlyOrder() {
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.setToken(createToken());
+        orderRequest.setAuthorizeOnly(Boolean.TRUE);
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Order code", response.getOrderCode(), notNullValue());
+        assertThat("Amount", response.getAmount(), is(0));
+        assertThat("Order status", response.getPaymentStatus(), equalTo(OrderStatus.AUTHORIZED.toString()));
+    }
+
+    /**
+     * This is the test for cancelling the authorize only Order.
+     * This test expects create to return {@link OrderResponse} and order status should be CANCELLED.
+     */
+    @Test
+    public void shouldCancelAuthorizeOnlyOrder() {
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.setToken(createToken());
+        orderRequest.setAuthorizeOnly(Boolean.TRUE);
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Order code", response.getOrderCode(), notNullValue());
+        assertThat("Amount", response.getAmount(), is(0));
+        assertThat("Order status", response.getPaymentStatus(), equalTo(OrderStatus.AUTHORIZED.toString()));
+
+        orderService.cancel(response.getOrderCode());
+        Transaction authorizedResponse = orderService.findOrder(response.getOrderCode());
+        assertThat("Response", authorizedResponse, notNullValue());
+        assertThat("Order Response", authorizedResponse.getOrderResponse(), notNullValue());
+        assertThat("Status", authorizedResponse.getOrderResponse().getPaymentStatus(),
+                   equalTo(OrderStatus.CANCELLED.toString()));
+    }
+
+    /**
+     * This is the test for partial capture the authorize only Order.
+     * This test expects create to return {@link OrderResponse} and order status should be SUCCESS.
+     */
+    @Test
+    public void shouldPartialCaptureAuthorizeOnlyOrder() {
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.setToken(createToken());
+        orderRequest.setAuthorizeOnly(Boolean.TRUE);
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Order code", response.getOrderCode(), notNullValue());
+        assertThat("Order status", response.getPaymentStatus(), equalTo(OrderStatus.AUTHORIZED.toString()));
+        assertThat("Amount", response.getAmount(), is(0));
+        assertThat("Authorized amount", response.getAuthorizedAmount(), is(1999));
+
+        CaptureOrderRequest captureOrderRequest = new CaptureOrderRequest();
+        captureOrderRequest.setCaptureAmount(900);
+        orderService.capture(captureOrderRequest, response.getOrderCode());
+        Transaction authorizedResponse = orderService.findOrder(response.getOrderCode());
+        assertThat("Response", authorizedResponse, notNullValue());
+        assertThat("Order Response", authorizedResponse.getOrderResponse(), notNullValue());
+        assertThat("Status", authorizedResponse.getOrderResponse().getPaymentStatus(),
+                   equalTo(OrderStatus.SUCCESS.toString()));
+        assertThat("Amount", authorizedResponse.getOrderResponse().getAmount(), is(900));
+        assertThat("Authorized amount", authorizedResponse.getOrderResponse().getAuthorizedAmount(), is(1999));
+    }
+
+    /**
+     * This is the test for full capture the authorize only Order.
+     * This test expects create to return {@link OrderResponse} and order status should be SUCCESS.
+     */
+    @Test
+    public void shouldFullCaptureAuthorizeOnlyOrder() {
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.setToken(createToken());
+        orderRequest.setAuthorizeOnly(Boolean.TRUE);
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Order code", response.getOrderCode(), notNullValue());
+        assertThat("Order status", response.getPaymentStatus(), equalTo(OrderStatus.AUTHORIZED.toString()));
+        assertThat("Amount", response.getAmount(), is(0));
+        assertThat("Authorized amount", response.getAuthorizedAmount(), is(1999));
+
+        CaptureOrderRequest captureOrderRequest = new CaptureOrderRequest();
+        orderService.capture(captureOrderRequest, response.getOrderCode());
+        Transaction authorizedResponse = orderService.findOrder(response.getOrderCode());
+        assertThat("Response", authorizedResponse, notNullValue());
+        assertThat("Order Response", authorizedResponse.getOrderResponse(), notNullValue());
+        assertThat("Status", authorizedResponse.getOrderResponse().getPaymentStatus(),
+                   equalTo(OrderStatus.SUCCESS.toString()));
+        assertThat("Amount", authorizedResponse.getOrderResponse().getAmount(), is(1999));
+        assertThat("Authorized amount", authorizedResponse.getOrderResponse().getAuthorizedAmount(), is(1999));
+    }
+
+    /**
+     * This is the test for over capture the authorize only Order.
+     * This test expects API error.
+     */
+    @Test
+    public void shouldExcessCaptureAuthorizeOnlyOrder() {
+        expectedException.expect(WorldpayException.class);
+        expectedException.expectMessage("API error: Capture amount cannot be more than authorized order amount");
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.setToken(createToken());
+        orderRequest.setAuthorizeOnly(Boolean.TRUE);
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Order code", response.getOrderCode(), notNullValue());
+        assertThat("Order status", response.getPaymentStatus(), equalTo(OrderStatus.AUTHORIZED.toString()));
+        assertThat("Amount", response.getAmount(), is(0));
+        assertThat("Authorized amount", response.getAuthorizedAmount(), is(1999));
+
+        CaptureOrderRequest captureOrderRequest = new CaptureOrderRequest();
+        captureOrderRequest.setCaptureAmount(2000);
+        orderService.capture(captureOrderRequest, response.getOrderCode());
+    }
 
     /**
      * Create an order request with three DS enabled
@@ -149,6 +354,24 @@ public class OrderServiceIT {
 
         ThreeDSecureInfo threeDSecureInfo = createThreeDsSecureInfo();
         orderRequest.setThreeDSecureInfo(threeDSecureInfo);
+
+        return orderRequest;
+    }
+
+    /**
+     * Create an order request with an APM
+     *
+     * @return {@link OrderRequest}
+     */
+    private OrderRequest createOrderRequestWithAPM() {
+        OrderRequest orderRequest = createOrderRequest();
+
+        MerchantUrlConfig merchantUrlConfig = new MerchantUrlConfig();
+        merchantUrlConfig.setSuccessUrl(SUCCESS_URL);
+        merchantUrlConfig.setCancelUrl(CANCEL_URL);
+        merchantUrlConfig.setFailureUrl(FAILURE_URL);
+        merchantUrlConfig.setPendingUrl(PENDING_URL);
+        orderRequest.setMerchantUrlConfig(merchantUrlConfig);
 
         return orderRequest;
     }
@@ -192,14 +415,7 @@ public class OrderServiceIT {
         orderRequest.setCurrencyCode(CurrencyCode.GBP);
         orderRequest.setName("test name");
         orderRequest.setOrderDescription("test description");
-
-        Address address = new Address();
-        address.setAddress1("line 1");
-        address.setAddress2("line 2");
-        address.setCity("city");
-        address.setCountryCode(CountryCode.GB);
-        address.setPostalCode("AB1 2CD");
-        orderRequest.setBillingAddress(address);
+        orderRequest.setBillingAddress(createAddress());
 
         List<Entry> customerIdentifiers = new ArrayList<Entry>();
         Entry entry = new Entry("test key 1", "test value 1");
@@ -209,6 +425,22 @@ public class OrderServiceIT {
         return orderRequest;
     }
 
+    private Address createAddress(){
+        Address address = new Address();
+        address.setAddress1("line 1");
+        address.setAddress2("line 2");
+        address.setCity("city");
+        address.setCountryCode(CountryCode.GB);
+        address.setPostalCode("AB1 2CD");
+
+        return address;
+    }
+
+    /**
+     * Create a token
+     *
+     * @return token
+     */
     private String createToken() {
         TokenRequest tokenRequest = new TokenRequest();
         tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
@@ -222,6 +454,40 @@ public class OrderServiceIT {
 
         tokenRequest.setPaymentMethod(cardRequest);
 
+        return getToken(tokenRequest);
+    }
+
+    /**
+     * Create a token for an alternate payment method.
+     *
+     * @return Alternate Payment Method Token
+     */
+    private String createApmToken() {
+        TokenRequest tokenRequest = new TokenRequest();
+        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
+
+        AlternatePaymentMethod alternatePaymentMethod = new AlternatePaymentMethod();
+        alternatePaymentMethod.setApmName(APM_NAME);
+        alternatePaymentMethod.setShopperCountryCode(CountryCode.GB);
+
+        Map<String, String> apmFields = new HashMap<String, String>();
+        apmFields.put("bankId", "some value");
+        apmFields.put("someOtherId", "some value");
+
+        alternatePaymentMethod.setApmFields(apmFields);
+
+        tokenRequest.setPaymentMethod(alternatePaymentMethod);
+        return getToken(tokenRequest);
+    }
+
+    /**
+     * Post request to fetch token.
+     *
+     * @param tokenRequest the request to get a token
+     *
+     * @return token value
+     */
+    private String getToken(TokenRequest tokenRequest) {
         final String json = JsonParser.toJson(tokenRequest);
 
         String fullUri = PropertyUtils.getProperty("tokenUrl");

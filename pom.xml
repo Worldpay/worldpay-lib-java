@@ -18,7 +18,7 @@
     <parent>
         <groupId>com.worldpay.api.root</groupId>
         <artifactId>worldpay-root</artifactId>
-        <version>0.0.6</version>
+        <version>0.0.5</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -36,9 +36,9 @@
         <github.repository>worldpay-lib-java</github.repository>
         <git.dotGitDirectory>${project.basedir}/.git</git.dotGitDirectory>
 
-        <dep.worldpay-client-core.version>0.0.1</dep.worldpay-client-core.version>
-        <dep.worldpay-client-common.version>0.0.7</dep.worldpay-client-common.version>
-        <dep.worldpay-common-utils.version>0.0.10</dep.worldpay-common-utils.version>
+        <dep.worldpay-client-core.version>0.0.3</dep.worldpay-client-core.version>
+        <dep.worldpay-client-common.version>0.0.11</dep.worldpay-client-common.version>
+        <dep.worldpay-common-utils.version>0.0.11</dep.worldpay-common-utils.version>
     </properties>
 
     <scm>
@@ -59,6 +59,18 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-beans</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>log4j-over-slf4j</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -73,6 +85,7 @@
             <artifactId>worldpay-common-utils</artifactId>
             <version>${dep.worldpay-common-utils.version}</version>
         </dependency>
+
     </dependencies>
     <build>
         <plugins>

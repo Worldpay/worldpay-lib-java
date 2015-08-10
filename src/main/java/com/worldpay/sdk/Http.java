@@ -28,6 +28,8 @@ import java.net.URL;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import static com.worldpay.sdk.util.WorldpayLibraryConstants.*;
+
 /**
  * Class to handle HTTP requests and responses.
  */
@@ -36,15 +38,16 @@ class Http {
     private static final String systemProperties;
 
     static {
-        systemProperties = WorldpayLibraryConstants.OS_NAME_PROP + WorldpayLibraryConstants.COMMA
-                           + WorldpayLibraryConstants.OS_VERSION_PROP + WorldpayLibraryConstants.COMMA
-                           + WorldpayLibraryConstants.OS_ARCH_PROP + WorldpayLibraryConstants.COMMA
-                           + WorldpayLibraryConstants.LANG_VERSION_PROP + WorldpayLibraryConstants.COMMA
-                           + WorldpayLibraryConstants.API_VERSION_PROP + WorldpayLibraryConstants.COMMA
-                           + WorldpayLibraryConstants.LANG_PROP + WorldpayLibraryConstants.COMMA
-                           + WorldpayLibraryConstants.OWNER_PROP + WorldpayLibraryConstants.COMMA
-                           + WorldpayLibraryConstants.JAVA_VENDOR_PROP + WorldpayLibraryConstants.COMMA
-                           + WorldpayLibraryConstants.JVM_VENDOR_PROP + WorldpayLibraryConstants.EOF;
+        systemProperties = OS_NAME_PROP + COMMA +
+                           OS_VERSION_PROP + COMMA +
+                           OS_ARCH_PROP + COMMA +
+                           LANG_VERSION_PROP + COMMA +
+                           API_VERSION_PROP + COMMA +
+                           LANG_PROP + COMMA +
+                           OWNER_PROP + COMMA +
+                           JAVA_VENDOR_PROP + COMMA +
+                           JVM_VENDOR_PROP + COMMA +
+                           BUILD;
     }
 
     /**
@@ -204,32 +207,31 @@ class Http {
         String fullUri = baseUri + uri;
         HttpURLConnection httpURLConnection = HttpUrlConnection.getConnection(fullUri);
         try {
-            httpURLConnection.setRequestProperty(WorldpayLibraryConstants.AUTHORIZATION, serviceKey);
-            final String propertiesWithVersion =
-                systemProperties.concat(WorldpayLibraryConstants.COMMA).concat(getVersion());
-            httpURLConnection.setRequestProperty(WorldpayLibraryConstants.WP_CLIENT_USER_AGENT, propertiesWithVersion);
+            httpURLConnection.setRequestProperty(AUTHORIZATION, serviceKey);
+            final String propertiesWithVersion = systemProperties.concat(getVersion());
+            httpURLConnection.setRequestProperty(WP_CLIENT_USER_AGENT, propertiesWithVersion);
 
             DataOutputStream dataOutputStream;
             switch (method) {
                 case GET:
-                    httpURLConnection.setRequestMethod(WorldpayLibraryConstants.GET);
+                    httpURLConnection.setRequestMethod(GET);
                     break;
                 case POST:
-                    httpURLConnection.setRequestMethod(WorldpayLibraryConstants.POST);
+                    httpURLConnection.setRequestMethod(POST);
                     dataOutputStream = new DataOutputStream(httpURLConnection.getOutputStream());
                     if (request != null) {
                         dataOutputStream.writeBytes(toJson(request));
                     }
                     break;
                 case PUT:
-                    httpURLConnection.setRequestMethod(WorldpayLibraryConstants.PUT);
+                    httpURLConnection.setRequestMethod(PUT);
                     dataOutputStream = new DataOutputStream(httpURLConnection.getOutputStream());
                     if (request != null) {
                         dataOutputStream.writeBytes(toJson(request));
                     }
                     break;
                 case DELETE:
-                    httpURLConnection.setRequestMethod(WorldpayLibraryConstants.DELETE);
+                    httpURLConnection.setRequestMethod(DELETE);
                     break;
             }
         } catch (IOException e) {
@@ -261,7 +263,7 @@ class Http {
      * @throws WorldpayException if an erroneous response is detected
      */
     private void errorHandler(HttpURLConnection connection) throws IOException {
-        if (connection.getResponseCode() >= WorldpayLibraryConstants.HTTP_ERROR_CODE_300) {
+        if (connection.getResponseCode() >= HTTP_ERROR_CODE_300) {
             InputStream is = connection.getErrorStream();
             ApiError error = JsonParser.toObject(is, ApiError.class);
             throw new WorldpayException(error, "API error: " + error.getMessage());

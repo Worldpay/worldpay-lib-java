@@ -130,6 +130,23 @@ public class OrderServiceIT {
     }
 
     /**
+     * Test for creating order with given site code for order routing.
+     */
+    @Test
+    public void shouldCreateOrderWithSiteCode() {
+        final String siteCode = "RC_GBP_ECOM";
+        orderService = new WorldpayRestClient(PropertyUtils.getProperty("serviceKey_cLevel")).getOrderService();
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.setToken(createToken(PropertyUtils.getProperty("clientKey_cLevel")));
+        orderRequest.setSiteCode(siteCode);
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Response", response, is(notNullValue()));
+        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
+        assertThat("Site code", response.getSiteCode(), equalTo(siteCode));
+    }
+
+    /**
      * This is the test for creating the 3D Order.
      * This test expects authorize3Ds to return {@link OrderResponse} and order status should be Success.
      */
@@ -442,8 +459,19 @@ public class OrderServiceIT {
      * @return token
      */
     private String createToken() {
+        return createToken(PropertyUtils.getProperty("clientKey"));
+    }
+
+    /**
+     * Create a token with given client key.
+     *
+     * @param clientKey the client key
+     *
+     * @return token string
+     */
+    private String createToken(String clientKey) {
         TokenRequest tokenRequest = new TokenRequest();
-        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
+        tokenRequest.setClientKey(clientKey);
 
         CardRequest cardRequest = new CardRequest();
         cardRequest.setCardNumber(TEST_MASTERCARD_NUMBER);

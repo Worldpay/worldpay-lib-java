@@ -84,6 +84,16 @@ public class OrderServiceIT {
     private static final String PENDING_URL = "http://www.wp.com/pending";
 
     /**
+     * Property name for a service key which can be used for order site routing
+     */
+    private static final String PROPERTY_SERVICE_KEY_SITE = "serviceKey_site";
+
+    /**
+     * Property name for a client key which can be use for order site routing
+     */
+    private static final String PROPERTY_CLIENT_KEY_SITE = "clientKey_site";
+
+    /**
      * Service under test
      */
     private OrderService orderService;
@@ -134,10 +144,10 @@ public class OrderServiceIT {
      */
     @Test
     public void shouldCreateOrderWithSiteCode() {
-        final String siteCode = "RC_GBP_ECOM";
-        orderService = new WorldpayRestClient(PropertyUtils.getProperty("serviceKey_cLevel")).getOrderService();
+        final String siteCode = "NEW";
+        orderService = new WorldpayRestClient(PropertyUtils.getProperty(PROPERTY_SERVICE_KEY_SITE)).getOrderService();
         OrderRequest orderRequest = createOrderRequest();
-        orderRequest.setToken(createToken(PropertyUtils.getProperty("clientKey_cLevel")));
+        orderRequest.setToken(createToken(PropertyUtils.getProperty(PROPERTY_CLIENT_KEY_SITE)));
         orderRequest.setSiteCode(siteCode);
 
         OrderResponse response = orderService.create(orderRequest);

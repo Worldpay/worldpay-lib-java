@@ -149,11 +149,12 @@ public class OrderServiceIT {
         OrderRequest orderRequest = createOrderRequest();
         orderRequest.setToken(createToken(PropertyUtils.getProperty(PROPERTY_CLIENT_KEY_SITE)));
         orderRequest.setSiteCode(siteCode);
+        orderRequest.setSettlementCurrency(CurrencyCode.USD);
 
         OrderResponse response = orderService.create(orderRequest);
         assertThat("Response", response, is(notNullValue()));
         assertThat("Response code", response.getOrderCode(), is(notNullValue()));
-        assertThat("Site code", response.getSiteCode(), equalTo(siteCode));
+        assertThat("Settlement currency", response.getSettlementCurrency(), equalTo(CurrencyCode.USD));
     }
 
     /**

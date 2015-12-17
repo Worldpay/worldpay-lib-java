@@ -85,6 +85,16 @@ public class OrderServiceIT {
     private static final String PENDING_URL = "http://www.wp.com/pending";
 
     /**
+     * Property name for a service key which can be used for order site routing
+     */
+    private static final String PROPERTY_SERVICE_KEY_SITE = "serviceKey_site";
+
+    /**
+     * Property name for a client key which can be use for order site routing
+     */
+    private static final String PROPERTY_CLIENT_KEY_SITE = "clientKey_site";
+
+    /**
      * Service under test
      */
     private OrderService orderService;
@@ -139,6 +149,24 @@ public class OrderServiceIT {
         assertThat("Response code", response.getOrderCode(), is(notNullValue()));
         assertThat("Amount", response.getAmount(), is(1999));
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+    }
+
+    /**
+     * Test for creating order with given site code for order routing.
+     */
+    @Test
+    public void shouldCreateOrderWithSiteCode() {
+        final String siteCode = "NEW";
+        orderService = new WorldpayRestClient(PropertyUtils.getProperty(PROPERTY_SERVICE_KEY_SITE)).getOrderService();
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.setToken(createToken(PropertyUtils.getProperty(PROPERTY_CLIENT_KEY_SITE)));
+        orderRequest.setSiteCode(siteCode);
+        orderRequest.setSettlementCurrency(CurrencyCode.USD);
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Response", response, is(notNullValue()));
+        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
+        assertThat("Settlement currency", response.getSettlementCurrency(), equalTo(CurrencyCode.USD));
     }
 
     /**
@@ -454,8 +482,19 @@ public class OrderServiceIT {
      * @return token
      */
     private String createToken() {
+        return createToken(PropertyUtils.getProperty("clientKey"));
+    }
+
+    /**
+     * Create a token with given client key.
+     *
+     * @param clientKey the client key
+     *
+     * @return token string
+     */
+    private String createToken(String clientKey) {
         TokenRequest tokenRequest = new TokenRequest();
-        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
+        tokenRequest.setClientKey(clientKey);
 
         CardRequest cardRequest = new CardRequest();
         cardRequest.setCardNumber(TEST_MASTERCARD_NUMBER);

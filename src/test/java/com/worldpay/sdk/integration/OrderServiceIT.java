@@ -493,8 +493,6 @@ public class OrderServiceIT {
      * @return token string
      */
     private String createToken(String clientKey) {
-        TokenRequest tokenRequest = new TokenRequest();
-        tokenRequest.setClientKey(clientKey);
 
         CardRequest cardRequest = new CardRequest();
         cardRequest.setCardNumber(TEST_MASTERCARD_NUMBER);
@@ -503,7 +501,8 @@ public class OrderServiceIT {
         cardRequest.setExpiryMonth(2);
         cardRequest.setExpiryYear(2018);
 
-        tokenRequest.setPaymentMethod(cardRequest);
+        TokenRequest tokenRequest = new TokenRequest(cardRequest, false);
+        tokenRequest.setClientKey(clientKey);
 
         return getToken(tokenRequest);
     }
@@ -514,8 +513,6 @@ public class OrderServiceIT {
      * @return Alternate Payment Method Token
      */
     private String createApmToken() {
-        TokenRequest tokenRequest = new TokenRequest();
-        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
 
         AlternatePaymentMethod alternatePaymentMethod = new AlternatePaymentMethod();
         alternatePaymentMethod.setApmName(APM_NAME);
@@ -526,8 +523,9 @@ public class OrderServiceIT {
         apmFields.put("someOtherId", "some value");
 
         alternatePaymentMethod.setApmFields(apmFields);
+        TokenRequest tokenRequest = new TokenRequest(alternatePaymentMethod, false);
+        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
 
-        tokenRequest.setPaymentMethod(alternatePaymentMethod);
         return getToken(tokenRequest);
     }
 

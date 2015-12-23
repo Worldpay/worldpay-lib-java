@@ -18,6 +18,7 @@ import com.worldpay.api.client.common.enums.OrderStatus;
 import com.worldpay.gateway.clearwater.client.core.dto.CountryCode;
 import com.worldpay.gateway.clearwater.client.core.dto.CurrencyCode;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
+import com.worldpay.gateway.clearwater.client.core.dto.common.DeliveryAddress;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
 import com.worldpay.gateway.clearwater.client.core.dto.common.MerchantUrlConfig;
 import com.worldpay.gateway.clearwater.client.core.dto.request.*;
@@ -113,6 +114,15 @@ public class OrderServiceIT {
     public void shouldCreateOrderForValidToken() {
 
         OrderRequest orderRequest = createOrderRequest();
+        final DeliveryAddress deliveryAddress = new DeliveryAddress("first", "last");
+        deliveryAddress.setAddress1("address1");
+        deliveryAddress.setAddress2("address1");
+        deliveryAddress.setCity("London");
+        deliveryAddress.setPostalCode("EC4V3BJ");
+        deliveryAddress.setCountryCode(CountryCode.GB);
+        orderRequest.setDeliveryAddress(deliveryAddress);
+        final String emailAddress = "email@test.com";
+        orderRequest.setShopperEmailAddress(emailAddress);
         orderRequest.setToken(createToken());
 
         OrderResponse response = orderService.create(orderRequest);
@@ -122,6 +132,8 @@ public class OrderServiceIT {
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
         assertThat("Card Type", ((CardResponse) response.getPaymentResponse()).getCardType(),
                    equalTo("MASTERCARD_CREDIT"));
+        assertThat("Delivery address",response.getDeliveryAddress(), equalTo(deliveryAddress));
+        assertThat("shopper email", response.getShopperEmailAddress(), equalTo(emailAddress));
     }
 
     /**
@@ -481,8 +493,6 @@ public class OrderServiceIT {
      * @return token string
      */
     private String createToken(String clientKey) {
-        TokenRequest tokenRequest = new TokenRequest();
-        tokenRequest.setClientKey(clientKey);
 
         CardRequest cardRequest = new CardRequest();
         cardRequest.setCardNumber(TEST_MASTERCARD_NUMBER);
@@ -491,7 +501,8 @@ public class OrderServiceIT {
         cardRequest.setExpiryMonth(2);
         cardRequest.setExpiryYear(2018);
 
-        tokenRequest.setPaymentMethod(cardRequest);
+        TokenRequest tokenRequest = new TokenRequest(cardRequest, false);
+        tokenRequest.setClientKey(clientKey);
 
         return getToken(tokenRequest);
     }
@@ -502,8 +513,6 @@ public class OrderServiceIT {
      * @return Alternate Payment Method Token
      */
     private String createApmToken() {
-        TokenRequest tokenRequest = new TokenRequest();
-        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
 
         AlternatePaymentMethod alternatePaymentMethod = new AlternatePaymentMethod();
         alternatePaymentMethod.setApmName(APM_NAME);
@@ -514,8 +523,9 @@ public class OrderServiceIT {
         apmFields.put("someOtherId", "some value");
 
         alternatePaymentMethod.setApmFields(apmFields);
+        TokenRequest tokenRequest = new TokenRequest(alternatePaymentMethod, false);
+        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
 
-        tokenRequest.setPaymentMethod(alternatePaymentMethod);
         return getToken(tokenRequest);
     }
 

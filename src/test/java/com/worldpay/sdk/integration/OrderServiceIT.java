@@ -18,6 +18,7 @@ import com.worldpay.api.client.common.enums.OrderStatus;
 import com.worldpay.gateway.clearwater.client.core.dto.CountryCode;
 import com.worldpay.gateway.clearwater.client.core.dto.CurrencyCode;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
+import com.worldpay.gateway.clearwater.client.core.dto.common.DeliveryAddress;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
 import com.worldpay.gateway.clearwater.client.core.dto.common.MerchantUrlConfig;
 import com.worldpay.gateway.clearwater.client.core.dto.request.*;
@@ -84,6 +85,16 @@ public class OrderServiceIT {
     private static final String PENDING_URL = "http://www.wp.com/pending";
 
     /**
+     * Property name for a service key which can be used for order site routing
+     */
+    private static final String PROPERTY_SERVICE_KEY_SITE = "serviceKey_site";
+
+    /**
+     * Property name for a client key which can be use for order site routing
+     */
+    private static final String PROPERTY_CLIENT_KEY_SITE = "clientKey_site";
+
+    /**
      * Service under test
      */
     private OrderService orderService;
@@ -103,6 +114,15 @@ public class OrderServiceIT {
     public void shouldCreateOrderForValidToken() {
 
         OrderRequest orderRequest = createOrderRequest();
+        final DeliveryAddress deliveryAddress = new DeliveryAddress("first", "last");
+        deliveryAddress.setAddress1("address1");
+        deliveryAddress.setAddress2("address1");
+        deliveryAddress.setCity("London");
+        deliveryAddress.setPostalCode("EC4V3BJ");
+        deliveryAddress.setCountryCode(CountryCode.GB);
+        orderRequest.setDeliveryAddress(deliveryAddress);
+        final String emailAddress = "email@test.com";
+        orderRequest.setShopperEmailAddress(emailAddress);
         orderRequest.setToken(createToken());
 
         OrderResponse response = orderService.create(orderRequest);
@@ -112,6 +132,8 @@ public class OrderServiceIT {
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
         assertThat("Card Type", ((CardResponse) response.getPaymentResponse()).getCardType(),
                    equalTo("MASTERCARD_CREDIT"));
+        assertThat("Delivery address",response.getDeliveryAddress(), equalTo(deliveryAddress));
+        assertThat("shopper email", response.getShopperEmailAddress(), equalTo(emailAddress));
     }
 
     /**
@@ -127,6 +149,24 @@ public class OrderServiceIT {
         assertThat("Response code", response.getOrderCode(), is(notNullValue()));
         assertThat("Amount", response.getAmount(), is(1999));
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+    }
+
+    /**
+     * Test for creating order with given site code for order routing.
+     */
+    @Test
+    public void shouldCreateOrderWithSiteCode() {
+        final String siteCode = "NEW";
+        orderService = new WorldpayRestClient(PropertyUtils.getProperty(PROPERTY_SERVICE_KEY_SITE)).getOrderService();
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.setToken(createToken(PropertyUtils.getProperty(PROPERTY_CLIENT_KEY_SITE)));
+        orderRequest.setSiteCode(siteCode);
+        orderRequest.setSettlementCurrency(CurrencyCode.USD);
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Response", response, is(notNullValue()));
+        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
+        assertThat("Settlement currency", response.getSettlementCurrency(), equalTo(CurrencyCode.USD));
     }
 
     /**
@@ -442,8 +482,17 @@ public class OrderServiceIT {
      * @return token
      */
     private String createToken() {
-        TokenRequest tokenRequest = new TokenRequest();
-        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
+        return createToken(PropertyUtils.getProperty("clientKey"));
+    }
+
+    /**
+     * Create a token with given client key.
+     *
+     * @param clientKey the client key
+     *
+     * @return token string
+     */
+    private String createToken(String clientKey) {
 
         CardRequest cardRequest = new CardRequest();
         cardRequest.setCardNumber(TEST_MASTERCARD_NUMBER);
@@ -452,7 +501,8 @@ public class OrderServiceIT {
         cardRequest.setExpiryMonth(2);
         cardRequest.setExpiryYear(2018);
 
-        tokenRequest.setPaymentMethod(cardRequest);
+        TokenRequest tokenRequest = new TokenRequest(cardRequest, false);
+        tokenRequest.setClientKey(clientKey);
 
         return getToken(tokenRequest);
     }
@@ -463,8 +513,6 @@ public class OrderServiceIT {
      * @return Alternate Payment Method Token
      */
     private String createApmToken() {
-        TokenRequest tokenRequest = new TokenRequest();
-        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
 
         AlternatePaymentMethod alternatePaymentMethod = new AlternatePaymentMethod();
         alternatePaymentMethod.setApmName(APM_NAME);
@@ -475,8 +523,9 @@ public class OrderServiceIT {
         apmFields.put("someOtherId", "some value");
 
         alternatePaymentMethod.setApmFields(apmFields);
+        TokenRequest tokenRequest = new TokenRequest(alternatePaymentMethod, false);
+        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
 
-        tokenRequest.setPaymentMethod(alternatePaymentMethod);
         return getToken(tokenRequest);
     }
 

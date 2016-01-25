@@ -80,5 +80,5 @@ public final class WorldpayLibraryConstants {
 
     public static final String JVM_VENDOR_PROP = "jvm.vendor=" + System.getProperty("java.vm.vendor");
 
-    public static final String EOF = "\\u001a";
+    public static final String BUILD = "build=";
 }

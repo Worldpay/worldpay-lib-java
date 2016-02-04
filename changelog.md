@@ -5,8 +5,6 @@ Worldpay REST API Java SDK
 * New SDK Features:
 * Support creating order with site code
 
-
-
 #### 0.1.9
 * New SDK Features:
 * Capture an Authorize Only order using order code

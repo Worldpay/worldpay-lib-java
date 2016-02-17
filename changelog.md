@@ -1,11 +1,15 @@
 Worldpay REST API Java SDK
 =====================
 
+#### 0.1.10
+* New SDK Features:
+* Support creating order with site code
+
 #### 0.1.9
 * New SDK Features:
 * Capture an Authorize Only order using order code
 * Cancel an Authorize Only order using Order Code, and amount to capture
-* Suport for enhanced/additional card details
+* Support for enhanced/additional card details
 *
 * Changed response for 3DS Authorize order API, from void to ``` OrderResponse``` :
 * ``` public OrderResponse authorize3Ds(String orderCode, OrderAuthorizationRequest orderAuthorizationRequest) ```

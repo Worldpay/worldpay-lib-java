@@ -1,6 +1,10 @@
 Worldpay REST API Java SDK
 =====================
 
+#### 0.1.11
+* New SDK Features:
+* Support creating tokenless order
+
 #### 0.1.10
 * New SDK Features:
 * Support creating order with site code

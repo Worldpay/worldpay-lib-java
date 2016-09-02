@@ -39,10 +39,7 @@ import org.junit.rules.ExpectedException;
 
 import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -221,6 +218,27 @@ public class OrderServiceIT {
         assertThat("Amount", response.getAmount(), is(1999));
         assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
         assertThat("Redirect URL", response.getRedirectURL(), is(notNullValue()));
+    }
+
+    @Test
+    public void shouldTokenlessCardOrder() {
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.getCommonToken().setPaymentMethod(createCardRequest());
+
+        OrderResponse response = orderService.create(orderRequest);
+        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
+        assertThat("Payment status", response.getPaymentStatus(), equalTo("SUCCESS"));
+    }
+
+    @Test
+    public void shouldTokenlessApmOrder() {
+        OrderRequest orderRequest = createOrderRequest();
+        orderRequest.getCommonToken().setPaymentMethod(createAlternatePaymentMethod());
+
+        OrderResponse response = orderService.create(orderRequest);
+        final String orderCode = response.getOrderCode();
+        assertThat("Response code", orderCode, is(notNullValue()));
+        assertThat("Payment status", response.getRedirectURL(), containsString(orderCode));
     }
 
     /**
@@ -493,18 +511,20 @@ public class OrderServiceIT {
      * @return token string
      */
     private String createToken(String clientKey) {
+        TokenRequest tokenRequest = new TokenRequest(createCardRequest(), false);
+        tokenRequest.setClientKey(clientKey);
 
+        return getToken(tokenRequest);
+    }
+
+    private CardRequest createCardRequest() {
         CardRequest cardRequest = new CardRequest();
         cardRequest.setCardNumber(TEST_MASTERCARD_NUMBER);
         cardRequest.setCvc(TEST_CVC);
         cardRequest.setName("javalib client");
         cardRequest.setExpiryMonth(2);
         cardRequest.setExpiryYear(2018);
-
-        TokenRequest tokenRequest = new TokenRequest(cardRequest, false);
-        tokenRequest.setClientKey(clientKey);
-
-        return getToken(tokenRequest);
+        return cardRequest;
     }
 
     /**
@@ -513,7 +533,14 @@ public class OrderServiceIT {
      * @return Alternate Payment Method Token
      */
     private String createApmToken() {
+        AlternatePaymentMethod alternatePaymentMethod = createAlternatePaymentMethod();
+        TokenRequest tokenRequest = new TokenRequest(alternatePaymentMethod, false);
+        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
 
+        return getToken(tokenRequest);
+    }
+
+    private AlternatePaymentMethod createAlternatePaymentMethod() {
         AlternatePaymentMethod alternatePaymentMethod = new AlternatePaymentMethod();
         alternatePaymentMethod.setApmName(APM_NAME);
         alternatePaymentMethod.setShopperCountryCode(CountryCode.GB);
@@ -523,10 +550,7 @@ public class OrderServiceIT {
         apmFields.put("someOtherId", "some value");
 
         alternatePaymentMethod.setApmFields(apmFields);
-        TokenRequest tokenRequest = new TokenRequest(alternatePaymentMethod, false);
-        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
-
-        return getToken(tokenRequest);
+        return alternatePaymentMethod;
     }
 
     /**

@@ -18,9 +18,8 @@ import com.worldpay.sdk.util.PropertyUtils;
 
 /**
  * Main interface for interacting with the Worldpay Payment Gateway REST service.<br><br>
- * <p/>
+ * <p>
  * Example:
- * <p/>
  * <pre>
  *
  *   WorldpayRestClient restClient = new WorldpayRestClient("YOUR_SERVICE_KEY");

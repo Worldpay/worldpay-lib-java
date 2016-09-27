@@ -18,7 +18,7 @@
     <parent>
         <groupId>com.worldpay.api.root</groupId>
         <artifactId>worldpay-root</artifactId>
-        <version>0.0.5</version>
+        <version>0.0.8</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -26,7 +26,7 @@
     <packaging>jar</packaging>
     <groupId>com.worldpay</groupId>
     <artifactId>worldpay-lib-java</artifactId>
-    <name>Worldpay: Java Client</name>
+
     <organization>
         <name>Worldpay</name>
         <url>https://online.worldpay.com/</url>
@@ -38,9 +38,9 @@
         <github.repository>worldpay-lib-java</github.repository>
         <git.dotGitDirectory>${project.basedir}/.git</git.dotGitDirectory>
 
-        <dep.worldpay-client-core.version>0.0.12</dep.worldpay-client-core.version>
-        <dep.worldpay-client-common.version>0.0.11</dep.worldpay-client-common.version>
-        <dep.worldpay-common-utils.version>0.0.11</dep.worldpay-common-utils.version>
+        <dep.worldpay-client-core.version>0.8.2</dep.worldpay-client-core.version>
+        <dep.worldpay-client-common.version>0.4.0</dep.worldpay-client-common.version>
+        <dep.worldpay-common-utils.version>0.3.0</dep.worldpay-common-utils.version>
     </properties>
 
     <scm>

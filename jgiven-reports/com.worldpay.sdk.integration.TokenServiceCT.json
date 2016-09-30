@@ -4,6 +4,359 @@
   "scenarios": [
     {
       "className": "com.worldpay.sdk.integration.TokenServiceCT",
+      "testMethodName": "shouldCreateASingleUseTokenForAVisaCard",
+      "description": "Should create a single use token for a visa card",
+      "tagIds": [],
+      "explicitParameters": [],
+      "derivedParameters": [],
+      "casesAsTable": false,
+      "scenarioCases": [
+        {
+          "caseNr": 1,
+          "steps": [
+            {
+              "name": "we create a token",
+              "words": [
+                {
+                  "value": "When",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "we create a token"
+                },
+                {
+                  "value": "TokenRequest{commonToken\u003dCommonToken{paymentMethod\u003d{ cardNumber Present?:true, name Present?:true, CVC Present?:true}, reusable\u003dfalse, shopperLanguageCode\u003d\u0027null\u0027}}",
+                  "argumentInfo": {
+                    "argumentName": "tokenRequest",
+                    "formattedValue": "TokenRequest{commonToken\u003dCommonToken{paymentMethod\u003d{ cardNumber Present?:true, name Present?:true, CVC Present?:true}, reusable\u003dfalse, shopperLanguageCode\u003d\u0027null\u0027}}"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2208297295,
+              "attachments": [
+                {
+                  "title": "Response",
+                  "value": "com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse@57a78e3[\n  token\u003dTEST_SU_dc0f9ddd-3e03-48f4-92a1-f86fabb9e667\n  commonToken\u003dCommonToken{paymentMethod\u003dcom.worldpay.gateway.clearwater.client.core.dto.response.CardResponse@402c4085[\n  cardType\u003dVISA_CREDIT\n  maskedCardNumber\u003d**** **** **** 1111\n  cardDetail\u003dcom.worldpay.gateway.clearwater.client.core.dto.common.CardDetail@6fa51cd4[\n  cardSchemeType\u003dconsumer\n  cardSchemeName\u003dVISA CREDIT\n  cardIssuer\u003dNATWEST\n  countryCode\u003dGB\n  cardClass\u003dcredit\n  cardProductTypeDescNonContactless\u003dVisa Credit Personal\n  cardProductTypeDescContactless\u003dCL Visa Credit Pers\n  prepaid\u003dfalse\n]\n  expiryMonth\u003d2\n  expiryYear\u003d2017\n  issueNumber\u003d\u003cnull\u003e\n  startMonth\u003d\u003cnull\u003e\n  startYear\u003d\u003cnull\u003e\n  name\u003dJohn Doe\n  billingAddress\u003d\u003cnull\u003e\n], reusable\u003dfalse, shopperLanguageCode\u003d\u0027null\u0027}\n]",
+                  "mediaType": "text/plain",
+                  "binary": false
+                }
+              ]
+            },
+            {
+              "name": "the token starts with",
+              "words": [
+                {
+                  "value": "Then",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "the token starts with"
+                },
+                {
+                  "value": "TEST_SU_",
+                  "argumentInfo": {
+                    "argumentName": "tokenPrefix",
+                    "formattedValue": "TEST_SU_"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 20016887
+            },
+            {
+              "name": "the card type is",
+              "words": [
+                {
+                  "value": "the card type is"
+                },
+                {
+                  "value": "VISA_CREDIT",
+                  "argumentInfo": {
+                    "argumentName": "cardType",
+                    "formattedValue": "VISA_CREDIT"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 3332320
+            },
+            {
+              "name": "the masked card number is",
+              "words": [
+                {
+                  "value": "the masked card number is"
+                },
+                {
+                  "value": "**** **** **** 1111",
+                  "argumentInfo": {
+                    "argumentName": "cardNumber",
+                    "formattedValue": "**** **** **** 1111"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1982373
+            },
+            {
+              "name": "the card schema type is",
+              "words": [
+                {
+                  "value": "the card schema type is"
+                },
+                {
+                  "value": "consumer",
+                  "argumentInfo": {
+                    "argumentName": "cardSchemaType",
+                    "formattedValue": "consumer"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2170553
+            },
+            {
+              "name": "the card schema name is",
+              "words": [
+                {
+                  "value": "the card schema name is"
+                },
+                {
+                  "value": "VISA CREDIT",
+                  "argumentInfo": {
+                    "argumentName": "cardSchemaName",
+                    "formattedValue": "VISA CREDIT"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2330967
+            },
+            {
+              "name": "the card issuer is",
+              "words": [
+                {
+                  "value": "the card issuer is"
+                },
+                {
+                  "value": "NATWEST",
+                  "argumentInfo": {
+                    "argumentName": "cardIssuer",
+                    "formattedValue": "NATWEST"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1988660
+            },
+            {
+              "name": "the country code is",
+              "words": [
+                {
+                  "value": "the country code is"
+                },
+                {
+                  "value": "GB",
+                  "argumentInfo": {
+                    "argumentName": "countryCode",
+                    "formattedValue": "GB"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2078460
+            },
+            {
+              "name": "the card class is",
+              "words": [
+                {
+                  "value": "the card class is"
+                },
+                {
+                  "value": "credit",
+                  "argumentInfo": {
+                    "argumentName": "cardClass",
+                    "formattedValue": "credit"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2516880
+            },
+            {
+              "name": "the card product type desc non contactless",
+              "words": [
+                {
+                  "value": "the card product type desc non contactless"
+                },
+                {
+                  "value": "Visa Credit Personal",
+                  "argumentInfo": {
+                    "argumentName": "cardProductType",
+                    "formattedValue": "Visa Credit Personal"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 3072275
+            },
+            {
+              "name": "the card product type desc contactless",
+              "words": [
+                {
+                  "value": "the card product type desc contactless"
+                },
+                {
+                  "value": "CL Visa Credit Pers",
+                  "argumentInfo": {
+                    "argumentName": "cardProductType",
+                    "formattedValue": "CL Visa Credit Pers"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 3495490
+            },
+            {
+              "name": "the prepaid is",
+              "words": [
+                {
+                  "value": "the prepaid is"
+                },
+                {
+                  "value": "false",
+                  "argumentInfo": {
+                    "argumentName": "prepaid",
+                    "formattedValue": "false"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 7646065
+            },
+            {
+              "name": "the expiry month is",
+              "words": [
+                {
+                  "value": "the expiry month is"
+                },
+                {
+                  "value": "2",
+                  "argumentInfo": {
+                    "argumentName": "expityMonth",
+                    "formattedValue": "2"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2535956
+            },
+            {
+              "name": "the expiry year is",
+              "words": [
+                {
+                  "value": "the expiry year is"
+                },
+                {
+                  "value": "2017",
+                  "argumentInfo": {
+                    "argumentName": "expityYear",
+                    "formattedValue": "2017"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2354719
+            },
+            {
+              "name": "the issuer number is null",
+              "words": [
+                {
+                  "value": "the issuer number is null"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 552777
+            },
+            {
+              "name": "the start month is null",
+              "words": [
+                {
+                  "value": "the start month is null"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 507221
+            },
+            {
+              "name": "the start year is null",
+              "words": [
+                {
+                  "value": "the start year is null"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 298909
+            },
+            {
+              "name": "the name is",
+              "words": [
+                {
+                  "value": "the name is"
+                },
+                {
+                  "value": "John Doe",
+                  "argumentInfo": {
+                    "argumentName": "name",
+                    "formattedValue": "John Doe"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2321286
+            },
+            {
+              "name": "the token is not reusable",
+              "words": [
+                {
+                  "value": "the token is not reusable"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 130249
+            },
+            {
+              "name": "the shopper language code is null",
+              "words": [
+                {
+                  "value": "the shopper language code is null"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 97185
+            },
+            {
+              "name": "the billing address is null",
+              "words": [
+                {
+                  "value": "the billing address is null"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 75153
+            }
+          ],
+          "explicitArguments": [],
+          "derivedArguments": [],
+          "success": true,
+          "durationInNanos": 2355298421
+        }
+      ],
+      "durationInNanos": 2355298421,
+      "executionStatus": "SUCCESS"
+    },
+    {
+      "className": "com.worldpay.sdk.integration.TokenServiceCT",
       "testMethodName": "shouldGetValidToken",
       "description": "Should get valid token",
       "tagIds": [],
@@ -33,7 +386,15 @@
                 }
               ],
               "status": "PASSED",
-              "durationInNanos": 1359080975
+              "durationInNanos": 203525403,
+              "attachments": [
+                {
+                  "title": "Response",
+                  "value": "com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse@5a59ca5e[\n  token\u003dTEST_RU_5ece9a82-9baf-4b0f-bc2c-fc2d62083c7e\n  commonToken\u003dCommonToken{paymentMethod\u003dcom.worldpay.gateway.clearwater.client.core.dto.response.CardResponse@4bdeaabb[\n  cardType\u003dVISA\n  maskedCardNumber\u003d**** **** **** 1111\n  cardDetail\u003dcom.worldpay.gateway.clearwater.client.core.dto.common.CardDetail@6c4906d3[\n  cardSchemeType\u003dunknown\n  cardSchemeName\u003dunknown\n  cardIssuer\u003dunknown\n  countryCode\u003dXXX\n  cardClass\u003dunknown\n  cardProductTypeDescNonContactless\u003dunknown\n  cardProductTypeDescContactless\u003dunknown\n  prepaid\u003dunknown\n]\n  expiryMonth\u003d2\n  expiryYear\u003d2017\n  issueNumber\u003d\u003cnull\u003e\n  startMonth\u003d\u003cnull\u003e\n  startYear\u003d\u003cnull\u003e\n  name\u003d3D\n  billingAddress\u003d\u003cnull\u003e\n], reusable\u003dtrue, shopperLanguageCode\u003d\u0027null\u0027}\n]",
+                  "mediaType": "text/plain",
+                  "binary": false
+                }
+              ]
             },
             {
               "name": "the token is not null",
@@ -47,21 +408,29 @@
                 }
               ],
               "status": "PASSED",
-              "durationInNanos": 13828308
+              "durationInNanos": 2851186
             },
             {
               "name": "the payment method is not null",
               "words": [
                 {
+                  "value": "and",
+                  "isIntroWord": true
+                },
+                {
                   "value": "the payment method is not null"
                 }
               ],
               "status": "PASSED",
-              "durationInNanos": 224419
+              "durationInNanos": 42935
             },
             {
               "name": "the token id is",
               "words": [
+                {
+                  "value": "and",
+                  "isIntroWord": true
+                },
                 {
                   "value": "the token id is"
                 },
@@ -74,16 +443,97 @@
                 }
               ],
               "status": "PASSED",
-              "durationInNanos": 2844900
+              "durationInNanos": 3712222
             }
           ],
           "explicitArguments": [],
           "derivedArguments": [],
           "success": true,
-          "durationInNanos": 1538245611
+          "durationInNanos": 212472498
         }
       ],
-      "durationInNanos": 1538245611,
+      "durationInNanos": 212472498,
+      "executionStatus": "SUCCESS"
+    },
+    {
+      "className": "com.worldpay.sdk.integration.TokenServiceCT",
+      "testMethodName": "shouldThrowExceptionIsTokenCreationRequestIsInvalid",
+      "description": "Should throw exception is token creation request is invalid",
+      "tagIds": [],
+      "explicitParameters": [],
+      "derivedParameters": [],
+      "casesAsTable": false,
+      "scenarioCases": [
+        {
+          "caseNr": 1,
+          "steps": [
+            {
+              "name": "we create a token",
+              "words": [
+                {
+                  "value": "When",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "we create a token"
+                },
+                {
+                  "value": "TokenRequest{commonToken\u003dCommonToken{paymentMethod\u003d{ cardNumber Present?:true, name Present?:true, CVC Present?:true}, reusable\u003dfalse, shopperLanguageCode\u003d\u0027null\u0027}}",
+                  "argumentInfo": {
+                    "argumentName": "tokenRequest",
+                    "formattedValue": "TokenRequest{commonToken\u003dCommonToken{paymentMethod\u003d{ cardNumber Present?:true, name Present?:true, CVC Present?:true}, reusable\u003dfalse, shopperLanguageCode\u003d\u0027null\u0027}}"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 255315453
+            },
+            {
+              "name": "the api error custom code is",
+              "words": [
+                {
+                  "value": "Then",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "the api error custom code is"
+                },
+                {
+                  "value": "BAD_REQUEST",
+                  "argumentInfo": {
+                    "argumentName": "customCode",
+                    "formattedValue": "BAD_REQUEST"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2264518
+            },
+            {
+              "name": "the error message is",
+              "words": [
+                {
+                  "value": "the error message is"
+                },
+                {
+                  "value": "API error: CVC Must always contain valid digits",
+                  "argumentInfo": {
+                    "argumentName": "errorMessage",
+                    "formattedValue": "API error: CVC Must always contain valid digits"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1546940
+            }
+          ],
+          "explicitArguments": [],
+          "derivedArguments": [],
+          "success": true,
+          "durationInNanos": 263010247
+        }
+      ],
+      "durationInNanos": 263010247,
       "executionStatus": "SUCCESS"
     },
     {
@@ -117,7 +567,7 @@
                 }
               ],
               "status": "PASSED",
-              "durationInNanos": 2818108
+              "durationInNanos": 6072889
             },
             {
               "name": "the error message is",
@@ -138,16 +588,722 @@
                 }
               ],
               "status": "PASSED",
-              "durationInNanos": 8136508
+              "durationInNanos": 3719003
             }
           ],
           "explicitArguments": [],
           "derivedArguments": [],
           "success": true,
-          "durationInNanos": 11820373
+          "durationInNanos": 15470028
         }
       ],
-      "durationInNanos": 11820373,
+      "durationInNanos": 15470028,
+      "executionStatus": "SUCCESS"
+    },
+    {
+      "className": "com.worldpay.sdk.integration.TokenServiceCT",
+      "testMethodName": "shouldCreateReusableTokenForAnAmexCard",
+      "description": "Should create reusable token for an amex card",
+      "tagIds": [],
+      "explicitParameters": [],
+      "derivedParameters": [],
+      "casesAsTable": false,
+      "scenarioCases": [
+        {
+          "caseNr": 1,
+          "steps": [
+            {
+              "name": "we create a token",
+              "words": [
+                {
+                  "value": "When",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "we create a token"
+                },
+                {
+                  "value": "TokenRequest{commonToken\u003dCommonToken{paymentMethod\u003d{ cardNumber Present?:true, name Present?:true, CVC Present?:true}, reusable\u003dfalse, shopperLanguageCode\u003d\u0027null\u0027}}",
+                  "argumentInfo": {
+                    "argumentName": "tokenRequest",
+                    "formattedValue": "TokenRequest{commonToken\u003dCommonToken{paymentMethod\u003d{ cardNumber Present?:true, name Present?:true, CVC Present?:true}, reusable\u003dfalse, shopperLanguageCode\u003d\u0027null\u0027}}"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 604799424,
+              "attachments": [
+                {
+                  "title": "Response",
+                  "value": "com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse@2ab4bc72[\n  token\u003dTEST_SU_9e2910b8-d603-4bc9-a8d3-bab5be27ed09\n  commonToken\u003dCommonToken{paymentMethod\u003dcom.worldpay.gateway.clearwater.client.core.dto.response.CardResponse@4e5ed836[\n  cardType\u003dAMEX\n  maskedCardNumber\u003d**** **** ** 3434\n  cardDetail\u003dcom.worldpay.gateway.clearwater.client.core.dto.common.CardDetail@eadd4fb[\n  cardSchemeType\u003dunknown\n  cardSchemeName\u003dunknown\n  cardIssuer\u003dunknown\n  countryCode\u003dXX\n  cardClass\u003dunknown\n  cardProductTypeDescNonContactless\u003dunknown\n  cardProductTypeDescContactless\u003dunknown\n  prepaid\u003dunknown\n]\n  expiryMonth\u003d2\n  expiryYear\u003d2017\n  issueNumber\u003d\u003cnull\u003e\n  startMonth\u003d\u003cnull\u003e\n  startYear\u003d\u003cnull\u003e\n  name\u003dJohn Doe\n  billingAddress\u003d\u003cnull\u003e\n], reusable\u003dfalse, shopperLanguageCode\u003d\u0027null\u0027}\n]",
+                  "mediaType": "text/plain",
+                  "binary": false
+                }
+              ]
+            },
+            {
+              "name": "the token starts with",
+              "words": [
+                {
+                  "value": "Then",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "the token starts with"
+                },
+                {
+                  "value": "TEST_SU_",
+                  "argumentInfo": {
+                    "argumentName": "tokenPrefix",
+                    "formattedValue": "TEST_SU_"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2770668
+            },
+            {
+              "name": "the card type is",
+              "words": [
+                {
+                  "value": "the card type is"
+                },
+                {
+                  "value": "AMEX",
+                  "argumentInfo": {
+                    "argumentName": "cardType",
+                    "formattedValue": "AMEX"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1801182
+            },
+            {
+              "name": "the masked card number is",
+              "words": [
+                {
+                  "value": "the masked card number is"
+                },
+                {
+                  "value": "**** **** ** 3434",
+                  "argumentInfo": {
+                    "argumentName": "cardNumber",
+                    "formattedValue": "**** **** ** 3434"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1887094
+            },
+            {
+              "name": "the card schema type is",
+              "words": [
+                {
+                  "value": "the card schema type is"
+                },
+                {
+                  "value": "unknown",
+                  "argumentInfo": {
+                    "argumentName": "cardSchemaType",
+                    "formattedValue": "unknown"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1580186
+            },
+            {
+              "name": "the card schema name is",
+              "words": [
+                {
+                  "value": "the card schema name is"
+                },
+                {
+                  "value": "unknown",
+                  "argumentInfo": {
+                    "argumentName": "cardSchemaName",
+                    "formattedValue": "unknown"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1617093
+            },
+            {
+              "name": "the card issuer is",
+              "words": [
+                {
+                  "value": "the card issuer is"
+                },
+                {
+                  "value": "unknown",
+                  "argumentInfo": {
+                    "argumentName": "cardIssuer",
+                    "formattedValue": "unknown"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1489167
+            },
+            {
+              "name": "the country code is",
+              "words": [
+                {
+                  "value": "the country code is"
+                },
+                {
+                  "value": "XX",
+                  "argumentInfo": {
+                    "argumentName": "countryCode",
+                    "formattedValue": "XX"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1899891
+            },
+            {
+              "name": "the card class is",
+              "words": [
+                {
+                  "value": "the card class is"
+                },
+                {
+                  "value": "unknown",
+                  "argumentInfo": {
+                    "argumentName": "cardClass",
+                    "formattedValue": "unknown"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2817210
+            },
+            {
+              "name": "the card product type desc non contactless",
+              "words": [
+                {
+                  "value": "the card product type desc non contactless"
+                },
+                {
+                  "value": "unknown",
+                  "argumentInfo": {
+                    "argumentName": "cardProductType",
+                    "formattedValue": "unknown"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 3161201
+            },
+            {
+              "name": "the card product type desc contactless",
+              "words": [
+                {
+                  "value": "the card product type desc contactless"
+                },
+                {
+                  "value": "unknown",
+                  "argumentInfo": {
+                    "argumentName": "cardProductType",
+                    "formattedValue": "unknown"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 4802286
+            },
+            {
+              "name": "the prepaid is",
+              "words": [
+                {
+                  "value": "the prepaid is"
+                },
+                {
+                  "value": "unknown",
+                  "argumentInfo": {
+                    "argumentName": "prepaid",
+                    "formattedValue": "unknown"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1538007
+            },
+            {
+              "name": "the expiry month is",
+              "words": [
+                {
+                  "value": "the expiry month is"
+                },
+                {
+                  "value": "2",
+                  "argumentInfo": {
+                    "argumentName": "expityMonth",
+                    "formattedValue": "2"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1281998
+            },
+            {
+              "name": "the expiry year is",
+              "words": [
+                {
+                  "value": "the expiry year is"
+                },
+                {
+                  "value": "2017",
+                  "argumentInfo": {
+                    "argumentName": "expityYear",
+                    "formattedValue": "2017"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1265181
+            },
+            {
+              "name": "the issuer number is null",
+              "words": [
+                {
+                  "value": "the issuer number is null"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 40092
+            },
+            {
+              "name": "the start month is null",
+              "words": [
+                {
+                  "value": "the start month is null"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 51525
+            },
+            {
+              "name": "the start year is null",
+              "words": [
+                {
+                  "value": "the start year is null"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 40415
+            },
+            {
+              "name": "the name is",
+              "words": [
+                {
+                  "value": "the name is"
+                },
+                {
+                  "value": "John Doe",
+                  "argumentInfo": {
+                    "argumentName": "name",
+                    "formattedValue": "John Doe"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2308021
+            },
+            {
+              "name": "the token is not reusable",
+              "words": [
+                {
+                  "value": "the token is not reusable"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 102273
+            },
+            {
+              "name": "the shopper language code is null",
+              "words": [
+                {
+                  "value": "the shopper language code is null"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 67208
+            },
+            {
+              "name": "the billing address is null",
+              "words": [
+                {
+                  "value": "the billing address is null"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 53414
+            }
+          ],
+          "explicitArguments": [],
+          "derivedArguments": [],
+          "success": true,
+          "durationInNanos": 637937376
+        }
+      ],
+      "durationInNanos": 637937376,
+      "executionStatus": "SUCCESS"
+    },
+    {
+      "className": "com.worldpay.sdk.integration.TokenServiceCT",
+      "testMethodName": "shouldCreateReusableTokenForAMaestroCard",
+      "description": "Should create reusable token for a maestro card",
+      "tagIds": [],
+      "explicitParameters": [],
+      "derivedParameters": [],
+      "casesAsTable": false,
+      "scenarioCases": [
+        {
+          "caseNr": 1,
+          "steps": [
+            {
+              "name": "we create a token",
+              "words": [
+                {
+                  "value": "When",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "we create a token"
+                },
+                {
+                  "value": "TokenRequest{commonToken\u003dCommonToken{paymentMethod\u003d{ cardNumber Present?:true, name Present?:true, CVC Present?:true}, reusable\u003dfalse, shopperLanguageCode\u003d\u0027null\u0027}}",
+                  "argumentInfo": {
+                    "argumentName": "tokenRequest",
+                    "formattedValue": "TokenRequest{commonToken\u003dCommonToken{paymentMethod\u003d{ cardNumber Present?:true, name Present?:true, CVC Present?:true}, reusable\u003dfalse, shopperLanguageCode\u003d\u0027null\u0027}}"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 801192765,
+              "attachments": [
+                {
+                  "title": "Response",
+                  "value": "com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse@4722ef0c[\n  token\u003dTEST_SU_7ef205f9-b632-4d80-b9d8-52e5633e2661\n  commonToken\u003dCommonToken{paymentMethod\u003dcom.worldpay.gateway.clearwater.client.core.dto.response.CardResponse@48e1f6c7[\n  cardType\u003dMAESTRO\n  maskedCardNumber\u003d**** **** **** 8453\n  cardDetail\u003dcom.worldpay.gateway.clearwater.client.core.dto.common.CardDetail@55cb6996[\n  cardSchemeType\u003dunknown\n  cardSchemeName\u003dunknown\n  cardIssuer\u003dunknown\n  countryCode\u003dXX\n  cardClass\u003dunknown\n  cardProductTypeDescNonContactless\u003dunknown\n  cardProductTypeDescContactless\u003dunknown\n  prepaid\u003dunknown\n]\n  expiryMonth\u003d2\n  expiryYear\u003d2017\n  issueNumber\u003d\u003cnull\u003e\n  startMonth\u003d\u003cnull\u003e\n  startYear\u003d\u003cnull\u003e\n  name\u003dJohn Doe\n  billingAddress\u003d\u003cnull\u003e\n], reusable\u003dfalse, shopperLanguageCode\u003d\u0027null\u0027}\n]",
+                  "mediaType": "text/plain",
+                  "binary": false
+                }
+              ]
+            },
+            {
+              "name": "the token starts with",
+              "words": [
+                {
+                  "value": "Then",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "the token starts with"
+                },
+                {
+                  "value": "TEST_SU_",
+                  "argumentInfo": {
+                    "argumentName": "tokenPrefix",
+                    "formattedValue": "TEST_SU_"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 3874511
+            },
+            {
+              "name": "the card type is",
+              "words": [
+                {
+                  "value": "the card type is"
+                },
+                {
+                  "value": "MAESTRO",
+                  "argumentInfo": {
+                    "argumentName": "cardType",
+                    "formattedValue": "MAESTRO"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2099191
+            },
+            {
+              "name": "the masked card number is",
+              "words": [
+                {
+                  "value": "the masked card number is"
+                },
+                {
+                  "value": "**** **** **** 8453",
+                  "argumentInfo": {
+                    "argumentName": "cardNumber",
+                    "formattedValue": "**** **** **** 8453"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2137934
+            },
+            {
+              "name": "the card schema type is",
+              "words": [
+                {
+                  "value": "the card schema type is"
+                },
+                {
+                  "value": "unknown",
+                  "argumentInfo": {
+                    "argumentName": "cardSchemaType",
+                    "formattedValue": "unknown"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2073289
+            },
+            {
+              "name": "the card schema name is",
+              "words": [
+                {
+                  "value": "the card schema name is"
+                },
+                {
+                  "value": "unknown",
+                  "argumentInfo": {
+                    "argumentName": "cardSchemaName",
+                    "formattedValue": "unknown"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1768822
+            },
+            {
+              "name": "the card issuer is",
+              "words": [
+                {
+                  "value": "the card issuer is"
+                },
+                {
+                  "value": "unknown",
+                  "argumentInfo": {
+                    "argumentName": "cardIssuer",
+                    "formattedValue": "unknown"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1373107
+            },
+            {
+              "name": "the country code is",
+              "words": [
+                {
+                  "value": "the country code is"
+                },
+                {
+                  "value": "XX",
+                  "argumentInfo": {
+                    "argumentName": "countryCode",
+                    "formattedValue": "XX"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1394817
+            },
+            {
+              "name": "the card class is",
+              "words": [
+                {
+                  "value": "the card class is"
+                },
+                {
+                  "value": "unknown",
+                  "argumentInfo": {
+                    "argumentName": "cardClass",
+                    "formattedValue": "unknown"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1918490
+            },
+            {
+              "name": "the card product type desc non contactless",
+              "words": [
+                {
+                  "value": "the card product type desc non contactless"
+                },
+                {
+                  "value": "unknown",
+                  "argumentInfo": {
+                    "argumentName": "cardProductType",
+                    "formattedValue": "unknown"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2498704
+            },
+            {
+              "name": "the card product type desc contactless",
+              "words": [
+                {
+                  "value": "the card product type desc contactless"
+                },
+                {
+                  "value": "unknown",
+                  "argumentInfo": {
+                    "argumentName": "cardProductType",
+                    "formattedValue": "unknown"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1529726
+            },
+            {
+              "name": "the prepaid is",
+              "words": [
+                {
+                  "value": "the prepaid is"
+                },
+                {
+                  "value": "unknown",
+                  "argumentInfo": {
+                    "argumentName": "prepaid",
+                    "formattedValue": "unknown"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1323097
+            },
+            {
+              "name": "the expiry month is",
+              "words": [
+                {
+                  "value": "the expiry month is"
+                },
+                {
+                  "value": "2",
+                  "argumentInfo": {
+                    "argumentName": "expityMonth",
+                    "formattedValue": "2"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1494583
+            },
+            {
+              "name": "the expiry year is",
+              "words": [
+                {
+                  "value": "the expiry year is"
+                },
+                {
+                  "value": "2017",
+                  "argumentInfo": {
+                    "argumentName": "expityYear",
+                    "formattedValue": "2017"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1318825
+            },
+            {
+              "name": "the issuer number is null",
+              "words": [
+                {
+                  "value": "the issuer number is null"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 56260
+            },
+            {
+              "name": "the start month is null",
+              "words": [
+                {
+                  "value": "the start month is null"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 36845
+            },
+            {
+              "name": "the start year is null",
+              "words": [
+                {
+                  "value": "the start year is null"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 37513
+            },
+            {
+              "name": "the name is",
+              "words": [
+                {
+                  "value": "the name is"
+                },
+                {
+                  "value": "John Doe",
+                  "argumentInfo": {
+                    "argumentName": "name",
+                    "formattedValue": "John Doe"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1396961
+            },
+            {
+              "name": "the token is not reusable",
+              "words": [
+                {
+                  "value": "the token is not reusable"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 37482
+            },
+            {
+              "name": "the shopper language code is null",
+              "words": [
+                {
+                  "value": "the shopper language code is null"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 28990
+            },
+            {
+              "name": "the billing address is null",
+              "words": [
+                {
+                  "value": "the billing address is null"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 24224
+            }
+          ],
+          "explicitArguments": [],
+          "derivedArguments": [],
+          "success": true,
+          "durationInNanos": 830239283
+        }
+      ],
+      "durationInNanos": 830239283,
       "executionStatus": "SUCCESS"
     },
     {
@@ -181,7 +1337,7 @@
                 }
               ],
               "status": "PASSED",
-              "durationInNanos": 230241470
+              "durationInNanos": 189253891
             },
             {
               "name": "the api error custom code is",
@@ -202,16 +1358,16 @@
                 }
               ],
               "status": "PASSED",
-              "durationInNanos": 2626617
+              "durationInNanos": 2380643
             }
           ],
           "explicitArguments": [],
           "derivedArguments": [],
           "success": true,
-          "durationInNanos": 233710016
+          "durationInNanos": 193236490
         }
       ],
-      "durationInNanos": 233710016,
+      "durationInNanos": 193236490,
       "executionStatus": "SUCCESS"
     }
   ],

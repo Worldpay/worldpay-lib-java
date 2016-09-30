@@ -14,6 +14,7 @@
 
 package com.worldpay.sdk;
 
+import com.worldpay.gateway.clearwater.client.core.dto.request.TokenRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
 import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
 import org.apache.commons.lang.StringUtils;
@@ -58,5 +59,9 @@ public class TokenService extends AbstractService {
         if (StringUtils.isEmpty(token)) {
             throw new WorldpayException("token id should be empty");
         }
+    }
+
+    public TokenResponse create(TokenRequest token) {
+        return http.post(TOKENS_URL + "/", token,  TokenResponse.class);
     }
 }

@@ -1,0 +1,219 @@
+{
+  "className": "com.worldpay.sdk.integration.TokenServiceCT",
+  "name": "Token Service CT",
+  "scenarios": [
+    {
+      "className": "com.worldpay.sdk.integration.TokenServiceCT",
+      "testMethodName": "shouldGetValidToken",
+      "description": "Should get valid token",
+      "tagIds": [],
+      "explicitParameters": [],
+      "derivedParameters": [],
+      "casesAsTable": false,
+      "scenarioCases": [
+        {
+          "caseNr": 1,
+          "steps": [
+            {
+              "name": "we get a token",
+              "words": [
+                {
+                  "value": "When",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "we get a token"
+                },
+                {
+                  "value": "TEST_RU_5ece9a82-9baf-4b0f-bc2c-fc2d62083c7e",
+                  "argumentInfo": {
+                    "argumentName": "tokenId",
+                    "formattedValue": "TEST_RU_5ece9a82-9baf-4b0f-bc2c-fc2d62083c7e"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 1359080975
+            },
+            {
+              "name": "the token is not null",
+              "words": [
+                {
+                  "value": "Then",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "the token is not null"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 13828308
+            },
+            {
+              "name": "the payment method is not null",
+              "words": [
+                {
+                  "value": "the payment method is not null"
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 224419
+            },
+            {
+              "name": "the token id is",
+              "words": [
+                {
+                  "value": "the token id is"
+                },
+                {
+                  "value": "TEST_RU_5ece9a82-9baf-4b0f-bc2c-fc2d62083c7e",
+                  "argumentInfo": {
+                    "argumentName": "tokenId",
+                    "formattedValue": "TEST_RU_5ece9a82-9baf-4b0f-bc2c-fc2d62083c7e"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2844900
+            }
+          ],
+          "explicitArguments": [],
+          "derivedArguments": [],
+          "success": true,
+          "durationInNanos": 1538245611
+        }
+      ],
+      "durationInNanos": 1538245611,
+      "executionStatus": "SUCCESS"
+    },
+    {
+      "className": "com.worldpay.sdk.integration.TokenServiceCT",
+      "testMethodName": "getTokenWithEmptyString",
+      "description": "Get token with empty string",
+      "tagIds": [],
+      "explicitParameters": [],
+      "derivedParameters": [],
+      "casesAsTable": false,
+      "scenarioCases": [
+        {
+          "caseNr": 1,
+          "steps": [
+            {
+              "name": "we get a token",
+              "words": [
+                {
+                  "value": "When",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "we get a token"
+                },
+                {
+                  "value": "",
+                  "argumentInfo": {
+                    "argumentName": "tokenId",
+                    "formattedValue": ""
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2818108
+            },
+            {
+              "name": "the error message is",
+              "words": [
+                {
+                  "value": "Then",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "the error message is"
+                },
+                {
+                  "value": "token id should be empty",
+                  "argumentInfo": {
+                    "argumentName": "errorMessage",
+                    "formattedValue": "token id should be empty"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 8136508
+            }
+          ],
+          "explicitArguments": [],
+          "derivedArguments": [],
+          "success": true,
+          "durationInNanos": 11820373
+        }
+      ],
+      "durationInNanos": 11820373,
+      "executionStatus": "SUCCESS"
+    },
+    {
+      "className": "com.worldpay.sdk.integration.TokenServiceCT",
+      "testMethodName": "shouldNotGetInValidToken",
+      "description": "Should not get in valid token",
+      "tagIds": [],
+      "explicitParameters": [],
+      "derivedParameters": [],
+      "casesAsTable": false,
+      "scenarioCases": [
+        {
+          "caseNr": 1,
+          "steps": [
+            {
+              "name": "we get a token",
+              "words": [
+                {
+                  "value": "When",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "we get a token"
+                },
+                {
+                  "value": "invalid-token",
+                  "argumentInfo": {
+                    "argumentName": "tokenId",
+                    "formattedValue": "invalid-token"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 230241470
+            },
+            {
+              "name": "the api error custom code is",
+              "words": [
+                {
+                  "value": "Then",
+                  "isIntroWord": true
+                },
+                {
+                  "value": "the api error custom code is"
+                },
+                {
+                  "value": "TKN_NOT_FOUND",
+                  "argumentInfo": {
+                    "argumentName": "customCode",
+                    "formattedValue": "TKN_NOT_FOUND"
+                  }
+                }
+              ],
+              "status": "PASSED",
+              "durationInNanos": 2626617
+            }
+          ],
+          "explicitArguments": [],
+          "derivedArguments": [],
+          "success": true,
+          "durationInNanos": 233710016
+        }
+      ],
+      "durationInNanos": 233710016,
+      "executionStatus": "SUCCESS"
+    }
+  ],
+  "tagMap": {}
+}

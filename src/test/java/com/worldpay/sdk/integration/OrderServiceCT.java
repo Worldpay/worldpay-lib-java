@@ -19,6 +19,7 @@ import com.tngtech.jgiven.junit.ScenarioTest;
 import com.worldpay.gateway.clearwater.client.core.dto.CountryCode;
 import com.worldpay.gateway.clearwater.client.core.dto.CurrencyCode;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
+import com.worldpay.gateway.clearwater.client.core.dto.common.CommonToken;
 import com.worldpay.gateway.clearwater.client.core.dto.common.DeliveryAddress;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
 import com.worldpay.gateway.clearwater.client.core.dto.common.MerchantUrlConfig;
@@ -436,6 +437,35 @@ public class OrderServiceCT extends ScenarioTest<OrderServiceClientStage, OrderS
             .aWorldpayExceptionIsThrown()
             .and()
             .theErrorMessageIs("API error: Capture amount cannot be more than authorized order amount");
+    }
+
+    @Test
+    public void shouldCreateAndUseToken() {
+        CardRequest cardRequest = new CardRequest();
+        cardRequest.setName("John Doe");
+        cardRequest.setCardNumber("4444333322221111");
+        cardRequest.setExpiryMonth(2);
+        cardRequest.setExpiryYear(2017);
+        cardRequest.setCvc("123");
+
+        CommonToken commonToken = new CommonToken(cardRequest, false);
+
+        TokenRequest tokenRequest = new TokenRequest(commonToken);
+        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
+
+        given()
+            .weCreateAToken(tokenRequest)
+            .weCreateAnOrder();
+
+        when()
+            .weFindTheOrder();
+
+        then()
+            .theTransactionIsNotNull()
+            .and()
+            .theOrderResponseIsNotNull()
+            .and()
+            .thePaymentStatusInTheOrderResponseIsSuccess();
     }
 
     /**

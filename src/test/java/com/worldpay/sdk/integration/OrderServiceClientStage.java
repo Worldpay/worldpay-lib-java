@@ -1,7 +1,9 @@
 package com.worldpay.sdk.integration;
 
+import com.tngtech.jgiven.CurrentStep;
 import com.tngtech.jgiven.Stage;
 import com.tngtech.jgiven.annotation.BeforeStage;
+import com.tngtech.jgiven.annotation.ExpectedScenarioState;
 import com.tngtech.jgiven.annotation.ProvidedScenarioState;
 import com.worldpay.gateway.clearwater.client.core.dto.CountryCode;
 import com.worldpay.gateway.clearwater.client.core.dto.CurrencyCode;
@@ -21,7 +23,13 @@ import com.worldpay.sdk.util.PropertyUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.tngtech.jgiven.attachment.Attachment.fromText;
+import static com.tngtech.jgiven.attachment.MediaType.PLAIN_TEXT_UTF_8;
+
 public class OrderServiceClientStage extends Stage<OrderServiceClientStage> {
+
+    @ExpectedScenarioState
+    private CurrentStep currentStep;
 
     @ProvidedScenarioState
     private OrderService orderService;
@@ -46,7 +54,9 @@ public class OrderServiceClientStage extends Stage<OrderServiceClientStage> {
     }
 
     public OrderServiceClientStage aExcisingOrder(OrderRequest orderRequest) {
+        currentStep.addAttachment(fromText(orderRequest.toString(), PLAIN_TEXT_UTF_8).withTitle("Request"));
         OrderResponse response = orderService.create(orderRequest);
+        currentStep.addAttachment(fromText(response.toString(), PLAIN_TEXT_UTF_8).withTitle("Response"));
         orderCode = response.getOrderCode();
         return self();
     }
@@ -70,6 +80,7 @@ public class OrderServiceClientStage extends Stage<OrderServiceClientStage> {
 
     public OrderServiceClientStage weCreateAToken(TokenRequest tokenRequest) {
         tokenResponse = tokenService.create(tokenRequest);
+        currentStep.addAttachment(fromText(tokenResponse.toString(), PLAIN_TEXT_UTF_8).withTitle("Response"));
         return self();
     }
 

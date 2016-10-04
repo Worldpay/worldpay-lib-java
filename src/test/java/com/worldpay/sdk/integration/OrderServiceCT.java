@@ -455,6 +455,7 @@ public class OrderServiceCT extends ScenarioTest<OrderServiceClientStage, OrderS
 
         given()
             .weCreateAToken(tokenRequest)
+            .and()
             .weCreateAnOrder();
 
         when()

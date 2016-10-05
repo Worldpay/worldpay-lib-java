@@ -43,7 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class OrderServiceCT extends ScenarioTest<OrderServiceClientStage, OrderStage, AssertOfferResponseStage> {
+public class OrderServiceCT extends ScenarioTest<OrderServiceClientStage, OrderStage, AssertOrderResponseStage> {
 
     /**
      * Test Master card number.

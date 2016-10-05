@@ -18,7 +18,7 @@
     <parent>
         <groupId>com.worldpay.api.root</groupId>
         <artifactId>worldpay-root</artifactId>
-        <version>0.0.5</version>
+        <version>0.0.8</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -26,19 +26,21 @@
     <packaging>jar</packaging>
     <groupId>com.worldpay</groupId>
     <artifactId>worldpay-lib-java</artifactId>
-    <name>Worldpay: Java Client</name>
+
     <organization>
         <name>Worldpay</name>
         <url>https://online.worldpay.com/</url>
     </organization>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <github.repository>worldpay-lib-java</github.repository>
         <git.dotGitDirectory>${project.basedir}/.git</git.dotGitDirectory>
 
-        <dep.worldpay-client-core.version>0.0.12</dep.worldpay-client-core.version>
-        <dep.worldpay-client-common.version>0.0.11</dep.worldpay-client-common.version>
-        <dep.worldpay-common-utils.version>0.0.11</dep.worldpay-common-utils.version>
+        <dep.worldpay-client-core.version>0.8.2</dep.worldpay-client-core.version>
+        <dep.worldpay-client-common.version>0.4.0</dep.worldpay-client-common.version>
+        <dep.worldpay-common-utils.version>0.3.0</dep.worldpay-common-utils.version>
     </properties>
 
     <scm>
@@ -84,6 +86,20 @@
             <groupId>com.worldpay.api.commons</groupId>
             <artifactId>worldpay-common-utils</artifactId>
             <version>${dep.worldpay-common-utils.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tngtech.jgiven</groupId>
+            <artifactId>jgiven-junit</artifactId>
+            <version>0.12.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.1.7</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
@@ -170,6 +186,44 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includes>
+                        <include>**/IT*.java</include>
+                        <include>**/*IT.java</include>
+                        <include>**/*CT.java</include>
+                        <include>**/CT*.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.tngtech.jgiven</groupId>
+                <artifactId>jgiven-maven-plugin</artifactId>
+                <version>0.12.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <format>html</format>
+                </configuration>
             </plugin>
         </plugins>
     </build>

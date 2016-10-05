@@ -14,37 +14,36 @@
 
 package com.worldpay.sdk.integration;
 
-import com.worldpay.api.client.common.enums.OrderStatus;
+import com.tngtech.jgiven.annotation.As;
+import com.tngtech.jgiven.junit.ScenarioTest;
 import com.worldpay.gateway.clearwater.client.core.dto.CountryCode;
 import com.worldpay.gateway.clearwater.client.core.dto.CurrencyCode;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Address;
+import com.worldpay.gateway.clearwater.client.core.dto.common.CommonToken;
 import com.worldpay.gateway.clearwater.client.core.dto.common.DeliveryAddress;
 import com.worldpay.gateway.clearwater.client.core.dto.common.Entry;
 import com.worldpay.gateway.clearwater.client.core.dto.common.MerchantUrlConfig;
-import com.worldpay.gateway.clearwater.client.core.dto.request.*;
-import com.worldpay.gateway.clearwater.client.core.dto.response.CardResponse;
+import com.worldpay.gateway.clearwater.client.core.dto.request.AlternatePaymentMethod;
+import com.worldpay.gateway.clearwater.client.core.dto.request.CardRequest;
+import com.worldpay.gateway.clearwater.client.core.dto.request.OrderAuthorizationRequest;
+import com.worldpay.gateway.clearwater.client.core.dto.request.OrderRequest;
+import com.worldpay.gateway.clearwater.client.core.dto.request.ThreeDSecureInfo;
+import com.worldpay.gateway.clearwater.client.core.dto.request.TokenRequest;
 import com.worldpay.gateway.clearwater.client.core.dto.response.OrderResponse;
 import com.worldpay.gateway.clearwater.client.core.dto.response.TokenResponse;
-import com.worldpay.gateway.clearwater.client.core.exception.WorldpayException;
-import com.worldpay.gateway.clearwater.client.ui.dto.order.Transaction;
-import com.worldpay.sdk.OrderService;
-import com.worldpay.sdk.WorldpayRestClient;
 import com.worldpay.sdk.util.HttpUrlConnection;
 import com.worldpay.sdk.util.JsonParser;
 import com.worldpay.sdk.util.PropertyUtils;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-
-public class OrderServiceIT {
+public class OrderServiceCT extends ScenarioTest<OrderServiceClientStage, OrderStage, AssertOrderResponseStage> {
 
     /**
      * Test Master card number.
@@ -92,24 +91,10 @@ public class OrderServiceIT {
     private static final String PROPERTY_CLIENT_KEY_SITE = "clientKey_site";
 
     /**
-     * Service under test
-     */
-    private OrderService orderService;
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    @Before
-    public void setup() {
-        orderService = new WorldpayRestClient(PropertyUtils.serviceKey()).getOrderService();
-    }
-
-    /**
      * This test for creating an order with valid token
      */
     @Test
     public void shouldCreateOrderForValidToken() {
-
         OrderRequest orderRequest = createOrderRequest();
         final DeliveryAddress deliveryAddress = new DeliveryAddress("first", "last");
         deliveryAddress.setAddress1("address1");
@@ -122,30 +107,41 @@ public class OrderServiceIT {
         orderRequest.setShopperEmailAddress(emailAddress);
         orderRequest.setToken(createToken());
 
-        OrderResponse response = orderService.create(orderRequest);
+        when()
+            .wePostAnOrderRequest(orderRequest);
 
-        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
-        assertThat("Amount", response.getAmount(), is(1999));
-        assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
-        assertThat("Card Type", ((CardResponse) response.getPaymentResponse()).getCardType(),
-                   equalTo("MASTERCARD_CREDIT"));
-        assertThat("Delivery address",response.getDeliveryAddress(), equalTo(deliveryAddress));
-        assertThat("shopper email", response.getShopperEmailAddress(), equalTo(emailAddress));
+        then()
+            .theOrderCodeIsNotNull()
+            .and()
+            .theAmountIs(1999)
+            .and()
+            .theCustomerIdentifiersIsNotNull()
+            .and()
+            .theCardTypeIs("MASTERCARD_CREDIT")
+            .and()
+            .theDeliveryAddressIs(deliveryAddress)
+            .and()
+            .theShopperEmailAddressIs(emailAddress);
     }
 
     /**
      * Test for creating 3DS order with valid token and 3DS information.
      */
     @Test
+    @As("Should create order for valid token and 3DS")
     public void shouldCreateOrderForValidTokenAndThreeDS() {
-
         OrderRequest orderRequest = createOrderRequestWithThreeDS();
         orderRequest.setToken(createToken());
 
-        OrderResponse response = orderService.create(orderRequest);
-        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
-        assertThat("Amount", response.getAmount(), is(1999));
-        assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+        when()
+            .wePostAnOrderRequest(orderRequest);
+
+        then()
+            .theOrderCodeIsNotNull()
+            .and()
+            .theAmountIs(1999)
+            .and()
+            .theCustomerIdentifiersIsNotNull();
     }
 
     /**
@@ -154,16 +150,23 @@ public class OrderServiceIT {
     @Test
     public void shouldCreateOrderWithSiteCode() {
         final String siteCode = "NEW";
-        orderService = new WorldpayRestClient(PropertyUtils.getProperty(PROPERTY_SERVICE_KEY_SITE)).getOrderService();
         OrderRequest orderRequest = createOrderRequest();
         orderRequest.setToken(createToken(PropertyUtils.getProperty(PROPERTY_CLIENT_KEY_SITE)));
         orderRequest.setSiteCode(siteCode);
         orderRequest.setSettlementCurrency(CurrencyCode.USD);
 
-        OrderResponse response = orderService.create(orderRequest);
-        assertThat("Response", response, is(notNullValue()));
-        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
-        assertThat("Settlement currency", response.getSettlementCurrency(), equalTo(CurrencyCode.USD));
+        given()
+            .aWorldpayRestClientWithServiceKey(PropertyUtils.getProperty(PROPERTY_SERVICE_KEY_SITE));
+
+        when()
+            .wePostAnOrderRequest(orderRequest);
+
+        then()
+            .theResponseIsNotNull()
+            .and()
+            .theOrderCodeIsNotNull()
+            .and()
+            .theCurrencyCodeIs(CurrencyCode.USD);
     }
 
     /**
@@ -171,37 +174,44 @@ public class OrderServiceIT {
      * This test expects authorize3Ds to return {@link OrderResponse} and order status should be Success.
      */
     @Test
+    @As(" Should authorize 3DS order")
     public void shouldAuthorizeThreeDSOrder() {
         OrderRequest orderRequest = createOrderRequestWithThreeDS();
         orderRequest.setName("3D");
         orderRequest.setToken(createToken());
 
-        OrderResponse response = orderService.create(orderRequest);
-        assertThat("Order code", response.getOrderCode(), notNullValue());
-        assertThat("Order Status", response.getPaymentStatus(), equalTo(OrderStatus.PRE_AUTHORIZED.toString()));
-
         OrderAuthorizationRequest orderAuthorizationRequest =
             createOrderAuthorizationRequest(orderRequest.getThreeDSecureInfo(), "IDENTIFIED");
-        OrderResponse authorizeRespone = orderService.authorize3Ds(response.getOrderCode(), orderAuthorizationRequest);
-        assertThat("Response", authorizeRespone, notNullValue());
-        assertThat("Order code", authorizeRespone.getOrderCode(), equalTo(response.getOrderCode()));
-        assertThat("Order Status", authorizeRespone.getPaymentStatus(), equalTo(OrderStatus.SUCCESS.toString()));
+
+        given()
+            .aExcisingOrder(orderRequest);
+
+        when()
+            .weAuthorizeTheOrder(orderAuthorizationRequest);
+
+        then()
+            .theResponseIsNotNull()
+            .and()
+            .theOrderCodeIsTheSame()
+            .and()
+            .thePaymentStatusIsSuccess();
     }
 
     /**
      * This is the test for testing 3DS order with invalid 3DS relevant information.
      */
-    @Test(expected = WorldpayException.class)
+    @Test
+    @As("should throw exception if 3DS is enabled but the info is invalid")
     public void shouldThrowExceptionIfThreeDSEnabledButInfoInvalid() {
-
         OrderRequest orderRequest = createOrderRequestWithThreeDS();
         orderRequest.setThreeDSecureInfo(null);
         orderRequest.setToken(createToken());
 
-        OrderResponse response = orderService.create(orderRequest);
-        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
-        assertThat("Amount", response.getAmount(), is(1999));
-        assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
+        when()
+            .wePostAnOrderRequest(orderRequest);
+
+        then()
+            .aWorldpayExceptionIsThrown();
     }
 
     /**
@@ -209,15 +219,20 @@ public class OrderServiceIT {
      */
     @Test
     public void shouldCreateAlternatePaymentMethodOrderWithValidToken() {
-
         OrderRequest orderRequest = createOrderRequestWithAPM();
         orderRequest.setToken(createApmToken());
 
-        OrderResponse response = orderService.create(orderRequest);
-        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
-        assertThat("Amount", response.getAmount(), is(1999));
-        assertThat("Customer identifier", response.getKeyValueResponse().getCustomerIdentifiers(), is(notNullValue()));
-        assertThat("Redirect URL", response.getRedirectURL(), is(notNullValue()));
+        when()
+           .wePostAnOrderRequest(orderRequest);
+
+        then()
+            .theOrderCodeIsNotNull()
+            .and()
+            .theAmountIs(1999)
+            .and()
+            .theCustomerIdentifiersIsNotNull()
+            .and()
+            .theRedirectUrlIsNotNull();
     }
 
     @Test
@@ -225,9 +240,13 @@ public class OrderServiceIT {
         OrderRequest orderRequest = createOrderRequest();
         orderRequest.getCommonToken().setPaymentMethod(createCardRequest());
 
-        OrderResponse response = orderService.create(orderRequest);
-        assertThat("Response code", response.getOrderCode(), is(notNullValue()));
-        assertThat("Payment status", response.getPaymentStatus(), equalTo("SUCCESS"));
+        when()
+            .wePostAnOrderRequest(orderRequest);
+
+        then()
+            .theOrderCodeIsNotNull()
+            .and()
+            .thePaymentStatusIsSuccess();
     }
 
     @Test
@@ -235,10 +254,13 @@ public class OrderServiceIT {
         OrderRequest orderRequest = createOrderRequest();
         orderRequest.getCommonToken().setPaymentMethod(createAlternatePaymentMethod());
 
-        OrderResponse response = orderService.create(orderRequest);
-        final String orderCode = response.getOrderCode();
-        assertThat("Response code", orderCode, is(notNullValue()));
-        assertThat("Payment status", response.getRedirectURL(), containsString(orderCode));
+        when()
+            .wePostAnOrderRequest(orderRequest);
+
+        then()
+            .theOrderCodeIsNotNull()
+            .and()
+            .theRedirectUrlContainsTheOrderCode();
     }
 
     /**
@@ -249,10 +271,11 @@ public class OrderServiceIT {
         OrderRequest orderRequest = createOrderRequest();
         orderRequest.setToken(createToken());
 
-        String orderCode = orderService.create(orderRequest).getOrderCode();
-        assertThat("Order code", orderCode, is(notNullValue()));
+        given()
+            .aExcisingOrder(orderRequest);
 
-        orderService.refund(orderCode);
+        when()
+            .weRefundTheOrder();
     }
 
     /**
@@ -263,10 +286,11 @@ public class OrderServiceIT {
         OrderRequest orderRequest = createOrderRequest();
         orderRequest.setToken(createToken());
 
-        String orderCode = orderService.create(orderRequest).getOrderCode();
-        assertThat("Order code", orderCode, is(notNullValue()));
+        given()
+            .aExcisingOrder(orderRequest);
 
-        orderService.refund(orderCode, 1);
+        when()
+            .weRefundTheOrder(1);
     }
 
     /**
@@ -277,11 +301,12 @@ public class OrderServiceIT {
     public void shouldThrowExceptionForInvalidToken() {
         OrderRequest orderRequest = createOrderRequest();
         orderRequest.setToken("invalid-token");
-        try {
-            orderService.create(orderRequest);
-        } catch (WorldpayException e) {
-            assertThat("Valid token", e.getApiError().getCustomCode(), is("TKN_NOT_FOUND"));
-        }
+
+        when()
+            .wePostAnOrderRequest(orderRequest);
+
+        then()
+            .theApiErrorCustomCodeIs("TKN_NOT_FOUND");
     }
 
     /**
@@ -294,10 +319,15 @@ public class OrderServiceIT {
         orderRequest.setToken(createToken());
         orderRequest.setAuthorizeOnly(Boolean.TRUE);
 
-        OrderResponse response = orderService.create(orderRequest);
-        assertThat("Order code", response.getOrderCode(), notNullValue());
-        assertThat("Amount", response.getAmount(), is(0));
-        assertThat("Order status", response.getPaymentStatus(), equalTo(OrderStatus.AUTHORIZED.toString()));
+        when()
+            .wePostAnOrderRequest(orderRequest);
+
+        then()
+            .theOrderCodeIsNotNull()
+            .and()
+            .theAmountIs(0)
+            .and()
+            .thePaymentStatusIsAuthorized();
     }
 
     /**
@@ -310,17 +340,20 @@ public class OrderServiceIT {
         orderRequest.setToken(createToken());
         orderRequest.setAuthorizeOnly(Boolean.TRUE);
 
-        OrderResponse response = orderService.create(orderRequest);
-        assertThat("Order code", response.getOrderCode(), notNullValue());
-        assertThat("Amount", response.getAmount(), is(0));
-        assertThat("Order status", response.getPaymentStatus(), equalTo(OrderStatus.AUTHORIZED.toString()));
+        given()
+            .aExcisingOrder(orderRequest);
 
-        orderService.cancel(response.getOrderCode());
-        Transaction authorizedResponse = orderService.findOrder(response.getOrderCode());
-        assertThat("Response", authorizedResponse, notNullValue());
-        assertThat("Order Response", authorizedResponse.getOrderResponse(), notNullValue());
-        assertThat("Status", authorizedResponse.getOrderResponse().getPaymentStatus(),
-                   equalTo(OrderStatus.CANCELLED.toString()));
+        when()
+            .weCancelTheOrder()
+            .and()
+            .weFindTheOrder();
+
+        then()
+            .theTransactionIsNotNull()
+            .and()
+            .theOrderResponseIsNotNull()
+            .and()
+            .thePaymentStatusInTheOrderResponseIsCancelled();
     }
 
     /**
@@ -333,22 +366,24 @@ public class OrderServiceIT {
         orderRequest.setToken(createToken());
         orderRequest.setAuthorizeOnly(Boolean.TRUE);
 
-        OrderResponse response = orderService.create(orderRequest);
-        assertThat("Order code", response.getOrderCode(), notNullValue());
-        assertThat("Order status", response.getPaymentStatus(), equalTo(OrderStatus.AUTHORIZED.toString()));
-        assertThat("Amount", response.getAmount(), is(0));
-        assertThat("Authorized amount", response.getAuthorizedAmount(), is(1999));
+        given()
+            .aExcisingOrder(orderRequest)
+            .and()
+            .wePartialCaptureTheOrder(900);
 
-        CaptureOrderRequest captureOrderRequest = new CaptureOrderRequest();
-        captureOrderRequest.setCaptureAmount(900);
-        orderService.capture(captureOrderRequest, response.getOrderCode());
-        Transaction authorizedResponse = orderService.findOrder(response.getOrderCode());
-        assertThat("Response", authorizedResponse, notNullValue());
-        assertThat("Order Response", authorizedResponse.getOrderResponse(), notNullValue());
-        assertThat("Status", authorizedResponse.getOrderResponse().getPaymentStatus(),
-                   equalTo(OrderStatus.SUCCESS.toString()));
-        assertThat("Amount", authorizedResponse.getOrderResponse().getAmount(), is(900));
-        assertThat("Authorized amount", authorizedResponse.getOrderResponse().getAuthorizedAmount(), is(1999));
+        when()
+            .weFindTheOrder();
+
+        then()
+            .theTransactionIsNotNull()
+            .and()
+            .theOrderResponseIsNotNull()
+            .and()
+            .thePaymentStatusInTheOrderResponseIsSuccess()
+            .and()
+            .theAmountInTheOrderResponseIs(900)
+            .and()
+            .theAuthorizedAmountInTheOrderResponseIs(1999);
     }
 
     /**
@@ -361,21 +396,25 @@ public class OrderServiceIT {
         orderRequest.setToken(createToken());
         orderRequest.setAuthorizeOnly(Boolean.TRUE);
 
-        OrderResponse response = orderService.create(orderRequest);
-        assertThat("Order code", response.getOrderCode(), notNullValue());
-        assertThat("Order status", response.getPaymentStatus(), equalTo(OrderStatus.AUTHORIZED.toString()));
-        assertThat("Amount", response.getAmount(), is(0));
-        assertThat("Authorized amount", response.getAuthorizedAmount(), is(1999));
+        given()
+            .aExcisingOrder(orderRequest)
+            .thatIsAuthorizeOnly()
+            .and()
+            .weCaptureTheOrder();
 
-        CaptureOrderRequest captureOrderRequest = new CaptureOrderRequest();
-        orderService.capture(captureOrderRequest, response.getOrderCode());
-        Transaction authorizedResponse = orderService.findOrder(response.getOrderCode());
-        assertThat("Response", authorizedResponse, notNullValue());
-        assertThat("Order Response", authorizedResponse.getOrderResponse(), notNullValue());
-        assertThat("Status", authorizedResponse.getOrderResponse().getPaymentStatus(),
-                   equalTo(OrderStatus.SUCCESS.toString()));
-        assertThat("Amount", authorizedResponse.getOrderResponse().getAmount(), is(1999));
-        assertThat("Authorized amount", authorizedResponse.getOrderResponse().getAuthorizedAmount(), is(1999));
+        when()
+            .weFindTheOrder();
+
+        then()
+            .theTransactionIsNotNull()
+            .and()
+            .theOrderResponseIsNotNull()
+            .and()
+            .thePaymentStatusInTheOrderResponseIsSuccess()
+            .and()
+            .theAmountInTheOrderResponseIs(1999)
+            .and()
+            .theAuthorizedAmountInTheOrderResponseIs(1999);
     }
 
     /**
@@ -384,21 +423,50 @@ public class OrderServiceIT {
      */
     @Test
     public void shouldExcessCaptureAuthorizeOnlyOrder() {
-        expectedException.expect(WorldpayException.class);
-        expectedException.expectMessage("API error: Capture amount cannot be more than authorized order amount");
         OrderRequest orderRequest = createOrderRequest();
         orderRequest.setToken(createToken());
         orderRequest.setAuthorizeOnly(Boolean.TRUE);
 
-        OrderResponse response = orderService.create(orderRequest);
-        assertThat("Order code", response.getOrderCode(), notNullValue());
-        assertThat("Order status", response.getPaymentStatus(), equalTo(OrderStatus.AUTHORIZED.toString()));
-        assertThat("Amount", response.getAmount(), is(0));
-        assertThat("Authorized amount", response.getAuthorizedAmount(), is(1999));
+        given()
+            .aExcisingOrder(orderRequest);
 
-        CaptureOrderRequest captureOrderRequest = new CaptureOrderRequest();
-        captureOrderRequest.setCaptureAmount(2000);
-        orderService.capture(captureOrderRequest, response.getOrderCode());
+        when()
+            .wePartialCaptureTheOrder(2000);
+
+        then()
+            .aWorldpayExceptionIsThrown()
+            .and()
+            .theErrorMessageIs("API error: Capture amount cannot be more than authorized order amount");
+    }
+
+    @Test
+    public void shouldCreateAndUseToken() {
+        CardRequest cardRequest = new CardRequest();
+        cardRequest.setName("John Doe");
+        cardRequest.setCardNumber("4444333322221111");
+        cardRequest.setExpiryMonth(2);
+        cardRequest.setExpiryYear(2017);
+        cardRequest.setCvc("123");
+
+        CommonToken commonToken = new CommonToken(cardRequest, false);
+
+        TokenRequest tokenRequest = new TokenRequest(commonToken);
+        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
+
+        given()
+            .weCreateAToken(tokenRequest)
+            .and()
+            .weCreateAnOrder();
+
+        when()
+            .weFindTheOrder();
+
+        then()
+            .theTransactionIsNotNull()
+            .and()
+            .theOrderResponseIsNotNull()
+            .and()
+            .thePaymentStatusInTheOrderResponseIsSuccess();
     }
 
     /**

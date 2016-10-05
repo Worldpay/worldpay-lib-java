@@ -57,8 +57,9 @@ public final class JsonParser {
     /**
      * Convert a string to Object representation.
      *
-     * @param json the string to convert
-     * @param type the type of object
+     * @param <T>  the class of the value
+     * @param json the {@link String} to convert
+     * @param type the {@link Class} of the value
      *
      * @return the object created from the string
      */
@@ -73,10 +74,11 @@ public final class JsonParser {
     /**
      * Convert an input stream to Object representation.
      *
-     * @param in   {@link InputStream}
-     * @param type {@link Class} type
+     * @param <T>  the class of the value
+     * @param in   the {@link InputStream} to get the object to convert from
+     * @param type the {@link Class} of the value
      *
-     * @return Data read into an object of type
+     * @return the object created from the InputStream
      */
     public static <T> T toObject(InputStream in, Class<T> type) {
         try {

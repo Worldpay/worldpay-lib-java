@@ -55,7 +55,7 @@ public class PropertyUtils {
     /**
      * Value of the the base URL.
      *
-     * @return
+     * @return the base URL
      */
     public static String baseUrl() {
         return getValue(BASE_URL);
@@ -64,7 +64,7 @@ public class PropertyUtils {
     /**
      * Value of the service key.
      *
-     * @return
+     * @return the service key
      */
     public static String serviceKey() {
         return getValue(SERVICE_KEY);
@@ -73,8 +73,9 @@ public class PropertyUtils {
     /**
      * Get value for the specified key.
      *
-     * @param key
-     * @return
+     * @param key the key to get the value for
+     *
+     * @return the value for the given key
      */
     public static String getProperty(String key) {
         return getValue(key);

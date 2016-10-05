@@ -8,3 +8,4 @@ git.properties
 atlassian-ide-plugin.xml
 **/**/bower_components
 **/**/node_modules
+jgiven-reports

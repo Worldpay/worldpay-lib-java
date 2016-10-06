@@ -1,6 +1,5 @@
 package com.worldpay.sdk.integration;
 
-import com.tngtech.jgiven.annotation.As;
 import com.tngtech.jgiven.junit.ScenarioTest;
 import com.worldpay.gateway.clearwater.client.core.dto.common.CommonToken;
 import com.worldpay.gateway.clearwater.client.core.dto.request.CardRequest;
@@ -53,7 +52,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
     }
 
     @Test
-    public void shouldCreateAReusableTokenForAVisaCard() {
+    public void shouldCreateReusableTokenForVisa() {
         CardRequest cardRequest = new CardRequest();
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("4444333322221111");
@@ -112,7 +111,184 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
     }
 
     @Test
-    public void shouldCreateSingleUseTokenForAnAmexCard() {
+    public void shouldCreateReusableTokenForMaestro() {
+        CardRequest cardRequest = new CardRequest();
+        cardRequest.setName("John Doe");
+        cardRequest.setCardNumber("6759649826438453");
+        cardRequest.setExpiryMonth(2);
+        cardRequest.setExpiryYear(2017);
+        cardRequest.setCvc("123");
+
+        CommonToken commonToken = new CommonToken(cardRequest, true);
+
+        TokenRequest tokenRequest = new TokenRequest(commonToken);
+        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
+
+        when()
+            .weCreateAToken(tokenRequest);
+
+        then()
+            .theTokenStartsWith("TEST_RU_")
+            .and()
+            .theCardTypeIs("MAESTRO")
+            .and()
+            .theMaskedCardNumberIs("**** **** **** 8453")
+            .and()
+            .theCardSchemaTypeIs("unknown")
+            .and()
+            .theCardSchemaNameIs("unknown")
+            .and()
+            .theCardIssuerIs("unknown")
+            .and()
+            .theCountryCodeIs("XX")
+            .and()
+            .theCardClassIs("unknown")
+            .and()
+            .theCardProductTypeDescNonContactless("unknown")
+            .and()
+            .theCardProductTypeDescContactless("unknown")
+            .and()
+            .thePrepaidIs("unknown")
+            .and()
+            .theExpiryMonthIs(2)
+            .and()
+            .theExpiryYearIs(2017)
+            .and()
+            .theIssuerNumberIsNull()
+            .and()
+            .theStartMonthIsNull()
+            .and()
+            .theStartYearIsNull()
+            .and()
+            .theNameIs("John Doe")
+            .and()
+            .theTokenIsReusable()
+            .and()
+            .theShopperLanguageCodeIsNull()
+            .and()
+            .theBillingAddressIsNull();
+    }
+
+    @Test
+    public void shouldCreateReusableTokenForAmex() {
+        CardRequest cardRequest = new CardRequest();
+        cardRequest.setName("John Doe");
+        cardRequest.setCardNumber("34343434343434");
+        cardRequest.setExpiryMonth(2);
+        cardRequest.setExpiryYear(2017);
+        cardRequest.setCvc("123");
+
+        CommonToken commonToken = new CommonToken(cardRequest, true);
+
+        TokenRequest tokenRequest = new TokenRequest(commonToken);
+        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
+
+        when()
+            .weCreateAToken(tokenRequest);
+
+        then()
+            .theTokenStartsWith("TEST_RU_")
+            .and()
+            .theCardTypeIs("AMEX")
+            .and()
+            .theMaskedCardNumberIs("**** **** ** 3434")
+            .and()
+            .theCardSchemaTypeIs("unknown")
+            .and()
+            .theCardSchemaNameIs("unknown")
+            .and()
+            .theCardIssuerIs("unknown")
+            .and()
+            .theCountryCodeIs("XX")
+            .and()
+            .theCardClassIs("unknown")
+            .and()
+            .theCardProductTypeDescNonContactless("unknown")
+            .and()
+            .theCardProductTypeDescContactless("unknown")
+            .and()
+            .thePrepaidIs("unknown")
+            .and()
+            .theExpiryMonthIs(2)
+            .and()
+            .theExpiryYearIs(2017)
+            .and()
+            .theIssuerNumberIsNull()
+            .and()
+            .theStartMonthIsNull()
+            .and()
+            .theStartYearIsNull()
+            .and()
+            .theNameIs("John Doe")
+            .and()
+            .theTokenIsReusable()
+            .and()
+            .theShopperLanguageCodeIsNull()
+            .and()
+            .theBillingAddressIsNull();
+    }
+
+    @Test
+    public void shouldCreateSingleUseTokenForVisa() {
+        CardRequest cardRequest = new CardRequest();
+        cardRequest.setName("John Doe");
+        cardRequest.setCardNumber("4444333322221111");
+        cardRequest.setExpiryMonth(2);
+        cardRequest.setExpiryYear(2017);
+        cardRequest.setCvc("123");
+
+        CommonToken commonToken = new CommonToken(cardRequest, false);
+
+        TokenRequest tokenRequest = new TokenRequest(commonToken);
+        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
+
+        when()
+            .weCreateAToken(tokenRequest);
+
+        then()
+            .theTokenStartsWith("TEST_SU_")
+            .and()
+            .theCardTypeIs("VISA_CREDIT")
+            .and()
+            .theMaskedCardNumberIs("**** **** **** 1111")
+            .and()
+            .theCardSchemaTypeIs("consumer")
+            .and()
+            .theCardSchemaNameIs("VISA CREDIT")
+            .and()
+            .theCardIssuerIs("NATWEST")
+            .and()
+            .theCountryCodeIs("GB")
+            .and()
+            .theCardClassIs("credit")
+            .and()
+            .theCardProductTypeDescNonContactless("Visa Credit Personal")
+            .and()
+            .theCardProductTypeDescContactless("CL Visa Credit Pers")
+            .and()
+            .thePrepaidIs("false")
+            .and()
+            .theExpiryMonthIs(2)
+            .and()
+            .theExpiryYearIs(2017)
+            .and()
+            .theIssuerNumberIsNull()
+            .and()
+            .theStartMonthIsNull()
+            .and()
+            .theStartYearIsNull()
+            .and()
+            .theNameIs("John Doe")
+            .and()
+            .theTokenIsNotReusable()
+            .and()
+            .theShopperLanguageCodeIsNull()
+            .and()
+            .theBillingAddressIsNull();
+    }
+
+    @Test
+    public void shouldCreateSingleUseTokenForAmex() {
         CardRequest cardRequest = new CardRequest();
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("34343434343434");
@@ -171,7 +347,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
     }
 
     @Test
-    public void shouldCreateSingleUseTokenForAMaestroCard() {
+    public void shouldCreateSingleUseTokenForMaestro() {
         CardRequest cardRequest = new CardRequest();
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("6759649826438453");
@@ -230,7 +406,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
     }
 
     @Test
-    public void shouldThrowExceptionIsTokenCreationRequestIsInvalid() {
+    public void shouldThrowExceptionIfTokenCreationRequestIsInvalid() {
         CardRequest cardRequest = new CardRequest();
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("6759649826438453");
@@ -252,7 +428,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
     }
 
     @Test
-    public void shouldCreateASingleUseTokenForALiveClientToken() {
+    public void shouldCreateSingleUseTokenWithLiveClientApiKey() {
         CardRequest cardRequest = new CardRequest();
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("4444333322221111");
@@ -311,7 +487,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
     }
 
     @Test
-    public void shouldCreateAReusableTokenForALiveClientToken() {
+    public void shouldCreateReusableTokenWithLiveClientApiKey() {
         CardRequest cardRequest = new CardRequest();
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("4444333322221111");
@@ -370,8 +546,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
     }
 
     @Test
-    @As("Should create a single use WPG token for a live client token")
-    public void shouldCreateASingleUseWPGTokenForALiveClientToken() {
+    public void shouldCreateSingleUseTokenStoreTokenWithLiveClientApiKey() {
         CardRequest cardRequest = new CardRequest();
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("4444333322221111");

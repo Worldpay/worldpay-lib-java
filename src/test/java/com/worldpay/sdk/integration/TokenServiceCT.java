@@ -60,7 +60,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
         cardRequest.setExpiryYear(2017);
         cardRequest.setCvc("123");
 
-        CommonToken commonToken = new CommonToken(cardRequest, false);
+        CommonToken commonToken = new CommonToken(cardRequest, true);
 
         TokenRequest tokenRequest = new TokenRequest(commonToken);
         tokenRequest.setClientKey(PropertyUtils.getProperty("clientKey"));
@@ -69,7 +69,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
             .weCreateAToken(tokenRequest);
 
         then()
-            .theTokenStartsWith("TEST_SU_")
+            .theTokenStartsWith("TEST_RU_")
             .and()
             .theCardTypeIs("VISA_CREDIT")
             .and()
@@ -103,7 +103,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
             .and()
             .theNameIs("John Doe")
             .and()
-            .theTokenIsNotReusable()
+            .theTokenIsReusable()
             .and()
             .theShopperLanguageCodeIsNull()
             .and()
@@ -111,7 +111,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
     }
 
     @Test
-    public void shouldCreateReusableTokenForAnAmexCard() {
+    public void shouldCreateSingleUseTokenForAnAmexCard() {
         CardRequest cardRequest = new CardRequest();
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("34343434343434");
@@ -170,7 +170,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
     }
 
     @Test
-    public void shouldCreateReusableTokenForAMaestroCard() {
+    public void shouldCreateSingleUseTokenForAMaestroCard() {
         CardRequest cardRequest = new CardRequest();
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("6759649826438453");

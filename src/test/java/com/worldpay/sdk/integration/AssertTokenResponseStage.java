@@ -141,6 +141,11 @@ public class AssertTokenResponseStage extends Stage<AssertTokenResponseStage> {
         return self();
     }
 
+    public AssertTokenResponseStage theTokenIsReusable() {
+        assertThat(tokenResponse.getCommonToken().isReusable(), is(true));
+        return self();
+    }
+
     public AssertTokenResponseStage theShopperLanguageCodeIsNull() {
         assertThat(tokenResponse.getCommonToken().getShopperLanguageCode(), is(nullValue()));
         return self();

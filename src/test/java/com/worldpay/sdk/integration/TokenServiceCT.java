@@ -1,5 +1,6 @@
 package com.worldpay.sdk.integration;
 
+import com.tngtech.jgiven.annotation.As;
 import com.tngtech.jgiven.junit.ScenarioTest;
 import com.worldpay.gateway.clearwater.client.core.dto.common.CommonToken;
 import com.worldpay.gateway.clearwater.client.core.dto.request.CardRequest;
@@ -369,6 +370,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
     }
 
     @Test
+    @As("Should create a single use WPG token for a live client token")
     public void shouldCreateASingleUseWPGTokenForALiveClientToken() {
         CardRequest cardRequest = new CardRequest();
         cardRequest.setName("John Doe");

@@ -52,7 +52,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
     }
 
     @Test
-    public void shouldCreateASingleUseTokenForAVisaCard() {
+    public void shouldCreateAReusableTokenForAVisaCard() {
         CardRequest cardRequest = new CardRequest();
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("4444333322221111");

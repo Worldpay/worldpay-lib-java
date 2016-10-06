@@ -249,4 +249,181 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
             .theApiErrorCustomCodeIs("BAD_REQUEST")
             .theErrorMessageIs("API error: CVC Must always contain valid digits");
     }
+
+    @Test
+    public void shouldCreateASingleUseTokenForALiveClientToken() {
+        CardRequest cardRequest = new CardRequest();
+        cardRequest.setName("John Doe");
+        cardRequest.setCardNumber("4444333322221111");
+        cardRequest.setExpiryMonth(2);
+        cardRequest.setExpiryYear(2017);
+        cardRequest.setCvc("123");
+
+        CommonToken commonToken = new CommonToken(cardRequest, false);
+
+        TokenRequest tokenRequest = new TokenRequest(commonToken);
+        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKeyLive"));
+
+        when()
+            .weCreateAToken(tokenRequest);
+
+        then()
+            .theTokenStartsWith("LIVE_SU_")
+            .and()
+            .theCardTypeIs("VISA_CREDIT")
+            .and()
+            .theMaskedCardNumberIs("**** **** **** 1111")
+            .and()
+            .theCardSchemaTypeIs("consumer")
+            .and()
+            .theCardSchemaNameIs("VISA CREDIT")
+            .and()
+            .theCardIssuerIs("NATWEST")
+            .and()
+            .theCountryCodeIs("GB")
+            .and()
+            .theCardClassIs("credit")
+            .and()
+            .theCardProductTypeDescNonContactless("Visa Credit Personal")
+            .and()
+            .theCardProductTypeDescContactless("CL Visa Credit Pers")
+            .and()
+            .thePrepaidIs("false")
+            .and()
+            .theExpiryMonthIs(2)
+            .and()
+            .theExpiryYearIs(2017)
+            .and()
+            .theIssuerNumberIsNull()
+            .and()
+            .theStartMonthIsNull()
+            .and()
+            .theStartYearIsNull()
+            .and()
+            .theNameIs("John Doe")
+            .and()
+            .theTokenIsNotReusable()
+            .and()
+            .theShopperLanguageCodeIsNull()
+            .and()
+            .theBillingAddressIsNull();
+    }
+
+    @Test
+    public void shouldCreateAReusableTokenForALiveClientToken() {
+        CardRequest cardRequest = new CardRequest();
+        cardRequest.setName("John Doe");
+        cardRequest.setCardNumber("4444333322221111");
+        cardRequest.setExpiryMonth(2);
+        cardRequest.setExpiryYear(2017);
+        cardRequest.setCvc("123");
+
+        CommonToken commonToken = new CommonToken(cardRequest, true);
+
+        TokenRequest tokenRequest = new TokenRequest(commonToken);
+        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKeyLive"));
+
+        when()
+            .weCreateAToken(tokenRequest);
+
+        then()
+            .theTokenStartsWith("LIVE_RU_")
+            .and()
+            .theCardTypeIs("VISA_CREDIT")
+            .and()
+            .theMaskedCardNumberIs("**** **** **** 1111")
+            .and()
+            .theCardSchemaTypeIs("consumer")
+            .and()
+            .theCardSchemaNameIs("VISA CREDIT")
+            .and()
+            .theCardIssuerIs("NATWEST")
+            .and()
+            .theCountryCodeIs("GB")
+            .and()
+            .theCardClassIs("credit")
+            .and()
+            .theCardProductTypeDescNonContactless("Visa Credit Personal")
+            .and()
+            .theCardProductTypeDescContactless("CL Visa Credit Pers")
+            .and()
+            .thePrepaidIs("false")
+            .and()
+            .theExpiryMonthIs(2)
+            .and()
+            .theExpiryYearIs(2017)
+            .and()
+            .theIssuerNumberIsNull()
+            .and()
+            .theStartMonthIsNull()
+            .and()
+            .theStartYearIsNull()
+            .and()
+            .theNameIs("John Doe")
+            .and()
+            .theTokenIsReusable()
+            .and()
+            .theShopperLanguageCodeIsNull()
+            .and()
+            .theBillingAddressIsNull();
+    }
+
+    @Test
+    public void shouldCreateASingleUseWPGTokenForALiveClientToken() {
+        CardRequest cardRequest = new CardRequest();
+        cardRequest.setName("John Doe");
+        cardRequest.setCardNumber("4444333322221111");
+        cardRequest.setExpiryMonth(2);
+        cardRequest.setExpiryYear(2017);
+        cardRequest.setCvc("123");
+
+        CommonToken commonToken = new CommonToken(cardRequest, true);
+
+        TokenRequest tokenRequest = new TokenRequest(commonToken);
+        tokenRequest.setClientKey(PropertyUtils.getProperty("clientKeyWpg"));
+
+        when()
+            .weCreateAToken(tokenRequest);
+
+        then()
+            .theTokenIsNotNull()
+            .and()
+            .theCardTypeIs("VISA_CREDIT")
+            .and()
+            .theMaskedCardNumberIs("**** **** **** 1111")
+            .and()
+            .theCardSchemaTypeIs("consumer")
+            .and()
+            .theCardSchemaNameIs("VISA CREDIT")
+            .and()
+            .theCardIssuerIs("NATWEST")
+            .and()
+            .theCountryCodeIs("GB")
+            .and()
+            .theCardClassIs("credit")
+            .and()
+            .theCardProductTypeDescNonContactless("Visa Credit Personal")
+            .and()
+            .theCardProductTypeDescContactless("CL Visa Credit Pers")
+            .and()
+            .thePrepaidIs("false")
+            .and()
+            .theExpiryMonthIs(2)
+            .and()
+            .theExpiryYearIs(2017)
+            .and()
+            .theIssuerNumberIsNull()
+            .and()
+            .theStartMonthIsNull()
+            .and()
+            .theStartYearIsNull()
+            .and()
+            .theNameIs("John Doe")
+            .and()
+            .theTokenIsReusable()
+            .and()
+            .theShopperLanguageCodeIsNull()
+            .and()
+            .theBillingAddressIsNull();
+    }
 }

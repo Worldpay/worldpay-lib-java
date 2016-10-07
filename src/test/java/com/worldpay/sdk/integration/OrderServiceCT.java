@@ -39,9 +39,12 @@ import org.junit.Test;
 import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.Calendar.YEAR;
 
 public class OrderServiceCT extends ScenarioTest<OrderServiceClientStage, OrderStage, AssertOrderResponseStage> {
 
@@ -441,11 +444,15 @@ public class OrderServiceCT extends ScenarioTest<OrderServiceClientStage, OrderS
 
     @Test
     public void shouldCreateAndUseToken() {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.add(YEAR, 1);
+        final int expiryYear = calendar.get(YEAR);
+
         CardRequest cardRequest = new CardRequest();
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("4444333322221111");
         cardRequest.setExpiryMonth(2);
-        cardRequest.setExpiryYear(2025);
+        cardRequest.setExpiryYear(expiryYear);
         cardRequest.setCvc("123");
 
         CommonToken commonToken = new CommonToken(cardRequest, false);

@@ -445,7 +445,7 @@ public class OrderServiceCT extends ScenarioTest<OrderServiceClientStage, OrderS
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("4444333322221111");
         cardRequest.setExpiryMonth(2);
-        cardRequest.setExpiryYear(2017);
+        cardRequest.setExpiryYear(2025);
         cardRequest.setCvc("123");
 
         CommonToken commonToken = new CommonToken(cardRequest, false);

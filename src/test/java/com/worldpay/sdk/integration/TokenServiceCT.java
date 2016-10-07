@@ -7,7 +7,19 @@ import com.worldpay.gateway.clearwater.client.core.dto.request.TokenRequest;
 import com.worldpay.sdk.util.PropertyUtils;
 import org.junit.Test;
 
+import java.util.Calendar;
+
+import static java.util.Calendar.YEAR;
+
 public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertTokenResponseStage> {
+
+    private static final int EXPIRY_YEAR;
+
+    static {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(YEAR, 1);
+        EXPIRY_YEAR = calendar.get(YEAR);
+    }
 
     /**
      * This test is for validating the Token API to retrieve the existing token.
@@ -57,7 +69,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("4444333322221111");
         cardRequest.setExpiryMonth(2);
-        cardRequest.setExpiryYear(2017);
+        cardRequest.setExpiryYear(EXPIRY_YEAR);
         cardRequest.setCvc("123");
 
         CommonToken commonToken = new CommonToken(cardRequest, true);
@@ -93,7 +105,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
             .and()
             .theExpiryMonthIs(2)
             .and()
-            .theExpiryYearIs(2017)
+            .theExpiryYearIs(EXPIRY_YEAR)
             .and()
             .theIssuerNumberIsNull()
             .and()
@@ -116,7 +128,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("6759649826438453");
         cardRequest.setExpiryMonth(2);
-        cardRequest.setExpiryYear(2017);
+        cardRequest.setExpiryYear(EXPIRY_YEAR);
         cardRequest.setCvc("123");
 
         CommonToken commonToken = new CommonToken(cardRequest, true);
@@ -152,7 +164,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
             .and()
             .theExpiryMonthIs(2)
             .and()
-            .theExpiryYearIs(2017)
+            .theExpiryYearIs(EXPIRY_YEAR)
             .and()
             .theIssuerNumberIsNull()
             .and()
@@ -175,7 +187,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("34343434343434");
         cardRequest.setExpiryMonth(2);
-        cardRequest.setExpiryYear(2017);
+        cardRequest.setExpiryYear(EXPIRY_YEAR);
         cardRequest.setCvc("123");
 
         CommonToken commonToken = new CommonToken(cardRequest, true);
@@ -211,7 +223,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
             .and()
             .theExpiryMonthIs(2)
             .and()
-            .theExpiryYearIs(2017)
+            .theExpiryYearIs(EXPIRY_YEAR)
             .and()
             .theIssuerNumberIsNull()
             .and()
@@ -234,7 +246,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("4444333322221111");
         cardRequest.setExpiryMonth(2);
-        cardRequest.setExpiryYear(2017);
+        cardRequest.setExpiryYear(EXPIRY_YEAR);
         cardRequest.setCvc("123");
 
         CommonToken commonToken = new CommonToken(cardRequest, false);
@@ -270,7 +282,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
             .and()
             .theExpiryMonthIs(2)
             .and()
-            .theExpiryYearIs(2017)
+            .theExpiryYearIs(EXPIRY_YEAR)
             .and()
             .theIssuerNumberIsNull()
             .and()
@@ -293,7 +305,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("34343434343434");
         cardRequest.setExpiryMonth(2);
-        cardRequest.setExpiryYear(2017);
+        cardRequest.setExpiryYear(EXPIRY_YEAR);
         cardRequest.setCvc("123");
 
         CommonToken commonToken = new CommonToken(cardRequest, false);
@@ -329,7 +341,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
             .and()
             .theExpiryMonthIs(2)
             .and()
-            .theExpiryYearIs(2017)
+            .theExpiryYearIs(EXPIRY_YEAR)
             .and()
             .theIssuerNumberIsNull()
             .and()
@@ -352,7 +364,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("6759649826438453");
         cardRequest.setExpiryMonth(2);
-        cardRequest.setExpiryYear(2017);
+        cardRequest.setExpiryYear(EXPIRY_YEAR);
         cardRequest.setCvc("123");
 
         CommonToken commonToken = new CommonToken(cardRequest, false);
@@ -388,7 +400,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
             .and()
             .theExpiryMonthIs(2)
             .and()
-            .theExpiryYearIs(2017)
+            .theExpiryYearIs(EXPIRY_YEAR)
             .and()
             .theIssuerNumberIsNull()
             .and()
@@ -411,7 +423,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("6759649826438453");
         cardRequest.setExpiryMonth(2);
-        cardRequest.setExpiryYear(2017);
+        cardRequest.setExpiryYear(EXPIRY_YEAR);
         cardRequest.setCvc("bad-cvc");
 
         CommonToken commonToken = new CommonToken(cardRequest, false);
@@ -433,7 +445,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("4444333322221111");
         cardRequest.setExpiryMonth(2);
-        cardRequest.setExpiryYear(2017);
+        cardRequest.setExpiryYear(EXPIRY_YEAR);
         cardRequest.setCvc("123");
 
         CommonToken commonToken = new CommonToken(cardRequest, false);
@@ -469,7 +481,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
             .and()
             .theExpiryMonthIs(2)
             .and()
-            .theExpiryYearIs(2017)
+            .theExpiryYearIs(EXPIRY_YEAR)
             .and()
             .theIssuerNumberIsNull()
             .and()
@@ -492,7 +504,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("4444333322221111");
         cardRequest.setExpiryMonth(2);
-        cardRequest.setExpiryYear(2017);
+        cardRequest.setExpiryYear(EXPIRY_YEAR);
         cardRequest.setCvc("123");
 
         CommonToken commonToken = new CommonToken(cardRequest, true);
@@ -528,7 +540,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
             .and()
             .theExpiryMonthIs(2)
             .and()
-            .theExpiryYearIs(2017)
+            .theExpiryYearIs(EXPIRY_YEAR)
             .and()
             .theIssuerNumberIsNull()
             .and()
@@ -546,12 +558,12 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
     }
 
     @Test
-    public void shouldCreateSingleUseTokenStoreTokenWithLiveClientApiKey() {
+    public void shouldCreateReuseableTokenStoreTokenWithLiveClientApiKey() {
         CardRequest cardRequest = new CardRequest();
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("4444333322221111");
         cardRequest.setExpiryMonth(2);
-        cardRequest.setExpiryYear(2017);
+        cardRequest.setExpiryYear(EXPIRY_YEAR);
         cardRequest.setCvc("123");
 
         CommonToken commonToken = new CommonToken(cardRequest, true);
@@ -587,7 +599,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
             .and()
             .theExpiryMonthIs(2)
             .and()
-            .theExpiryYearIs(2017)
+            .theExpiryYearIs(EXPIRY_YEAR)
             .and()
             .theIssuerNumberIsNull()
             .and()

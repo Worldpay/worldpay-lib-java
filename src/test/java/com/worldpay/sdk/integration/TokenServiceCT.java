@@ -546,7 +546,7 @@ public class TokenServiceCT extends ScenarioTest<EmptyStage, TokenStage, AssertT
     }
 
     @Test
-    public void shouldCreateSingleUseTokenStoreTokenWithLiveClientApiKey() {
+    public void shouldCreateReuseableTokenStoreTokenWithLiveClientApiKey() {
         CardRequest cardRequest = new CardRequest();
         cardRequest.setName("John Doe");
         cardRequest.setCardNumber("4444333322221111");

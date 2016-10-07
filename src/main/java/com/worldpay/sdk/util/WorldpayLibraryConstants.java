@@ -29,12 +29,12 @@ public final class WorldpayLibraryConstants {
     /**
      * Connection timeout in milliseconds.
      */
-    public static final int CONNECTION_TIMEOUT = 10000;
+    public static final int CONNECTION_TIMEOUT = 61000;
 
     /**
      * Socket timeout in milliseconds.
      */
-    public static final int SOCKET_TIMEOUT = 10000;
+    public static final int SOCKET_TIMEOUT = 61000;
 
     public static final java.lang.String ACCEPT = "Accept";
 

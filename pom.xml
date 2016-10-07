@@ -38,9 +38,13 @@
         <github.repository>worldpay-lib-java</github.repository>
         <git.dotGitDirectory>${project.basedir}/.git</git.dotGitDirectory>
 
-        <dep.worldpay-client-core.version>0.8.2</dep.worldpay-client-core.version>
-        <dep.worldpay-client-common.version>0.4.0</dep.worldpay-client-common.version>
-        <dep.worldpay-common-utils.version>0.3.0</dep.worldpay-common-utils.version>
+        <worldpay-client-core.version>0.8.2</worldpay-client-core.version>
+        <worldpay-client-common.version>0.4.0</worldpay-client-common.version>
+        <worldpay-common-utils.version>0.3.0</worldpay-common-utils.version>
+        <jgiven.version>0.12.1</jgiven.version>
+        <logback-classic.version>1.1.7</logback-classic.version>
+        <maven-javadoc-plugin.version>2.9</maven-javadoc-plugin.version>
+        <wiremock.version>2.2.1</wiremock.version>
     </properties>
 
     <scm>
@@ -55,7 +59,7 @@
         <dependency>
             <groupId>com.worldpay.api.client</groupId>
             <artifactId>worldpay-client-core</artifactId>
-            <version>${dep.worldpay-client-core.version}</version>
+            <version>${worldpay-client-core.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -79,27 +83,40 @@
         <dependency>
             <groupId>com.worldpay.api.client</groupId>
             <artifactId>worldpay-client-common</artifactId>
-            <version>${dep.worldpay-client-common.version}</version>
+            <version>${worldpay-client-common.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.worldpay.api.commons</groupId>
             <artifactId>worldpay-common-utils</artifactId>
-            <version>${dep.worldpay-common-utils.version}</version>
+            <version>${worldpay-common-utils.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.tngtech.jgiven</groupId>
             <artifactId>jgiven-junit</artifactId>
-            <version>0.12.1</version>
+            <version>${jgiven.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.7</version>
+            <version>${logback-classic.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock</artifactId>
+            <version>${wiremock.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.ow2.asm</groupId>
+                    <artifactId>asm</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>
@@ -159,7 +176,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9</version>
+                <version>${maven-javadoc-plugin.version}</version>
 
                 <executions>
                     <execution>
@@ -213,7 +230,7 @@
             <plugin>
                 <groupId>com.tngtech.jgiven</groupId>
                 <artifactId>jgiven-maven-plugin</artifactId>
-                <version>0.12.1</version>
+                <version>${jgiven.version}</version>
                 <executions>
                     <execution>
                         <goals>

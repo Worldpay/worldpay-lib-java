@@ -2,6 +2,9 @@ Worldpay REST API Java SDK
 =====================
 Java SDK for interacting with the Worldpay Developer REST API.
 
+#### Issues
+Please see our [support contact information]( https://developer.worldpay.com/jsonapi/faq/articles/how-can-i-contact-you-for-support) to raise an issue.
+
 #### Download
 
 Please download lastest released jar from release section. This jar does not require any other dependency.
@@ -11,8 +14,6 @@ https://online.worldpay.com/docs
 
 #### API Reference
 https://online.worldpay.com/api-reference
-
-
 
 #### Usage
 
